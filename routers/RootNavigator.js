@@ -64,11 +64,16 @@ function StackNavigator() {
 }
 
 function RootStackNavigator() {
-  return (
+  const [user, setUser] = useState(null);
+
+  storage.get('accessToken').then(token => setUser('12345'));
+  console.log(user);
+
+  return user ? (
     <ZegoUIKitPrebuiltCallWithInvitation
       appID={env.CALL_APP_ID}
       appSign={env.CALL_APP_SIGN_IN}
-      userID={'12345'}
+      userID={user}
       userName={'Lê Tuấn'}
       ringtoneConfig={{
         incomingCallFileName: 'zego_incoming.mp3',
@@ -118,7 +123,7 @@ function RootStackNavigator() {
         <StackNavigator />
       </NavigationContainer>
     </ZegoUIKitPrebuiltCallWithInvitation>
-  );
+  ) : null;
 }
 
 export default RootStackNavigator;
