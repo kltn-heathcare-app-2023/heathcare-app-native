@@ -26,8 +26,9 @@ import {useSelector} from 'react-redux';
 import {infoSelector} from '../redux/selectors/infoSelector';
 
 import env from '../utils/env';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import storage from '../utils/storage';
+import jwtDecode from 'jwt-decode';
 
 function StackNavigator() {
   return (
@@ -35,7 +36,7 @@ function StackNavigator() {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={RouterKey.LOGIN_SCREEN}>
+      initialRouteName={RouterKey.HOME_SCREEN}>
       <Stack.Screen name={RouterKey.LOGIN_SCREEN} component={LoginScreen} />
       <Stack.Screen
         name={RouterKey.REGISTER_SCREEN}
@@ -64,16 +65,31 @@ function StackNavigator() {
 }
 
 function RootStackNavigator() {
-  return (
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    storage.get('accessToken').then(token => {
+      if (token) {
+        const user = jwtDecode(token);
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, []);
+
+  console.log('user', user);
+
+  return user ? (
     <ZegoUIKitPrebuiltCallWithInvitation
       appID={env.CALL_APP_ID}
       appSign={env.CALL_APP_SIGN_IN}
-      userID={'12345'}
-      userName={'Lê Tuấn'}
-      ringtoneConfig={{
-        incomingCallFileName: 'zego_incoming.mp3',
-        outgoingCallFileName: 'zego_outgoing.mp3',
-      }}
+      userID={user.user_id}
+      userName={user.username}
+      // ringtoneConfig={{
+      //   incomingCallFileName: 'zego_incoming.mp3',
+      //   outgoingCallFileName: 'zego_outgoing.mp3',
+      // }}
       plugins={[ZegoUIKitSignalingPlugin]} // The signaling plug-in used for call invitation must be set here.
       requireConfig={data => {
         console.warn('requireConfig', data);
@@ -118,6 +134,10 @@ function RootStackNavigator() {
         <StackNavigator />
       </NavigationContainer>
     </ZegoUIKitPrebuiltCallWithInvitation>
+  ) : (
+    <NavigationContainer independent={true}>
+      <StackNavigator />
+    </NavigationContainer>
   );
 }
 

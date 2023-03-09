@@ -7,6 +7,8 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import {StatusBar} from 'react-native';
 
 import env from './utils/env';
+import storage from './utils/storage';
+import {useEffect, useState} from 'react';
 
 LogBox.ignoreLogs([
   'Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead',
