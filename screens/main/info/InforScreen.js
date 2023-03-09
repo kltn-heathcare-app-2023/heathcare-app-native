@@ -47,6 +47,10 @@ function InfoScreen({navigation}) {
     navigation.navigate(RouterKey.INFO_BMI_SCREEN);
   };
 
+  const handleClickBoxGlycemic = () => {
+    navigation.navigate(RouterKey.GLYCEMIC_SCREEN);
+  };
+
   const handleLogout = () => {
     dispatch(infoSlice.actions.resetUserInfo());
     storage.remove('accessToken');
@@ -93,14 +97,16 @@ function InfoScreen({navigation}) {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.bmi_container}>
+      <TouchableOpacity
+        style={styles.bmi_container}
+        onPress={handleClickBoxGlycemic}>
         <Image
           style={styles.header_info_img}
           source={require('../../../assets/images/glycemic.png')}
         />
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số Đường Huyết mới nhất: ${glycemic}`}
+            {`Chỉ số Đường Huyết mới nhất: ${glycemic ? glycemic : 0}`}
           </Text>
           <Text
             style={

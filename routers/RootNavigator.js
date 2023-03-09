@@ -36,7 +36,7 @@ function StackNavigator() {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={RouterKey.LOGIN_SCREEN}>
+      initialRouteName={RouterKey.HOME_SCREEN}>
       <Stack.Screen name={RouterKey.LOGIN_SCREEN} component={LoginScreen} />
       <Stack.Screen
         name={RouterKey.REGISTER_SCREEN}
