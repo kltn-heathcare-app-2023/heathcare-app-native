@@ -9,7 +9,10 @@ import {
 import ScheduleItem from '../../../components/ScheduleItem';
 import {ProgressChart} from 'react-native-chart-kit';
 import {fetchAllScheduleDetailListById} from '../../../redux/slices/scheduleDetailSlice';
-import {scheduleDetailList} from '../../../redux/selectors/scheduleDetailSelector';
+import {
+  scheduleDetailList,
+  scheduleDetailListAfterNow,
+} from '../../../redux/selectors/scheduleDetailSelector';
 
 function HomeScreen() {
   const user_info = useSelector(infoSelector);
@@ -17,8 +20,9 @@ function HomeScreen() {
   const glycemic_last = useSelector(userLastGlycemicSelector);
 
   const dispatch = useDispatch();
-  const schedules = useSelector(scheduleDetailList);
+  const schedules = useSelector(scheduleDetailListAfterNow);
 
+  console.log(schedules);
   const data = {
     // labels: ["", "", "BMI"], // optional
     data: [0, 0, 1 - bmi_avg / 30],
