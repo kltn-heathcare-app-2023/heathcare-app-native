@@ -36,7 +36,7 @@ function StackNavigator() {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={RouterKey.HOME_SCREEN}>
+      initialRouteName={RouterKey.LOADING_SCREEN}>
       <Stack.Screen name={RouterKey.LOGIN_SCREEN} component={LoginScreen} />
       <Stack.Screen
         name={RouterKey.REGISTER_SCREEN}
@@ -78,18 +78,16 @@ function RootStackNavigator() {
     });
   }, []);
 
-  console.log('user', user);
-
   return user ? (
     <ZegoUIKitPrebuiltCallWithInvitation
       appID={env.CALL_APP_ID}
       appSign={env.CALL_APP_SIGN_IN}
       userID={user.user_id}
       userName={user.username}
-      // ringtoneConfig={{
-      //   incomingCallFileName: 'zego_incoming.mp3',
-      //   outgoingCallFileName: 'zego_outgoing.mp3',
-      // }}
+      ringtoneConfig={{
+        incomingCallFileName: 'zego_incoming.mp3',
+        outgoingCallFileName: 'zego_outgoing.mp3',
+      }}
       plugins={[ZegoUIKitSignalingPlugin]} // The signaling plug-in used for call invitation must be set here.
       requireConfig={data => {
         console.warn('requireConfig', data);
