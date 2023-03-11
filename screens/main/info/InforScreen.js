@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   header_info_img: {
     width: 100,
     height: 'auto',
+    minHeight: 80,
     borderRadius: 16,
   },
   header_info_text: {
