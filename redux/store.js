@@ -4,6 +4,7 @@ import scheduleReducer from './slices/scheduleSlice';
 import conversationReducer from './slices/conversationSlice';
 import messageReducer from './slices/messageSlice';
 import scheduleDetailReducer from './slices/scheduleDetailSlice';
+import notificationReducer from './slices/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     conversations: conversationReducer,
     messages: messageReducer,
     schedule_details: scheduleDetailReducer,
+    notifications: notificationReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
