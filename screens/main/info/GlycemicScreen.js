@@ -57,6 +57,7 @@ function GlycemicScreen() {
 
   const dispatch = useDispatch();
 
+  console.log(glycemic_list);
   data.labels = labels;
   data.datasets[0] = {data: metrics.length > 0 ? metrics : []};
 

@@ -6,18 +6,21 @@ import ZegoUIKitPrebuiltCall, {
 import {ZegoLayoutMode} from '@zegocloud/zego-uikit-rn';
 import RouterKey from '../../../../utils/Routerkey';
 import env from '../../../../utils/env';
+import {useSelector} from 'react-redux';
+import {infoSelector} from '../../../../redux/selectors/infoSelector';
 
-function CallVideoScreen({navigation}) {
-  randomUserID = String(Math.floor(Math.random() * 100000));
+function CallVideoScreen({navigation, route}) {
+  const {room_id} = route;
+  const user_info = useSelector(infoSelector);
 
   return (
     <View style={{flex: 1}}>
       <ZegoUIKitPrebuiltCall
         appID={env.CALL_APP_ID}
         appSign={env.CALL_APP_SIGN_IN}
-        userID={randomUserID}
-        userName={'Lê Tuấn'}
-        callID="123456"
+        userID={user_info._id}
+        userName={user_info.person.username}
+        callID={room_id}
         notifyWhenAppRunningInBackgroundOrQuit={true}
         isIOSSandboxEnvironment={false} // Ignore this if you are not building an iOS app.
         config={{

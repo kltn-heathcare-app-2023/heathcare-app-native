@@ -20,7 +20,7 @@ import ICon from 'react-native-vector-icons/Ionicons';
 import {socket} from '../../../../utils/config';
 import RouterKey from '../../../../utils/Routerkey';
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -90;
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
 function ConversationDetail({route, navigation}) {
   const {conversation} = route.params;
@@ -76,45 +76,48 @@ function ConversationDetail({route, navigation}) {
           name={'videocam-outline'}
           color="black"
           size={20}
-          onPress={() => navigation.navigate(RouterKey.CALL_VIDEO_SCREEN)}
+          onPress={() =>
+            navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+              room_id: conversation._id,
+            })
+          }
         />
       </View>
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
-        keyboardVerticalOffset={keyboardVerticalOffset}>
-        <ScrollView
-          style={styles.content}
-          ref={scrollViewRef}
-          onContentSizeChange={() =>
-            scrollViewRef.current.scrollToEnd({animated: true})
-          }>
-          {messages.map(message => {
-            // console.log(message);
-            return <MessageItem message={message} key={message._id} />;
-          })}
-        </ScrollView>
-
-        <TextInput
-          right={
-            <TextInput.Icon
-              icon={'send-circle-outline'}
-              size={32}
-              style={{
-                marginLeft: 16,
-              }}
-              onPress={handleSendMessage}
-            />
-          }
-          style={{
-            backgroundColor: '#fff',
-            borderWidth: 1,
-            height: 48,
-          }}
-          value={message}
-          onChangeText={val => setMessage(val)}
-          mode={'flat'}
-        />
-      </KeyboardAvoidingView>
+        keyboardVerticalOffset={keyboardVerticalOffset}></KeyboardAvoidingView> */}
+      <ScrollView
+        style={styles.content}
+        ref={scrollViewRef}
+        onContentSizeChange={() =>
+          scrollViewRef.current.scrollToEnd({animated: true})
+        }>
+        {messages.map(message => {
+          // console.log(message);
+          return <MessageItem message={message} key={message._id} />;
+        })}
+      </ScrollView>
+      <TextInput
+        right={
+          <TextInput.Icon
+            icon={'send-circle-outline'}
+            size={32}
+            style={{
+              marginLeft: 16,
+            }}
+            onPress={handleSendMessage}
+          />
+        }
+        style={{
+          backgroundColor: '#fff',
+          borderWidth: 1,
+          height: 48,
+          borderColor: '#cccc',
+        }}
+        value={message}
+        onChangeText={val => setMessage(val)}
+        mode={'flat'}
+      />
     </>
   );
 }
@@ -143,7 +146,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 8,
-    height: '83%',
+    height: '84%',
     backgroundColor: '#fff',
   },
   message_box: {
