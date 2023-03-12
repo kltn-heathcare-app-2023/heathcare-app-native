@@ -38,6 +38,7 @@ function ConversationDetail({route, navigation}) {
     dispatch(fetchMessagesByIdConversation(conversation._id));
   }, []);
 
+  console.log(conversation._id);
   const handleSendMessage = async () => {
     if (message) {
       const data = {

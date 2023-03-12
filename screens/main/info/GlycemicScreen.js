@@ -91,7 +91,10 @@ function GlycemicScreen() {
           <Text style={styles.bmi_text_title}>
             {`Chỉ số đường huyết mới nhất: ${glycemic_last}`}
           </Text>
-          <Text>{`Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}</Text>
+          <Text>
+            {glycemic_list[glycemic_list.length - 1].notification ??
+              `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+          </Text>
         </View>
         <Image
           style={styles.header_info_img}
