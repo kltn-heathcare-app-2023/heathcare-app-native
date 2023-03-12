@@ -22,8 +22,6 @@ import RouterKey from '../../../../utils/Routerkey';
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -90;
 
-import {ZegoSendCallInvitationButton} from '@zegocloud/zego-uikit-prebuilt-call-rn';
-
 function ConversationDetail({route, navigation}) {
   const {conversation} = route.params;
   const dispatch = useDispatch();
@@ -74,19 +72,12 @@ function ConversationDetail({route, navigation}) {
           </Text>
         </View>
 
-        {/* <ICon
+        <ICon
           name={'videocam-outline'}
           color="black"
           size={20}
           onPress={() => navigation.navigate(RouterKey.CALL_VIDEO_SCREEN)}
-        /> */}
-        {/* <ZegoSendCallInvitationButton
-          invitees={[
-            {userID: '123456', userName: 'Bảo Trấn'},
-          ]} // List of user object.
-          isVideoCall={true}
-          // resourceID={'zego_uikit_call'} // For offline call notification
-        /> */}
+        />
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'padding'}

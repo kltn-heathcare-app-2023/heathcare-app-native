@@ -69,10 +69,13 @@ export const notification_list_filter = createSelector(
   (notifications, rule) => {
     if (rule === type.RULE_ALL) {
       return notifications.filter(notification => !notification.hasSeen);
+    } else if (rule === type.RULE_HAS_SEEN) {
+      return notifications.filter(notification => notification.hasSeen);
     } else {
-      return notifications.filter(
-        notification =>
-          notification.rule.includes(rule) && !notification.hasSeen,
+      return notifications.filter(notification =>
+        notification.rule === type.RULE_DOCTOR_REMIND
+          ? notification.rule.includes(rule)
+          : notification.rule.includes(rule) && !notification.hasSeen,
       );
     }
   },

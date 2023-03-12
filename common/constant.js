@@ -11,6 +11,7 @@ const RULE_DOCTOR_REMIND = 'RULE_DOCTOR_REMIND'; // bác sĩ nhắc nhở
 const RULE_SYSTEM = 'RULE_SYSTEM';
 const RULE_INFORMATION = 'RULE_INFORMATION';
 const RULE_ALL = 'RULE_ALL';
+const RULE_HAS_SEEN = 'RULE_HAS_SEEN';
 
 export const type = {
   RULE_DOCTOR_REMIND,
@@ -20,4 +21,5 @@ export const type = {
   RULE_SYSTEM,
   RULE_ALL,
   RULE__SCHEDULE,
+  RULE_HAS_SEEN,
 };
