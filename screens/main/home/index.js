@@ -22,14 +22,13 @@ function HomeScreen() {
   const dispatch = useDispatch();
   const schedules = useSelector(scheduleDetailListAfterNow);
 
-  console.log(schedules);
   const data = {
     // labels: ["", "", "BMI"], // optional
-    data: [0, 0, 1 - bmi_avg / 30],
+    data: [0, 0, bmi_avg / 30],
   };
 
   const dataGlycemic = {
-    data: [0, 0, 1 - glycemic_last / 600],
+    data: [0, 0, glycemic_last / 600],
   };
 
   const chartBMIConfig = {

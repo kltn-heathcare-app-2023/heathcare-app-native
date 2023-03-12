@@ -65,75 +65,8 @@ function StackNavigator() {
 }
 
 function RootStackNavigator() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    storage.get('accessToken').then(token => {
-      if (token) {
-        const user = jwtDecode(token);
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-  }, []);
-
-  return user ? (
-    <ZegoUIKitPrebuiltCallWithInvitation
-      appID={env.CALL_APP_ID}
-      appSign={env.CALL_APP_SIGN_IN}
-      userID={user.user_id}
-      userName={user.username}
-      ringtoneConfig={{
-        incomingCallFileName: 'zego_incoming.mp3',
-        outgoingCallFileName: 'zego_outgoing.mp3',
-      }}
-      plugins={[ZegoUIKitSignalingPlugin]} // The signaling plug-in used for call invitation must be set here.
-      requireConfig={data => {
-        console.warn('requireConfig', data);
-        const callConfig =
-          ZegoInvitationType.videoCall === data.type
-            ? ONE_ON_ONE_VIDEO_CALL_CONFIG
-            : ONE_ON_ONE_VOICE_CALL_CONFIG;
-        return {
-          ...callConfig,
-        };
-      }}
-      notifyWhenAppRunningInBackgroundOrQuit={false}
-      isIOSSandboxEnvironment={false} // Ignore this if you are not building an iOS app.
-      config={{
-        ...ONE_ON_ONE_VIDEO_CALL_CONFIG,
-        onOnlySelfInRoom: () => {
-          navigation.goBack();
-          navigation.navigate(RouterKey.HOME_SCREEN);
-        },
-        onHangUp: () => {
-          navigation.goBack();
-          navigation.navigate(RouterKey.HOME_SCREEN);
-        },
-
-        layout: {
-          mode: ZegoLayoutMode.pictureInPicture,
-          config: {
-            showMyViewWithVideoOnly: true,
-            isSmallViewDraggable: true,
-            switchLargeOrSmallViewByClick: true,
-          },
-        },
-
-        hangUpConfirmInfo: {
-          title: 'Thông báo',
-          message: 'Bạn có chắc muốn kết thúc cuộc trò chuyện',
-          cancelButtonName: 'Hủy',
-          confirmButtonName: 'Xác nhận',
-        },
-      }}>
-      <NavigationContainer independent={true}>
-        <StackNavigator />
-      </NavigationContainer>
-    </ZegoUIKitPrebuiltCallWithInvitation>
-  ) : (
-    <NavigationContainer independent={true}>
+  return (
+    <NavigationContainer>
       <StackNavigator />
     </NavigationContainer>
   );

@@ -20,6 +20,7 @@ const type_items = [
   {label: 'Tất cả', value: type.RULE_ALL},
   {label: 'Nhắc nhở', value: type.RULE_DOCTOR_REMIND},
   {label: 'Lịch khám', value: type.RULE__SCHEDULE},
+  {label: 'Đã xem', value: type.RULE_HAS_SEEN},
 ];
 
 function NotificationScreen() {
@@ -64,7 +65,7 @@ function NotificationScreen() {
         }}
       />
       <ScrollView style={styles.container_scroll_view}>
-        {notification_list.map(({_id, content, createdAt, rule}) => {
+        {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
           return (
             <TouchableOpacity
               style={[
@@ -85,18 +86,22 @@ function NotificationScreen() {
               </Text>
               <Text style={styles.content_notification}>{content}</Text>
               <Text style={styles.time_notification}>
-                {moment(createdAt).fromNow()}
+                {moment(createdAt).fromNow()} - {hasSeen ? 'Đã xem' : null}
               </Text>
             </TouchableOpacity>
           );
         })}
-        {notification_list.length > 0 && (
+        {notification_list.length > 0 && choose !== type.RULE_HAS_SEEN ? (
           <Button
             onPress={handleSeenNotification}
             style={{marginBottom: 8}}
             mode="elevated">
             Đánh dấu đã xem
           </Button>
+        ) : choose === type.RULE_HAS_SEEN ? null : (
+          <Text style={{textAlign: 'center', fontSize: 16}}>
+            Bạn chưa có thông báo nào
+          </Text>
         )}
       </ScrollView>
     </View>

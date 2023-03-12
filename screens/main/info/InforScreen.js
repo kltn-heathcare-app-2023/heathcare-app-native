@@ -5,6 +5,7 @@ import {COLOR_1, COLOR_2, COLOR_3, COLOR_4} from '../../../common/constant';
 import {
   infoSelector,
   notificationByBMIMertric,
+  notificationByGlycemicMetric,
   userAVGBMISelector,
   userLastGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
@@ -38,7 +39,7 @@ function InfoScreen({navigation}) {
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic = useSelector(userLastGlycemicSelector);
   const notification = useSelector(notificationByBMIMertric);
-
+  const glycemic_notification = useSelector(notificationByGlycemicMetric);
   const {person, blood} = user_info;
 
   const dispatch = useDispatch();
@@ -106,12 +107,12 @@ function InfoScreen({navigation}) {
         />
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số Đường Huyết mới nhất: ${glycemic ? glycemic : 0}`}
+            {`Chỉ số Đường Huyết mới nhất: ${glycemic}`}
           </Text>
-          <Text
-            style={
-              styles.bmi_text_notification
-            }>{`Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}</Text>
+          <Text style={styles.bmi_text_notification}>
+            {glycemic_notification ??
+              `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+          </Text>
         </View>
       </TouchableOpacity>
 

@@ -6,6 +6,7 @@ import MainInfo from '../screens/main/info';
 import MainScheduleScreen from '../screens/main/schedule';
 import NotificationScreen from '../screens/main/notification';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {NavigationContainer} from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +33,6 @@ const screenOptions = ({route}) => ({
 
 function MainNavigator() {
   return (
-    // <NavigationContainer independent={true}>
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name={RouterKey.HOME_SCREEN}
@@ -66,7 +66,6 @@ function MainNavigator() {
         }}
       />
     </Tab.Navigator>
-    // </NavigationContainer>
   );
 }
 

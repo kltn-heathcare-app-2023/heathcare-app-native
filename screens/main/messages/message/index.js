@@ -20,9 +20,7 @@ import ICon from 'react-native-vector-icons/Ionicons';
 import {socket} from '../../../../utils/config';
 import RouterKey from '../../../../utils/Routerkey';
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -90;
-
-import {ZegoSendCallInvitationButton} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
 function ConversationDetail({route, navigation}) {
   const {conversation} = route.params;
@@ -40,6 +38,7 @@ function ConversationDetail({route, navigation}) {
     dispatch(fetchMessagesByIdConversation(conversation._id));
   }, []);
 
+  console.log(conversation._id);
   const handleSendMessage = async () => {
     if (message) {
       const data = {
@@ -74,56 +73,52 @@ function ConversationDetail({route, navigation}) {
           </Text>
         </View>
 
-        {/* <ICon
+        <ICon
           name={'videocam-outline'}
           color="black"
           size={20}
-          onPress={() => navigation.navigate(RouterKey.CALL_VIDEO_SCREEN)}
-        /> */}
-        {/* <ZegoSendCallInvitationButton
-          invitees={[
-            {userID: '123456', userName: 'Bảo Trấn'},
-          ]} // List of user object.
-          isVideoCall={true}
-          // resourceID={'zego_uikit_call'} // For offline call notification
-        /> */}
-      </View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
-        keyboardVerticalOffset={keyboardVerticalOffset}>
-        <ScrollView
-          style={styles.content}
-          ref={scrollViewRef}
-          onContentSizeChange={() =>
-            scrollViewRef.current.scrollToEnd({animated: true})
-          }>
-          {messages.map(message => {
-            // console.log(message);
-            return <MessageItem message={message} key={message._id} />;
-          })}
-        </ScrollView>
-
-        <TextInput
-          right={
-            <TextInput.Icon
-              icon={'send-circle-outline'}
-              size={32}
-              style={{
-                marginLeft: 16,
-              }}
-              onPress={handleSendMessage}
-            />
+          onPress={() =>
+            navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+              room_id: conversation._id,
+            })
           }
-          style={{
-            backgroundColor: '#fff',
-            borderWidth: 1,
-            height: 48,
-          }}
-          value={message}
-          onChangeText={val => setMessage(val)}
-          mode={'flat'}
         />
-      </KeyboardAvoidingView>
+      </View>
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
+        keyboardVerticalOffset={keyboardVerticalOffset}></KeyboardAvoidingView> */}
+      <ScrollView
+        style={styles.content}
+        ref={scrollViewRef}
+        onContentSizeChange={() =>
+          scrollViewRef.current.scrollToEnd({animated: true})
+        }>
+        {messages.map(message => {
+          // console.log(message);
+          return <MessageItem message={message} key={message._id} />;
+        })}
+      </ScrollView>
+      <TextInput
+        right={
+          <TextInput.Icon
+            icon={'send-circle-outline'}
+            size={32}
+            style={{
+              marginLeft: 16,
+            }}
+            onPress={handleSendMessage}
+          />
+        }
+        style={{
+          backgroundColor: '#fff',
+          borderWidth: 1,
+          height: 48,
+          borderColor: '#cccc',
+        }}
+        value={message}
+        onChangeText={val => setMessage(val)}
+        mode={'flat'}
+      />
     </>
   );
 }
@@ -152,7 +147,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 8,
-    height: '83%',
+    height: '84%',
     backgroundColor: '#fff',
   },
   message_box: {
