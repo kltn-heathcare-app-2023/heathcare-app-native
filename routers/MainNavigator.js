@@ -6,7 +6,6 @@ import MainInfo from '../screens/main/info';
 import MainScheduleScreen from '../screens/main/schedule';
 import NotificationScreen from '../screens/main/notification';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {NavigationContainer} from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 

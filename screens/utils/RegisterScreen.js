@@ -29,35 +29,35 @@ function RegisterScreen({navigation}) {
   const recaptchaVerifier = useRef();
 
   //function get OTP with phone number
-  const sendOTP = async () => {
-    let phoneNumber = '+84' + phone.slice(1);
-    try {
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      const verificationId = await phoneProvider.verifyPhoneNumber(
-        phoneNumber,
-        recaptchaVerifier.current,
-      );
-      if (verificationId) {
-        return verificationId;
-      }
-    } catch (err) {
-      throw new Error(err);
-    }
-  };
+  // const sendOTP = async () => {
+  //   let phoneNumber = '+84' + phone.slice(1);
+  //   try {
+  //     const phoneProvider = new firebase.auth.PhoneAuthProvider();
+  //     const verificationId = await phoneProvider.verifyPhoneNumber(
+  //       phoneNumber,
+  //       recaptchaVerifier.current,
+  //     );
+  //     if (verificationId) {
+  //       return verificationId;
+  //     }
+  //   } catch (err) {
+  //     throw new Error(err);
+  //   }
+  // };
 
   const handleRegister = () => {
-    // if (phone && password && confirmPass && name) {
-    //     sendOTP()
-    //         .then((otp) => {
-    //             navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
-    //                 phone,
-    //                 password,
-    //                 name,
-    //                 otp,
-    //             });
-    //         })
-    //         .catch((err) => console.error("bug send otp", err));
-    // }
+    if (phone && password && confirmPass && name) {
+      sendOTP()
+        .then(otp => {
+          navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
+            phone,
+            password,
+            name,
+            otp,
+          });
+        })
+        .catch(err => console.error('bug send otp', err));
+    }
     register({
       phone_number: phone,
       password: password,

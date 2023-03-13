@@ -13,6 +13,7 @@ import MainNavigator from '../../routers/MainNavigator';
 
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RouterKey from '../../utils/Routerkey';
+import {socket} from '../../utils/config';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(true);

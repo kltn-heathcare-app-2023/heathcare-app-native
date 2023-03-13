@@ -52,9 +52,9 @@ function InfoScreen({navigation}) {
     navigation.navigate(RouterKey.GLYCEMIC_SCREEN);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(infoSlice.actions.resetUserInfo());
-    storage.remove('accessToken');
+    await storage.remove('accessToken');
 
     navigation.navigate(RouterKey.LOGIN_SCREEN);
   };

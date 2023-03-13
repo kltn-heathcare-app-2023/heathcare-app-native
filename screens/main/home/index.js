@@ -13,6 +13,7 @@ import {
   scheduleDetailList,
   scheduleDetailListAfterNow,
 } from '../../../redux/selectors/scheduleDetailSelector';
+import {socket} from '../../../utils/config';
 
 function HomeScreen() {
   const user_info = useSelector(infoSelector);
