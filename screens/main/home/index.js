@@ -60,6 +60,17 @@ function HomeScreen() {
     }
   }, [user_info]);
 
+  useEffect(() => {
+    socket.on('call_id_room_to_user_success', resp => {
+      const {room_id, doctor_username} = resp;
+      console.log('call ->', room_id, doctor_username);
+    });
+
+    socket.on('test', resp => {
+      console.log('call ->', resp);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.box_chart}>

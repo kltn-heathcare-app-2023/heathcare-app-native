@@ -7,16 +7,20 @@ import {
   View,
 } from 'react-native';
 import {Modal, Portal} from 'react-native-paper';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 import MainNavigator from '../../routers/MainNavigator';
 
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RouterKey from '../../utils/Routerkey';
 import {socket} from '../../utils/config';
+import {infoSelector} from '../../redux/selectors/infoSelector';
 
 function MainScreen({navigation}) {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const [room, setRoom] = useState('');
+  const [username, setUsername] = useState('');
+  const user_info = useSelector(infoSelector);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -51,13 +55,26 @@ function MainScreen({navigation}) {
     dispatch(fetchUserInfo());
   }, []);
 
+  useEffect(() => {
+    user_info._id && socket.emit('status_user', user_info._id);
+  }, [user_info]);
+
+  useEffect(() => {
+    socket.on('call_id_room_to_user_success', resp => {
+      const {room_id, doctor_username} = resp;
+      setRoom(room_id);
+      setUsername(doctor_username);
+      showModal();
+    });
+  }, []);
+
   return (
     <>
       <Portal>
         <Modal visible={visible} onDismiss={hideModal}>
           <View style={styles.modal_container}>
             <View>
-              <Text>Bác sĩ: BaoTran</Text>
+              <Text>Bác sĩ: {username}</Text>
             </View>
 
             <View style={styles.action_view}>
@@ -71,8 +88,9 @@ function MainScreen({navigation}) {
                   borderRadius: 50,
                 }}
                 onPress={() => {
+                  console.log('call');
                   navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-                    room_id: '63fa3231d86212735e0f763b',
+                    room_id: room,
                   });
                   setVisible(false);
                 }}

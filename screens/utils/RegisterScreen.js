@@ -14,10 +14,7 @@ import RouterKey from '../../utils/Routerkey';
 
 import styles from '../../styles/global.js';
 
-import firebase from 'firebase/compat/app';
-// import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import {firebaseConfig} from '../../config/firebase.config';
-import {register} from '../../services/auth';
+import auth from '@react-native-firebase/auth';
 import storage from '../../utils/storage';
 
 function RegisterScreen({navigation}) {
@@ -25,8 +22,6 @@ function RegisterScreen({navigation}) {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
-
-  const recaptchaVerifier = useRef();
 
   //function get OTP with phone number
   // const sendOTP = async () => {
@@ -45,9 +40,20 @@ function RegisterScreen({navigation}) {
   //   }
   // };
 
+  async function signInWithPhoneNumber() {
+    let phoneNumber = '+84' + phone.slice(1);
+    console.log(phoneNumber);
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      console.log(confirmation);
+    } catch (error) {
+      console.log('error in send otp', error);
+    }
+  }
+
   const handleRegister = () => {
     if (phone && password && confirmPass && name) {
-      sendOTP()
+      signInWithPhoneNumber()
         .then(otp => {
           navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
             phone,
@@ -143,7 +149,7 @@ function RegisterScreen({navigation}) {
           onChangeText={handleChangeConfirmPassInput}
         />
 
-        <ButtonPrimary title="Đăng ký" handle={handleRegister} />
+        <ButtonPrimary title="Đăng ký" handle={signInWithPhoneNumber} />
         <ActionView title="Quay lại" handle={handleBackLogin} />
       </ImageBackground>
     </>

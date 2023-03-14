@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "811052457406",
+    "project_id": "heath-care-auth",
+    "storage_bucket": "heath-care-auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811052457406:android:0eb777c81f3d634f662def",
+        "android_client_info": {
+          "package_name": "com.heathcareapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811052457406-5qcjcbktqu4uc7ecmf7ejjuu93fevb2s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOgvMmsj9VZduYdXfR9tHZKsAjv-FZvO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811052457406-5qcjcbktqu4uc7ecmf7ejjuu93fevb2s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
