@@ -15,6 +15,7 @@ import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RouterKey from '../../utils/Routerkey';
 import {socket} from '../../utils/config';
 import {infoSelector} from '../../redux/selectors/infoSelector';
+import storage from '../../utils/storage';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
@@ -36,6 +37,7 @@ function MainScreen({navigation}) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    storage.remove('accessToken').then(() => {});
     granted
       .then(data => {
         if (!data) {

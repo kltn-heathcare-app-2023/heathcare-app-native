@@ -38,7 +38,7 @@ export const infoSlice = createSlice({
       state.bmi_avg = action.payload.bmis.avgBMI ?? 0;
       state.bmi_list = action.payload.bmis.bmis;
       state.glycemic_list = action.payload.glycemic;
-      state.rule = action.payload.bmis.rule.notification;
+      // state.rule = action.payload.bmis.rule.notification ?? null;
     });
   },
 });
@@ -55,6 +55,7 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
         getListGlycemicById(user_id),
       ]);
 
+      console.log(resp_values);
       const bmis = resp_values[0].data;
       const glycemic = resp_values[1].data;
 

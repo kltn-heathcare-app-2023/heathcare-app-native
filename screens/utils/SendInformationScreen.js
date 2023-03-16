@@ -1,10 +1,8 @@
 // import { Button } from "@ant-design/react-native";
 import {useState} from 'react';
 import {
-  Button,
   Image,
   ImageBackground,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,15 +11,15 @@ import {
 
 import ActionView from '../../components/ActionView';
 import ButtonPrimary from '../../components/ButtonPrimary';
-import DateTimePicker from '../../components/Input/DateTimePicker';
 import DropDownPicker from '../../components/Input/DropdownPicker';
 import TextInputPrimary from '../../components/Input/InputPrimary';
 import {BACKGROUND_IMAGE} from '../../utils/image';
-
+import DatePicker from 'react-native-neat-date-picker';
 import styles from '../../styles/global.js';
 import fetch from '../../utils/fetch';
 import env from '../../utils/env';
 import RouterKey from '../../utils/Routerkey';
+import moment from 'moment';
 
 const genderItems = [
   {label: 'Nam', value: 'Nam'},
@@ -84,6 +82,24 @@ function SendInformationScreen({navigation, route}) {
     // console.info(name, gender, date, address, blood, image);
   };
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const onCancel = () => {
+    // You should close the modal in here
+    setShowDatePicker(false);
+  };
+
+  const onConfirm = ({date}) => {
+    // You should close the modal in here
+    setShowDatePicker(false);
+
+    // The parameter 'date' is a Date object so that you can use any Date prototype method.
+    setDate(date);
+  };
   return (
     <>
       <View
@@ -111,9 +127,25 @@ function SendInformationScreen({navigation, route}) {
           value={gender}
           _setValue={setGender}
           items={genderItems}
+          isGender
         />
 
-        <DateTimePicker date={date} setDate={setDate} />
+        {/* <DateTimePicker date={date} setDate={setDate} show={true} /> */}
+        <DatePicker
+          isVisible={showDatePicker}
+          mode={'single'}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+          startDate={new Date('2001/01/01')}
+        />
+
+        <TextInputPrimary
+          isInsurance
+          isDate
+          value={moment(date).format('l')}
+          editable={false}
+          openPicker={openDatePicker}
+        />
 
         <TextInputPrimary
           isAddress={true}
@@ -122,10 +154,15 @@ function SendInformationScreen({navigation, route}) {
           onChangeText={val => setAddress(val)}
         />
 
-        <DropDownPicker value={blood} _setValue={setBlood} items={bloodITems} />
+        <DropDownPicker
+          value={blood}
+          _setValue={setBlood}
+          items={bloodITems}
+          isBlood
+        />
 
         <TouchableOpacity
-          onPress={pickImage}
+          onPress={() => {}}
           style={{
             width: '90%',
             height: 40,
@@ -137,7 +174,7 @@ function SendInformationScreen({navigation, route}) {
           }}>
           <Text style={{alignContent: 'center'}}>Chọn ảnh</Text>
         </TouchableOpacity>
-
+        {/* 
         <Image
           source={{uri: image && image.uri}}
           style={{
@@ -147,7 +184,7 @@ function SendInformationScreen({navigation, route}) {
             marginBottom: 8,
           }}
           resizeMode="contain"
-        />
+        /> */}
         <ButtonPrimary title="Cập nhật thông tin" handle={handleUpdateIn4} />
 
         <ActionView

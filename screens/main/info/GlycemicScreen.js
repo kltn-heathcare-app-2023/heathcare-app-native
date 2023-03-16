@@ -92,7 +92,7 @@ function GlycemicScreen() {
             {`Chỉ số đường huyết mới nhất: ${glycemic_last}`}
           </Text>
           <Text>
-            {glycemic_list[glycemic_list.length - 1].notification ??
+            {glycemic_list[glycemic_list.length - 1]?.notification ??
               `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
           </Text>
         </View>

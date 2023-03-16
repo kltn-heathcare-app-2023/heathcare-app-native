@@ -68,7 +68,7 @@ function InfoScreen({navigation}) {
           <Text>{`Họ & tên: ${person.username}`}</Text>
           <Text>{`Năm sinh : ${person.dob}`}</Text>
           <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
-          <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nu'}`}</Text>
+          <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
           <Text>{`Nhóm máu : ${blood}`}</Text>
         </View>
       </TouchableOpacity>
@@ -89,7 +89,7 @@ function InfoScreen({navigation}) {
             {`Chỉ số BMI Trung Bình: ${bmi_avg}`}
           </Text>
           <Text style={styles.bmi_text_notification}>
-            {notification || `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            {notification ?? `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
           </Text>
         </View>
         <Image

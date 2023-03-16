@@ -16,6 +16,9 @@ import styles from '../../styles/global.js';
 
 import auth from '@react-native-firebase/auth';
 import storage from '../../utils/storage';
+import {register} from '../../services/auth';
+import {Alert} from 'react-native';
+import {TITLE_NOTIFICATION} from '../../common/title';
 
 function RegisterScreen({navigation}) {
   const [phone, setPhone] = useState('');
@@ -40,38 +43,37 @@ function RegisterScreen({navigation}) {
   //   }
   // };
 
-  async function signInWithPhoneNumber() {
+  const signInWithPhoneNumber = () => {
     let phoneNumber = '+84' + phone.slice(1);
-    console.log(phoneNumber);
-    try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      console.log(confirmation);
-    } catch (error) {
-      console.log('error in send otp', error);
-    }
-  }
+    return auth().signInWithPhoneNumber(phoneNumber);
+  };
 
   const handleRegister = () => {
     if (phone && password && confirmPass && name) {
-      signInWithPhoneNumber()
-        .then(otp => {
-          navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
-            phone,
-            password,
-            name,
-            otp,
-          });
+      // signInWithPhoneNumber();
+      // .then(confirm => {
+      //   navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
+      //     phone,
+      //     password,
+      //     name,
+      //     confirm,
+      //   });
+      // })
+      // .catch(err => console.error('bug send otp', err));
+
+      register({
+        phone_number: phone,
+        password: password,
+        rule: 'patient',
+      })
+        .then(({data}) => {
+          storage.set('accessToken', data.accessToken);
+          navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
         })
-        .catch(err => console.error('bug send otp', err));
+        .catch(err => {
+          Alert.alert(TITLE_NOTIFICATION, err?.message);
+        });
     }
-    register({
-      phone_number: phone,
-      password: password,
-      rule: 'patient',
-    }).then(({data}) => {
-      storage.set('accessToken', data.accessToken);
-      navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
-    });
   };
 
   const handleChangePhoneInput = useCallback(
@@ -114,7 +116,7 @@ function RegisterScreen({navigation}) {
         title="Xác thực"
         cancelLabel="Hủy"
       /> */}
-      <View style={styles.titleView}>
+      <View style={_styles.titleView}>
         <Text style={styles.title}>T&T HEALTHCARE</Text>
       </View>
       <ImageBackground
@@ -137,6 +139,7 @@ function RegisterScreen({navigation}) {
 
         <TextInputPrimary
           isPass={true}
+          cre
           placeholder="Mật khẩu"
           value={password}
           onChangeText={handleChangePassInput}
@@ -149,11 +152,20 @@ function RegisterScreen({navigation}) {
           onChangeText={handleChangeConfirmPassInput}
         />
 
-        <ButtonPrimary title="Đăng ký" handle={signInWithPhoneNumber} />
+        <ButtonPrimary title="Đăng ký" handle={handleRegister} />
         <ActionView title="Quay lại" handle={handleBackLogin} />
       </ImageBackground>
     </>
   );
 }
+
+const _styles = StyleSheet.create({
+  titleView: {
+    width: '100%',
+    position: 'absolute',
+    top: '10%',
+    zIndex: 1,
+  },
+});
 
 export default RegisterScreen;
