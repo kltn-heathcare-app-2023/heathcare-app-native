@@ -1066,6 +1066,11 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
+"@baronha/react-native-multiple-image-picker@^0.4.13":
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/@baronha/react-native-multiple-image-picker/-/react-native-multiple-image-picker-0.4.13.tgz#b86f6f6d26884f7708f70dba0b0f674294810806"
+  integrity sha512-/jzT5oJgLpQUJWfoRuLYwxy5ajL5Iz+H2wB6exJz6hcAIIfQclIxisLtGdvpYrXtXvUSrjLSZJ0Hyo9my63NcA==
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
@@ -6434,11 +6439,6 @@ react-native-gradle-plugin@^0.71.15:
   version "0.71.15"
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.15.tgz#9e6b506f30729fe8eb086981702f4e3c891d2b13"
   integrity sha512-7S3pAuPaQJlhax6EZ4JMsDNpj05TfuzX9gPgWLrFfAIWIFLuJ6aDQYAZy2TEI9QJALPoWrj8LWaqP/DGYh14pw==
-
-react-native-image-picker@^5.3.1:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-5.3.1.tgz#836ab13c228174728a0bd68293b27dc5e1affa0f"
-  integrity sha512-zRCjtlE3KOeaWDM8gXzTwXfvo3ZeF2XMkHceU7CVCtKRleKxna/E4XWIPu/lXO2qlMdnSx1WvfPSbqzAX0qxpA==
 
 react-native-modal@13.0.1:
   version "13.0.1"
