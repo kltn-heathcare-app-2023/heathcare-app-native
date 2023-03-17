@@ -3,11 +3,20 @@ import {StyleSheet, View} from 'react-native';
 import Picker from 'react-native-dropdown-picker';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import MTICon from 'react-native-vector-icons/MaterialCommunityIcons';
-function DropDownPicker({value, _setValue, items, isGender, isBlood}) {
+function DropDownPicker({
+  value,
+  _setValue,
+  items,
+  isGender,
+  isBlood,
+  style,
+  stylePicker,
+  childPicker,
+}) {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {isGender && <FAIcon name="transgender" size={24} color="gray" />}
       {isBlood && <MTICon name="water-plus" size={24} color="gray" />}
       <Picker
@@ -17,8 +26,8 @@ function DropDownPicker({value, _setValue, items, isGender, isBlood}) {
         setOpen={setOpen}
         setValue={_setValue}
         placeholder={value}
-        style={styles.picker}
-        dropDownContainerStyle={styles.childPicker}
+        style={[styles.picker, stylePicker]}
+        dropDownContainerStyle={[styles.childPicker, childPicker]}
       />
     </View>
   );

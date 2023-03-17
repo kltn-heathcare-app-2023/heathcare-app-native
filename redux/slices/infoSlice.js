@@ -13,6 +13,7 @@ export const infoSlice = createSlice({
     bmi_avg: 0,
     glycemic_list: 0,
     rule: '',
+    option_bmi: 'week',
   },
   reducers: {
     updateAVGBMI: (state, action) => {
@@ -30,6 +31,9 @@ export const infoSlice = createSlice({
       state.bmi_avg = 0;
       state.glycemic_list = [];
       state.rule = '';
+    },
+    updateOptionBMI: (state, action) => {
+      state.option_bmi = action.payload;
     },
   },
   extraReducers: builder => {
@@ -55,10 +59,10 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
         getListGlycemicById(user_id),
       ]);
 
-      console.log(resp_values);
       const bmis = resp_values[0].data;
       const glycemic = resp_values[1].data;
 
+      console.log(bmis, glycemic);
       return {
         user,
         bmis,
@@ -70,7 +74,12 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   }
 });
 
-export const {updateAVGBMI, addBMI, resetUserInfo, addGlycemic} =
-  infoSlice.actions;
+export const {
+  updateAVGBMI,
+  addBMI,
+  resetUserInfo,
+  addGlycemic,
+  updateOptionBMI,
+} = infoSlice.actions;
 
 export default infoSlice.reducer;

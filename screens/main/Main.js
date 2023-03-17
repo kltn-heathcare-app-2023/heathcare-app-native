@@ -37,7 +37,7 @@ function MainScreen({navigation}) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    storage.remove('accessToken').then(() => {});
+    // storage.remove('accessToken').then(() => {});
     granted
       .then(data => {
         if (!data) {

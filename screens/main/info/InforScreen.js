@@ -42,6 +42,7 @@ function InfoScreen({navigation}) {
   const glycemic_notification = useSelector(notificationByGlycemicMetric);
   const {person, blood} = user_info;
 
+  console.log(user_info);
   const dispatch = useDispatch();
 
   const handleClickBoxBMI = () => {
