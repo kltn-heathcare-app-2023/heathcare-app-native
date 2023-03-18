@@ -3,6 +3,7 @@ import {
   getBMIById,
   getIn4,
   getLastGlycemicById,
+  getListBloodPressure,
   getListGlycemicById,
 } from '../../services/patient/info';
 
@@ -14,6 +15,7 @@ export const infoSlice = createSlice({
     bmi_avg: 0,
     glycemic_list: 0,
     glycemic_last: [],
+    blood_pressures: [],
     rule: '',
     option_bmi: 'week',
     option_glycemic: 'week',
@@ -49,6 +51,7 @@ export const infoSlice = createSlice({
       state.bmi_list = action.payload.bmis.bmis;
       state.glycemic_list = action.payload.glycemic;
       state.glycemic_last = action.payload.last_glycemic;
+      state.blood_pressures = action.payload.blood_pressures;
       // state.rule = action.payload.bmis.rule.notification ?? null;
     });
   },
@@ -65,17 +68,20 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
         getBMIById(user_id),
         getListGlycemicById(user_id),
         getLastGlycemicById(user_id),
+        getListBloodPressure(user_id),
       ]);
 
       const bmis = resp_values[0].data;
       const glycemic = resp_values[1].data;
       const last_glycemic = resp_values[2].data;
-      // console.log(bmis, glycemic);
+      const blood_pressures = resp_values[3].data;
+
       return {
         user,
         bmis,
         glycemic,
         last_glycemic,
+        blood_pressures,
       };
     }
   } catch (error) {

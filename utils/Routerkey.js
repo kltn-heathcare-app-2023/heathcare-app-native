@@ -19,6 +19,7 @@ const RouterKey = {
   CALL_VIDEO_SCREEN: 'CallVideoScreen',
   GLYCEMIC_SCREEN: 'GlycemicScreen',
   NOTIFICATION_SCREEN: 'NotificationScreen',
+  BLOOD_SCREEN: 'BloodScreen',
 };
 
 export default RouterKey;

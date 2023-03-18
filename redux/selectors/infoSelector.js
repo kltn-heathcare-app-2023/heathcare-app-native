@@ -8,6 +8,10 @@ export const optionBMISelector = state => state.info.option_bmi;
 export const userLastGlycemicSelector = state => state.info.glycemic_last;
 export const userListGlycemicSelector = state => state.info.glycemic_list;
 export const optionGlycemicSelector = state => state.info.option_glycemic;
+export const userLastBloodPressureSelector = state =>
+  state.info.blood_pressures[state.info.blood_pressures.length - 1] ?? null;
+export const userListBloodPressureSelector = state =>
+  state.info.blood_pressures;
 export const notificationByBMIMertric = state => state.info.rule ?? null;
 export const notificationByGlycemicMetric = state =>
   state?.info?.glycemic_list[state.info.glycemic_list.length - 1]
