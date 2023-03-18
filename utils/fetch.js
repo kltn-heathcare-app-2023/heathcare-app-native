@@ -43,7 +43,7 @@ const postFormWithAuth = async (url, data) => {
     const resp = await fetch(`${env.API_URL}${url}`, {
       method: 'POST',
       headers: {
-        // Accept: 'application/json',
+        Accept: 'application/json',
         'content-type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
@@ -63,7 +63,7 @@ const postWithAuth = async (url, data) => {
     const resp = await fetch(`${env.API_URL}${url}`, {
       method: 'POST',
       headers: {
-        // Accept: "application/json",
+        Accept: 'application/json',
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },

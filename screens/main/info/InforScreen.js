@@ -35,14 +35,20 @@ const getBackgroundByGenderAndBMI = (avg_bmi, gender) => {
 };
 
 function InfoScreen({navigation}) {
+  const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
-  const glycemic = useSelector(userLastGlycemicSelector);
+  const glycemic_last = useSelector(userLastGlycemicSelector);
   const notification = useSelector(notificationByBMIMertric);
-  const glycemic_notification = useSelector(notificationByGlycemicMetric);
   const {person, blood} = user_info;
 
-  const dispatch = useDispatch();
+  const glycemic_case_1 =
+    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+
+  const glycemic_case_2 =
+    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+  const glycemic_case_3 =
+    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
 
   const handleClickBoxBMI = () => {
     navigation.navigate(RouterKey.INFO_BMI_SCREEN);
@@ -52,9 +58,9 @@ function InfoScreen({navigation}) {
     navigation.navigate(RouterKey.GLYCEMIC_SCREEN);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(infoSlice.actions.resetUserInfo());
-    storage.remove('accessToken');
+    await storage.remove('accessToken');
 
     navigation.navigate(RouterKey.LOGIN_SCREEN);
   };
@@ -68,7 +74,7 @@ function InfoScreen({navigation}) {
           <Text>{`Họ & tên: ${person.username}`}</Text>
           <Text>{`Năm sinh : ${person.dob}`}</Text>
           <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
-          <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nu'}`}</Text>
+          <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
           <Text>{`Nhóm máu : ${blood}`}</Text>
         </View>
       </TouchableOpacity>
@@ -89,7 +95,7 @@ function InfoScreen({navigation}) {
             {`Chỉ số BMI Trung Bình: ${bmi_avg}`}
           </Text>
           <Text style={styles.bmi_text_notification}>
-            {notification || `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            {notification ?? `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
           </Text>
         </View>
         <Image
@@ -107,11 +113,12 @@ function InfoScreen({navigation}) {
         />
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số Đường Huyết mới nhất: ${glycemic}`}
+            {`Chỉ số Đường Huyết mới nhất:`}
           </Text>
           <Text style={styles.bmi_text_notification}>
-            {glycemic_notification ??
-              `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
+            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
+            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
           </Text>
         </View>
       </TouchableOpacity>

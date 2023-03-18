@@ -9,6 +9,7 @@ import RouterKey from '../../utils/Routerkey';
 function LoadingScreen({navigation}) {
   const init = async () => {
     const token = await storage.get('accessToken');
+    console.log(token);
     if (token) {
       navigation.navigate(RouterKey.MAIN_SCREEN);
     } else {

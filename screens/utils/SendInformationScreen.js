@@ -1,10 +1,8 @@
 // import { Button } from "@ant-design/react-native";
 import {useState} from 'react';
 import {
-  Button,
   Image,
   ImageBackground,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,15 +11,16 @@ import {
 
 import ActionView from '../../components/ActionView';
 import ButtonPrimary from '../../components/ButtonPrimary';
-import DateTimePicker from '../../components/Input/DateTimePicker';
 import DropDownPicker from '../../components/Input/DropdownPicker';
 import TextInputPrimary from '../../components/Input/InputPrimary';
 import {BACKGROUND_IMAGE} from '../../utils/image';
-
+import DatePicker from 'react-native-neat-date-picker';
 import styles from '../../styles/global.js';
 import fetch from '../../utils/fetch';
 import env from '../../utils/env';
 import RouterKey from '../../utils/Routerkey';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import moment from 'moment';
 
 const genderItems = [
   {label: 'Nam', value: 'Nam'},
@@ -35,55 +34,67 @@ const bloodITems = [
   {label: 'AB', value: 'AB'},
 ];
 
+const anamnesisITems = [
+  {label: 'Tiền sử đường huyết: Bình thường', value: '0'},
+  {label: 'Tiền sử đường huyết: Típ 1', value: '1'},
+  {label: 'Tiền sử đường huyết: Típ 2', value: '2'},
+];
+
 function SendInformationScreen({navigation, route}) {
   // const { name } = route.params;
   const name = 'Le Tuan';
   const [gender, setGender] = useState('Nam');
   const [blood, setBlood] = useState('O');
+  const [anamnesis, setAnamnesis] = useState('0');
   const [date, setDate] = useState(new Date());
   const [address, setAddress] = useState('');
-  const [insurance, setInsurance] = useState('');
   const [image, setImage] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  //   const pickImage = async () => {
-  //     // No permissions request is necessary for launching the image library
-  //     let result = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //       // allowsEditing: true,
-  //       aspect: [4, 3],
-  //       quality: 1,
-  //     });
+  const handleChooseImage = async () => {
+    try {
+      const image = await MultipleImagePicker.openPicker({mediaType: 'image'});
+      setImage({
+        uri: `file://${image[0].realPath}`,
+        type: image[0].mime,
+        name: image[0].fileName,
+      });
+    } catch (error) {
+      console.log('err chooose image -> ', error);
+    }
+  };
 
-  //     if (!result.canceled) {
-  //       console.log(result.assets[0]);
-  //       setImage(result.assets[0]);
-  //     }
-  //   };
-
-  const handleUpdateIn4 = () => {
-    const localUri = image.uri;
-    const filename = localUri.split('/').pop();
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `image/${match[1]}` : `image`;
+  const handleUpdateIn4 = async () => {
     const formData = new FormData();
     formData.append('username', name);
     formData.append('dob', `${date}`);
     formData.append('address', address);
     formData.append('gender', gender === 'Nam' ? true : false);
     formData.append('blood', blood);
-    formData.append('avatar', {
-      uri: localUri,
-      name: filename,
-      type: 'image/jpeg',
-    });
+    formData.append('avatar', image);
 
     fetch
-      .postFormWithAuth(`${env.API_URL}/patients`, formData)
+      .postFormWithAuth(`/patients`, formData)
       .then(val => console.log('value -> ', val))
       .catch(err => console.log('err -> ', err));
-    // console.info(name, gender, date, address, blood, image);
   };
 
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const onCancel = () => {
+    // You should close the modal in here
+    setShowDatePicker(false);
+  };
+
+  const onConfirm = ({date}) => {
+    // You should close the modal in here
+    setShowDatePicker(false);
+
+    // The parameter 'date' is a Date object so that you can use any Date prototype method.
+    setDate(date);
+  };
   return (
     <>
       <View
@@ -111,9 +122,25 @@ function SendInformationScreen({navigation, route}) {
           value={gender}
           _setValue={setGender}
           items={genderItems}
+          isGender
         />
 
-        <DateTimePicker date={date} setDate={setDate} />
+        {/* <DateTimePicker date={date} setDate={setDate} show={true} /> */}
+        <DatePicker
+          isVisible={showDatePicker}
+          mode={'single'}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+          startDate={new Date('2001/01/01')}
+        />
+
+        <TextInputPrimary
+          isInsurance
+          isDate
+          value={moment(date).format('l')}
+          editable={false}
+          openPicker={openDatePicker}
+        />
 
         <TextInputPrimary
           isAddress={true}
@@ -122,10 +149,22 @@ function SendInformationScreen({navigation, route}) {
           onChangeText={val => setAddress(val)}
         />
 
-        <DropDownPicker value={blood} _setValue={setBlood} items={bloodITems} />
+        <DropDownPicker
+          value={blood}
+          _setValue={setBlood}
+          items={bloodITems}
+          isBlood
+        />
+
+        <DropDownPicker
+          value={anamnesis}
+          _setValue={setAnamnesis}
+          items={anamnesisITems}
+          isBlood
+        />
 
         <TouchableOpacity
-          onPress={pickImage}
+          onPress={handleChooseImage}
           style={{
             width: '90%',
             height: 40,
@@ -137,17 +176,19 @@ function SendInformationScreen({navigation, route}) {
           }}>
           <Text style={{alignContent: 'center'}}>Chọn ảnh</Text>
         </TouchableOpacity>
-
-        <Image
-          source={{uri: image && image.uri}}
-          style={{
-            width: '90%',
-            height: 200,
-            borderWidth: 1,
-            marginBottom: 8,
-          }}
-          resizeMode="contain"
-        />
+        {image && (
+          <Image
+            source={{uri: image.uri}}
+            style={{
+              width: '30%',
+              height: 100,
+              borderWidth: 1,
+              marginBottom: 8,
+              backgroundColor: '#ffcc',
+            }}
+            resizeMode="center"
+          />
+        )}
         <ButtonPrimary title="Cập nhật thông tin" handle={handleUpdateIn4} />
 
         <ActionView

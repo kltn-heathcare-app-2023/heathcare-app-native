@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {
   getBMIById,
   getIn4,
+  getLastGlycemicById,
   getListGlycemicById,
 } from '../../services/patient/info';
 
@@ -12,7 +13,10 @@ export const infoSlice = createSlice({
     bmi_list: [],
     bmi_avg: 0,
     glycemic_list: 0,
+    glycemic_last: [],
     rule: '',
+    option_bmi: 'week',
+    option_glycemic: 'week',
   },
   reducers: {
     updateAVGBMI: (state, action) => {
@@ -31,6 +35,12 @@ export const infoSlice = createSlice({
       state.glycemic_list = [];
       state.rule = '';
     },
+    updateOptionBMI: (state, action) => {
+      state.option_bmi = action.payload;
+    },
+    updateOptionGlycemic: (state, action) => {
+      state.option_glycemic = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(fetchUserInfo.fulfilled, (state, action) => {
@@ -38,7 +48,8 @@ export const infoSlice = createSlice({
       state.bmi_avg = action.payload.bmis.avgBMI ?? 0;
       state.bmi_list = action.payload.bmis.bmis;
       state.glycemic_list = action.payload.glycemic;
-      state.rule = action.payload.bmis.rule.notification;
+      state.glycemic_last = action.payload.last_glycemic;
+      // state.rule = action.payload.bmis.rule.notification ?? null;
     });
   },
 });
@@ -53,15 +64,18 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
       const resp_values = await Promise.all([
         getBMIById(user_id),
         getListGlycemicById(user_id),
+        getLastGlycemicById(user_id),
       ]);
 
       const bmis = resp_values[0].data;
       const glycemic = resp_values[1].data;
-
+      const last_glycemic = resp_values[2].data;
+      // console.log(bmis, glycemic);
       return {
         user,
         bmis,
         glycemic,
+        last_glycemic,
       };
     }
   } catch (error) {
@@ -69,7 +83,12 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   }
 });
 
-export const {updateAVGBMI, addBMI, resetUserInfo, addGlycemic} =
-  infoSlice.actions;
+export const {
+  updateAVGBMI,
+  addBMI,
+  resetUserInfo,
+  addGlycemic,
+  updateOptionBMI,
+} = infoSlice.actions;
 
 export default infoSlice.reducer;

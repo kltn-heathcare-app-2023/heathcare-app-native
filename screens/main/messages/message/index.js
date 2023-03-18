@@ -33,12 +33,17 @@ function ConversationDetail({route, navigation}) {
   const scrollViewRef = useRef();
 
   useEffect(() => {
-    socket.emit('join_room', conversation._id);
-
+    socket.emit('join_room', conversation);
     dispatch(fetchMessagesByIdConversation(conversation._id));
   }, []);
 
-  console.log(conversation._id);
+  useEffect(() => {
+    socket.on('receiver_message', ({message}) => {
+      dispatch(messageSlice.actions.pushMessage(message));
+    });
+  }, []);
+
+  // socket when send message
   const handleSendMessage = async () => {
     if (message) {
       const data = {

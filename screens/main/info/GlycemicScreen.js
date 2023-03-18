@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {
   View,
@@ -9,57 +9,103 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {LineChart} from 'react-native-chart-kit';
+import PureChart from 'react-native-pure-chart';
+// import {LineChart} from 'react-native-chart-kit';
 import {Button, Modal, Portal, TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {MESSAGE_MISS_DATA} from '../../../common/message';
 import {TITLE_NOTIFICATION} from '../../../common/title';
+import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {
   infoSelector,
+  userGlycemicListSelectorFilter,
   userLastGlycemicSelector,
   userListGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 import {postGlycemic} from '../../../services/patient/info';
+import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const screenWidth = Dimensions.get('window').width;
+const optionItems = [
+  {label: 'Trước bữa ăn', value: '1'},
+  {label: 'Sau bữa ăn', value: '2'},
+  {label: 'Trước khi ngủ', value: '3'},
+  {label: 'Xét nghiệm', value: '4'},
+];
 
-let data = {
-  datasets: [
-    {
-      data: [],
-    },
-  ],
-  legend: ['Biểu đồ theo dõi chỉ số  đường huyết theo tuần'], // optional
-};
-
-const chartConfig = {
-  backgroundGradientFrom: '#ffff',
-  backgroundGradientTo: '#ffff',
-  color: (opacity = 1) => `rgba(244, 115, 115, ${opacity})`, // optional
-  barPercentage: 0.5,
-  strokeWidth: 2, // optional
-  useShadowColorFromDataset: true, // optional
-};
+const optionDateItems = [
+  {label: 'Tuần', value: 'week'},
+  {label: 'Tháng', value: 'month'},
+];
 
 function GlycemicScreen() {
+  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [glycemic, setGlycemic] = useState('');
-
-  const glycemic_list = useSelector(userListGlycemicSelector);
+  const [option, setOption] = useState('1');
+  const [optionDate, setOptionDate] = useState('week');
+  const glycemic_list = useSelector(userGlycemicListSelectorFilter);
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const user_info = useSelector(infoSelector);
-  const metrics = glycemic_list.map(glycemic => glycemic.metric);
 
-  const labels = glycemic_list.map(glycemic =>
-    moment(glycemic.createdAt).format('dddd'),
-  );
+  useEffect(() => {
+    dispatch(infoSlice.actions.updateOptionGlycemic(optionDate));
+  }, [optionDate]);
 
-  const dispatch = useDispatch();
+  const glycemic_case_1 =
+    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
 
-  console.log(glycemic_list);
-  data.labels = labels;
-  data.datasets[0] = {data: metrics.length > 0 ? metrics : []};
+  const glycemic_case_2 =
+    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+  const glycemic_case_3 =
+    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  useEffect(() => {
+    dispatch(infoSlice.actions.updateOptionBMI(option));
+  }, [option]);
+  const metrics_1 = glycemic_list
+    .filter(glycemic => glycemic.case === 1)
+    .map(glycemic => {
+      return {
+        x: moment(glycemic.createdAt).format('l'),
+        y: glycemic.metric,
+      };
+    });
+
+  const metrics_2 = glycemic_list
+    .filter(glycemic => glycemic.case === 2)
+    .map(glycemic => {
+      return {
+        x: moment(glycemic.createdAt).format('l'),
+        y: glycemic.metric,
+      };
+    });
+
+  const metrics_3 = glycemic_list
+    .filter(glycemic => glycemic.case === 3)
+    .map(glycemic => {
+      return {
+        x: moment(glycemic.createdAt).format('l'),
+        y: glycemic.metric,
+      };
+    });
+
+  const data = [
+    {
+      seriesName: 'Trước ăn',
+      data: metrics_1,
+      color: '#ff9f1c',
+    },
+    {
+      seriesName: 'Sau ăn',
+      data: metrics_2,
+      color: '#ffbf69',
+    },
+    {
+      seriesName: 'Trước ngủ',
+      data: metrics_3,
+      color: '#2ec4b6',
+    },
+  ];
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -68,12 +114,14 @@ function GlycemicScreen() {
     if (glycemic && glycemic > 0) {
       postGlycemic({
         metric: glycemic,
-        case: 2,
+        case: option,
         patient: user_info._id,
       })
         .then(({data}) => {
           dispatch(infoSlice.actions.addGlycemic(data));
           setVisible(false);
+          setGlycemic('');
+          setOption('1');
         })
         .catch(error => {
           Alert.alert(TITLE_NOTIFICATION, error.message);
@@ -89,11 +137,14 @@ function GlycemicScreen() {
       <View style={styles.bmi_container}>
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số đường huyết mới nhất: ${glycemic_last}`}
+            {`Chỉ số đường huyết mới nhất: \n${moment(
+              glycemic_last[0].createdAt,
+            ).fromNow()}`}
           </Text>
-          <Text>
-            {glycemic_list[glycemic_list.length - 1].notification ??
-              `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+          <Text style={styles.bmi_text_notification}>
+            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
+            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
+            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
           </Text>
         </View>
         <Image
@@ -101,21 +152,48 @@ function GlycemicScreen() {
           source={require('../../../assets/images/glycemic.png')}
         />
       </View>
-
-      {metrics.length > 0 && (
-        <LineChart
-          data={data}
-          width={screenWidth - 16}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chart}
-          fromZero
-          onDataPointClick={({value}) => {
-            console.log(value);
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 4,
+          zIndex: 1,
+        }}>
+        <DropDownPicker
+          items={optionDateItems}
+          _setValue={setOptionDate}
+          value={optionDate}
+          style={{
+            width: '80%',
+            margin: 0,
+            marginTop: 8,
+          }}
+          stylePicker={{
+            width: '99%',
+          }}
+          childPicker={{
+            marginRight: 0,
           }}
         />
-      )}
+        <ICon
+          name={'plus-circle-outline'}
+          size={32}
+          onPress={showModal}
+          color={'#02c39a'}
+        />
+      </View>
+      <View style={{marginTop: 12}}>
+        <PureChart
+          data={data}
+          type="line"
+          height={350}
+          // customValueRenderer={(index, point) => {
+          //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
+          // }}
+        />
+      </View>
 
       <Portal>
         <Modal
@@ -133,6 +211,23 @@ function GlycemicScreen() {
             keyboardType="decimal-pad"
           />
 
+          <DropDownPicker
+            items={optionItems}
+            _setValue={setOption}
+            value={option}
+            style={{
+              width: '100%',
+              margin: 0,
+              marginTop: 8,
+            }}
+            stylePicker={{
+              width: '99%',
+            }}
+            childPicker={{
+              marginRight: 0,
+            }}
+          />
+
           <Button
             mode="elevated"
             onPress={handlePostGlycemic}
@@ -141,10 +236,6 @@ function GlycemicScreen() {
           </Button>
         </Modal>
       </Portal>
-
-      <TouchableOpacity style={styles.btn_container} onPress={showModal}>
-        <Text style={styles.btn_text}>{'Nhập đường huyết cho hôm nay'}</Text>
-      </TouchableOpacity>
     </View>
   );
 }

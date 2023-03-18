@@ -13,7 +13,6 @@ function CallVideoScreen({navigation, route}) {
   const {room_id} = route.params;
   const user_info = useSelector(infoSelector);
 
-  console.log('room id ->', room_id);
   return (
     <View style={{flex: 1}}>
       <ZegoUIKitPrebuiltCall

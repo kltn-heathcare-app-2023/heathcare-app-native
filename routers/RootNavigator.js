@@ -12,24 +12,6 @@ import RouterKey from '../utils/Routerkey';
 import MainScreen from '../screens/main/Main';
 const Stack = createNativeStackNavigator();
 
-import {
-  ZegoUIKitPrebuiltCallWithInvitation,
-  ZegoInvitationType,
-  ONE_ON_ONE_VIDEO_CALL_CONFIG,
-  ONE_ON_ONE_VOICE_CALL_CONFIG,
-} from '@zegocloud/zego-uikit-prebuilt-call-rn';
-
-import {ZegoLayoutMode} from '@zegocloud/zego-uikit-rn';
-
-import ZegoUIKitSignalingPlugin from '@zegocloud/zego-uikit-signaling-plugin-rn';
-import {useSelector} from 'react-redux';
-import {infoSelector} from '../redux/selectors/infoSelector';
-
-import env from '../utils/env';
-import {useEffect, useMemo, useState} from 'react';
-import storage from '../utils/storage';
-import jwtDecode from 'jwt-decode';
-
 function StackNavigator() {
   return (
     <Stack.Navigator

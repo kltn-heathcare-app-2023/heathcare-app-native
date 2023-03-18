@@ -13,11 +13,20 @@ import {
   scheduleDetailList,
   scheduleDetailListAfterNow,
 } from '../../../redux/selectors/scheduleDetailSelector';
+import {socket} from '../../../utils/config';
 
 function HomeScreen() {
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
+
+  const glycemic_case_1 =
+    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+
+  const glycemic_case_2 =
+    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+  const glycemic_case_3 =
+    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
 
   const dispatch = useDispatch();
   const schedules = useSelector(scheduleDetailListAfterNow);
@@ -28,7 +37,7 @@ function HomeScreen() {
   };
 
   const dataGlycemic = {
-    data: [0, 0, glycemic_last / 600],
+    data: [glycemic_case_1 / 600, glycemic_case_2 / 600, glycemic_case_3 / 600],
   };
 
   const chartBMIConfig = {
@@ -58,6 +67,17 @@ function HomeScreen() {
       dispatch(fetchAllScheduleDetailListById(user_info._id));
     }
   }, [user_info]);
+
+  useEffect(() => {
+    socket.on('call_id_room_to_user_success', resp => {
+      const {room_id, doctor_username} = resp;
+      console.log('call ->', room_id, doctor_username);
+    });
+
+    socket.on('test', resp => {
+      console.log('call ->', resp);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -90,7 +110,7 @@ function HomeScreen() {
           <Text
             style={
               styles.chart_text
-            }>{`Chỉ số ĐH: ${glycemic_last}/ 600`}</Text>
+            }>{`Chỉ số TH1: ${glycemic_case_1}/ 600\nChỉ số TH2: ${glycemic_case_2}/ 600\nChỉ số TH3: ${glycemic_case_3}/ 600`}</Text>
         </View>
       </View>
 
