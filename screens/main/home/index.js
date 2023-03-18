@@ -20,6 +20,14 @@ function HomeScreen() {
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
 
+  const glycemic_case_1 =
+    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+
+  const glycemic_case_2 =
+    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+  const glycemic_case_3 =
+    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+
   const dispatch = useDispatch();
   const schedules = useSelector(scheduleDetailListAfterNow);
 
@@ -29,7 +37,7 @@ function HomeScreen() {
   };
 
   const dataGlycemic = {
-    data: [0, 0, glycemic_last / 600],
+    data: [glycemic_case_1 / 600, glycemic_case_2 / 600, glycemic_case_3 / 600],
   };
 
   const chartBMIConfig = {
@@ -102,7 +110,7 @@ function HomeScreen() {
           <Text
             style={
               styles.chart_text
-            }>{`Chỉ số ĐH: ${glycemic_last}/ 600`}</Text>
+            }>{`Chỉ số TH1: ${glycemic_case_1}/ 600\nChỉ số TH2: ${glycemic_case_2}/ 600\nChỉ số TH3: ${glycemic_case_3}/ 600`}</Text>
         </View>
       </View>
 

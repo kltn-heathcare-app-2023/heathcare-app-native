@@ -35,15 +35,20 @@ const getBackgroundByGenderAndBMI = (avg_bmi, gender) => {
 };
 
 function InfoScreen({navigation}) {
+  const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
-  const glycemic = useSelector(userLastGlycemicSelector);
+  const glycemic_last = useSelector(userLastGlycemicSelector);
   const notification = useSelector(notificationByBMIMertric);
-  const glycemic_notification = useSelector(notificationByGlycemicMetric);
   const {person, blood} = user_info;
 
-  console.log(user_info);
-  const dispatch = useDispatch();
+  const glycemic_case_1 =
+    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+
+  const glycemic_case_2 =
+    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+  const glycemic_case_3 =
+    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
 
   const handleClickBoxBMI = () => {
     navigation.navigate(RouterKey.INFO_BMI_SCREEN);
@@ -108,11 +113,12 @@ function InfoScreen({navigation}) {
         />
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số Đường Huyết mới nhất: ${glycemic}`}
+            {`Chỉ số Đường Huyết mới nhất:`}
           </Text>
           <Text style={styles.bmi_text_notification}>
-            {glycemic_notification ??
-              `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
+            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
+            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
           </Text>
         </View>
       </TouchableOpacity>

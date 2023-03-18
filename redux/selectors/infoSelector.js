@@ -5,9 +5,9 @@ export const infoSelector = state => state.info.user_info;
 export const userAVGBMISelector = state => state.info.bmi_avg;
 export const userBMIListSelector = state => state.info.bmi_list;
 export const optionBMISelector = state => state.info.option_bmi;
-export const userLastGlycemicSelector = state =>
-  state.info.glycemic_list[state.info.glycemic_list.length - 1]?.metric ?? 0;
+export const userLastGlycemicSelector = state => state.info.glycemic_last;
 export const userListGlycemicSelector = state => state.info.glycemic_list;
+export const optionGlycemicSelector = state => state.info.option_glycemic;
 export const notificationByBMIMertric = state => state.info.rule ?? null;
 export const notificationByGlycemicMetric = state =>
   state?.info?.glycemic_list[state.info.glycemic_list.length - 1]
@@ -32,6 +32,30 @@ export const userBMIListSelectorFilter = createSelector(
         );
 
         return _bmis;
+      }
+    }
+    return [];
+  },
+);
+
+export const userGlycemicListSelectorFilter = createSelector(
+  userListGlycemicSelector,
+  optionGlycemicSelector,
+  (glycemics, option) => {
+    const now = new Date();
+    if (glycemics.length > 0) {
+      if (option === 'week') {
+        const _glycemics = glycemics.filter(
+          b => moment(b.createdAt).week() === moment(now).week(),
+        );
+
+        return _glycemics;
+      } else if (option === 'month') {
+        const _glycemics = glycemics.filter(
+          b => moment(b.createdAt).month() === moment(now).month(),
+        );
+
+        return _glycemics;
       }
     }
     return [];
