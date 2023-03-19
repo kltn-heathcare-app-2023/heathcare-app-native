@@ -17,6 +17,7 @@ export const notificationByBMIMertric = state => state.info.rule ?? null;
 export const notificationByGlycemicMetric = state =>
   state?.info?.glycemic_list[state.info.glycemic_list.length - 1]
     ?.notification ?? null;
+export const infoStatusSelector = state => state.info.status;
 
 export const userBMIListSelectorFilter = createSelector(
   userBMIListSelector,

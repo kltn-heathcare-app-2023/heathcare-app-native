@@ -60,8 +60,8 @@ function MainNavigator() {
         name={RouterKey.ROUTER_INFO_SCREEN}
         component={MainInfo}
         options={{
-          tabBarLabel: 'Thông tin cá nhân',
-          title: 'Thông tin cá nhân',
+          tabBarLabel: 'Cá nhân',
+          title: 'Cá nhân',
         }}
       />
     </Tab.Navigator>

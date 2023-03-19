@@ -3,6 +3,7 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   infoSelector,
+  infoStatusSelector,
   userAVGBMISelector,
   userLastGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
@@ -19,7 +20,9 @@ function HomeScreen() {
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
+  const status = useSelector(infoStatusSelector);
 
+  console.log(status);
   const glycemic_case_1 =
     glycemic_last.find(item => item.case === 1)?.metric ?? 0;
 
@@ -114,6 +117,25 @@ function HomeScreen() {
         </View>
       </View>
 
+      <View
+        style={[
+          styles.box_status,
+          {
+            borderColor:
+              status && status.message.code === 0
+                ? '#0ead69'
+                : status.message.code === 1
+                ? '#fb8b240'
+                : status.message.code === 2
+                ? '#f95738'
+                : '#cbdfbd',
+          },
+        ]}>
+        <Text style={styles.box_status_title}>Tổng kết:</Text>
+        <Text style={styles.box_status_content}>
+          {status ? status.message.status : 'Đang tải ...'}
+        </Text>
+      </View>
       <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
       <ScrollView style={styles.box_schedule}>
         {schedules.map(schedule => (
@@ -135,6 +157,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     paddingHorizontal: 8,
     flex: 1,
+    backgroundColor: '#fff',
   },
   box_chart: {
     display: 'flex',
@@ -158,6 +181,24 @@ const styles = StyleSheet.create({
     margin: 8,
     fontSize: 16,
     fontWeight: '600',
+  },
+  box_status: {
+    padding: 8,
+    borderWidth: 2,
+    borderRadius: 8,
+    position: 'relative',
+  },
+  box_status_title: {
+    position: 'absolute',
+    top: -12,
+    left: 8,
+    zIndex: 1,
+    backgroundColor: '#fff',
+    fontWeight: '700',
+  },
+  box_status_content: {
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

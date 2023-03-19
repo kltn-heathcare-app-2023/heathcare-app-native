@@ -20,6 +20,7 @@ export const infoSlice = createSlice({
     option_bmi: 'week',
     option_glycemic: 'week',
     option_blood: 'week',
+    status: null,
   },
   reducers: {
     updateAVGBMI: (state, action) => {
@@ -59,7 +60,8 @@ export const infoSlice = createSlice({
       state.glycemic_list = action.payload.glycemic;
       state.glycemic_last = action.payload.last_glycemic;
       state.blood_pressures = action.payload.blood_pressures;
-      // state.rule = action.payload.bmis.rule.notification ?? null;
+      state.rule = action.payload.bmis.rule.notification ?? null;
+      state.status = action.payload.status;
     });
   },
 });
@@ -67,10 +69,10 @@ export const infoSlice = createSlice({
 export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   try {
     const resp = await getIn4();
-    const user = resp.data;
+    const {patient, status} = resp.data;
 
-    if (user) {
-      const user_id = user._id;
+    if (patient) {
+      const user_id = patient._id;
       const resp_values = await Promise.all([
         getBMIById(user_id),
         getListGlycemicById(user_id),
@@ -84,11 +86,12 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
       const blood_pressures = resp_values[3].data;
 
       return {
-        user,
+        user: patient,
         bmis,
         glycemic,
         last_glycemic,
         blood_pressures,
+        status,
       };
     }
   } catch (error) {
