@@ -3,6 +3,7 @@ import RouterKey from '../../utils/Routerkey';
 import InfoScreen from '../../screens/main/info/InforScreen';
 import BMIScreen from '../../screens/main/info/BMIScreen';
 import GlycemicScreen from '../../screens/main/info/GlycemicScreen';
+import BloodScreen from '../../screens/main/info/BloodScreen';
 const Stack = createNativeStackNavigator();
 
 function InfoNavigator() {
@@ -18,6 +19,7 @@ function InfoNavigator() {
         name={RouterKey.GLYCEMIC_SCREEN}
         component={GlycemicScreen}
       />
+      <Stack.Screen name={RouterKey.BLOOD_SCREEN} component={BloodScreen} />
     </Stack.Navigator>
   );
 }

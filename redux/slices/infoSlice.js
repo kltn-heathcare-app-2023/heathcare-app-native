@@ -3,6 +3,7 @@ import {
   getBMIById,
   getIn4,
   getLastGlycemicById,
+  getListBloodPressure,
   getListGlycemicById,
 } from '../../services/patient/info';
 
@@ -14,9 +15,12 @@ export const infoSlice = createSlice({
     bmi_avg: 0,
     glycemic_list: 0,
     glycemic_last: [],
+    blood_pressures: [],
     rule: '',
     option_bmi: 'week',
     option_glycemic: 'week',
+    option_blood: 'week',
+    status: null,
   },
   reducers: {
     updateAVGBMI: (state, action) => {
@@ -27,6 +31,9 @@ export const infoSlice = createSlice({
     },
     addGlycemic: (state, action) => {
       state.glycemic_list.push(action.payload);
+    },
+    addBlood: (state, action) => {
+      state.blood_pressures.push(action.payload);
     },
     resetUserInfo: state => {
       state.user_info = {};
@@ -41,6 +48,9 @@ export const infoSlice = createSlice({
     updateOptionGlycemic: (state, action) => {
       state.option_glycemic = action.payload;
     },
+    updateOptionBlood: (state, action) => {
+      state.option_blood = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(fetchUserInfo.fulfilled, (state, action) => {
@@ -49,7 +59,9 @@ export const infoSlice = createSlice({
       state.bmi_list = action.payload.bmis.bmis;
       state.glycemic_list = action.payload.glycemic;
       state.glycemic_last = action.payload.last_glycemic;
-      // state.rule = action.payload.bmis.rule.notification ?? null;
+      state.blood_pressures = action.payload.blood_pressures;
+      state.rule = action.payload.bmis.rule.notification ?? null;
+      state.status = action.payload.status;
     });
   },
 });
@@ -57,25 +69,29 @@ export const infoSlice = createSlice({
 export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   try {
     const resp = await getIn4();
-    const user = resp.data;
+    const {patient, status} = resp.data;
 
-    if (user) {
-      const user_id = user._id;
+    if (patient) {
+      const user_id = patient._id;
       const resp_values = await Promise.all([
         getBMIById(user_id),
         getListGlycemicById(user_id),
         getLastGlycemicById(user_id),
+        getListBloodPressure(user_id),
       ]);
 
       const bmis = resp_values[0].data;
       const glycemic = resp_values[1].data;
       const last_glycemic = resp_values[2].data;
-      // console.log(bmis, glycemic);
+      const blood_pressures = resp_values[3].data;
+
       return {
-        user,
+        user: patient,
         bmis,
         glycemic,
         last_glycemic,
+        blood_pressures,
+        status,
       };
     }
   } catch (error) {
@@ -89,6 +105,8 @@ export const {
   resetUserInfo,
   addGlycemic,
   updateOptionBMI,
+  addBlood,
+  updateOptionBlood,
 } = infoSlice.actions;
 
 export default infoSlice.reducer;

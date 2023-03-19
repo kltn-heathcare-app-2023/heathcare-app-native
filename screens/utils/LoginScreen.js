@@ -18,13 +18,18 @@ function LoginScreen({navigation}) {
     if (!(phone.trim() && password.trim())) {
       Alert.alert('Thông báo', 'Bạn phải điền đầy đủ thông tin!');
     } else {
-      const resp = await login({phone_number: phone, password});
-      const {message, data} = resp;
-      if (data) {
-        await storage.set('accessToken', data.accessToken);
-        navigation.navigate(RouterKey.MAIN_SCREEN);
-      } else {
-        Alert.alert('Thông báo', message);
+      try {
+        const resp = await login({phone_number: phone, password});
+        const {data} = resp;
+        if (data) {
+          await storage.set('accessToken', data.accessToken);
+          navigation.navigate(RouterKey.MAIN_SCREEN);
+          setPhone('');
+          setPassword('');
+        }
+      } catch (error) {
+        const {message} = error;
+        Alert.alert('Thông báo', message ?? error);
       }
     }
   };

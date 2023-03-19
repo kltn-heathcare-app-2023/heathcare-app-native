@@ -27,3 +27,11 @@ export const postBMI = data => {
 export const postGlycemic = data => {
   return fetch.postWithAuth(`/glycemics`, data);
 };
+
+export const getListBloodPressure = id => {
+  return fetch.get(`/blood-pressures/${id}`);
+};
+
+export const postBloodPressure = data => {
+  return fetch.postWithAuth(`/blood-pressures`, data);
+};

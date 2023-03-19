@@ -18,14 +18,18 @@ import {TITLE_NOTIFICATION} from '../../../common/title';
 import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {
   infoSelector,
+  userBloodPressureListSelectorFilter,
   userGlycemicListSelectorFilter,
+  userLastBloodPressureSelector,
   userLastGlycemicSelector,
+  userListBloodPressureSelector,
   userListGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
-import {postGlycemic} from '../../../services/patient/info';
+import {postBloodPressure, postGlycemic} from '../../../services/patient/info';
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
+
 import AnimatedLottieView from 'lottie-react-native';
 
 const optionItems = [
@@ -40,90 +44,73 @@ const optionDateItems = [
   {label: 'Tháng', value: 'month'},
 ];
 
-function GlycemicScreen() {
+function BloodScreen() {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [glycemic, setGlycemic] = useState('');
-  const [option, setOption] = useState('1');
+  const [diastoleMetric, setDiastoleMetric] = useState('');
+  const [systolicMetric, setSystolicMetric] = useState('');
   const [optionDate, setOptionDate] = useState('week');
-  const glycemic_list = useSelector(userGlycemicListSelectorFilter);
-  const glycemic_last = useSelector(userLastGlycemicSelector);
+
+  const blood_list = useSelector(userBloodPressureListSelectorFilter);
+  const last_blood_pressure = useSelector(userLastBloodPressureSelector);
+  const {
+    diastole = null,
+    systolic = null,
+    createdAt = null,
+  } = last_blood_pressure;
   const user_info = useSelector(infoSelector);
 
   useEffect(() => {
-    dispatch(infoSlice.actions.updateOptionGlycemic(optionDate));
+    dispatch(infoSlice.actions.updateOptionBlood(optionDate));
   }, [optionDate]);
 
-  const glycemic_case_1 =
-    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+  const metrics_1 = blood_list.map(blood => {
+    return {
+      x: moment(blood.createdAt).format('l'),
+      y: blood.systolic,
+    };
+  });
 
-  const glycemic_case_2 =
-    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
-  const glycemic_case_3 =
-    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
-  useEffect(() => {
-    dispatch(infoSlice.actions.updateOptionBMI(option));
-  }, [option]);
-  const metrics_1 = glycemic_list
-    .filter(glycemic => glycemic.case === 1)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
-
-  const metrics_2 = glycemic_list
-    .filter(glycemic => glycemic.case === 2)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
-
-  const metrics_3 = glycemic_list
-    .filter(glycemic => glycemic.case === 3)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
+  const metrics_2 = blood_list.map(blood => {
+    return {
+      x: moment(blood.createdAt).format('l'),
+      y: blood.diastole,
+    };
+  });
 
   const data = [
     {
-      seriesName: 'Trước ăn',
+      seriesName: 'Tâm thu',
       data: metrics_1,
-      color: '#227c9d',
+      color: '#e76f51',
     },
     {
-      seriesName: 'Sau ăn',
+      seriesName: 'Tâm trương',
       data: metrics_2,
-      color: '#17c3b2',
-    },
-    {
-      seriesName: 'Trước ngủ',
-      data: metrics_3,
-      color: '#ffcb77',
+      color: '#d00000',
     },
   ];
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const handlePostGlycemic = () => {
-    if (glycemic && glycemic > 0) {
-      postGlycemic({
-        metric: glycemic,
-        case: option,
+  const handlePostBloodPressure = () => {
+    if (
+      diastoleMetric &&
+      diastoleMetric > 0 &&
+      systolicMetric &&
+      systolicMetric > 0
+    ) {
+      postBloodPressure({
+        systolic: systolicMetric,
+        diastole: diastoleMetric,
         patient: user_info._id,
       })
         .then(({data}) => {
-          dispatch(infoSlice.actions.addGlycemic(data));
+          dispatch(infoSlice.actions.addBlood(data));
           setVisible(false);
-          setGlycemic('');
-          setOption('1');
+          setDiastoleMetric('');
+          setSystolicMetric('');
         })
         .catch(error => {
           Alert.alert(TITLE_NOTIFICATION, error.message);
@@ -139,18 +126,16 @@ function GlycemicScreen() {
       <View style={styles.bmi_container}>
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
-            {`Chỉ số đường huyết mới nhất: \n${moment(
-              glycemic_last[0].createdAt,
-            ).fromNow()}`}
+            {`Chỉ số Huyết áp mới nhất:`}
           </Text>
           <Text style={styles.bmi_text_notification}>
-            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+            {`Tâm thu: ${systolic}\n`}
+            {`Tâm trương: ${diastole}\n`}
           </Text>
         </View>
+
         <AnimatedLottieView
-          source={require('../../../assets/images/blood.json')}
+          source={require('../../../assets/images/heart.json')}
           autoPlay
           loop
           style={{
@@ -201,14 +186,16 @@ function GlycemicScreen() {
         />
       </View>
       <View style={styles.bottom_view}>
-        <View style={{backgroundColor: '#227c9d', padding: 4, borderRadius: 8}}>
-          <Text>Trước ăn</Text>
+        <View
+          style={{
+            backgroundColor: '#e76f51',
+            padding: 4,
+            borderRadius: 8,
+          }}>
+          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm thu</Text>
         </View>
-        <View style={{backgroundColor: '#17c3b2', padding: 4, borderRadius: 8}}>
-          <Text>Sau ăn</Text>
-        </View>
-        <View style={{backgroundColor: '#ffcb77', padding: 4, borderRadius: 8}}>
-          <Text>Trước ngủ</Text>
+        <View style={{backgroundColor: '#d00000', padding: 4, borderRadius: 8}}>
+          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm trương</Text>
         </View>
       </View>
 
@@ -218,36 +205,27 @@ function GlycemicScreen() {
           auto
           onDismiss={hideModal}
           contentContainerStyle={styles.modal}>
-          <Text>Chỉ số đường huyết hôm nay</Text>
+          <Text>Chỉ số huyết áp hôm nay</Text>
 
           <TextInput
-            placeholder="Đường huyết (mg/dl)"
+            placeholder="Tâm thu (mmHG)"
             style={styles.modal_input}
-            value={glycemic}
-            onChangeText={val => setGlycemic(val)}
+            value={systolicMetric}
+            onChangeText={val => setSystolicMetric(val)}
             keyboardType="decimal-pad"
           />
 
-          <DropDownPicker
-            items={optionItems}
-            _setValue={setOption}
-            value={option}
-            style={{
-              width: '100%',
-              margin: 0,
-              marginTop: 8,
-            }}
-            stylePicker={{
-              width: '99%',
-            }}
-            childPicker={{
-              marginRight: 0,
-            }}
+          <TextInput
+            placeholder="Tâm trương (mmHG)"
+            style={styles.modal_input}
+            value={diastoleMetric}
+            onChangeText={val => setDiastoleMetric(val)}
+            keyboardType="decimal-pad"
           />
 
           <Button
             mode="elevated"
-            onPress={handlePostGlycemic}
+            onPress={handlePostBloodPressure}
             style={styles.modal_button}>
             Gửi
           </Button>
@@ -326,9 +304,9 @@ const styles = StyleSheet.create({
   bottom_view: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     marginTop: 8,
   },
 });
 
-export default GlycemicScreen;
+export default BloodScreen;

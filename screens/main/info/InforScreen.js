@@ -7,41 +7,53 @@ import {
   notificationByBMIMertric,
   notificationByGlycemicMetric,
   userAVGBMISelector,
+  userLastBloodPressureSelector,
   userLastGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 import RouterKey from '../../../utils/Routerkey';
 import storage from '../../../utils/storage';
+import Lottie from 'lottie-react-native';
 
-const getBackgroundByGenderAndBMI = (avg_bmi, gender) => {
-  switch (gender) {
-    case true:
-      {
-        if (avg_bmi < 20) return COLOR_1;
-        else if (avg_bmi < 26) return COLOR_2;
-        else if (avg_bmi < 30) return COLOR_3;
-        else return COLOR_4;
-      }
-      break;
-    case false:
-      {
-        if (avg_bmi < 18) return COLOR_1;
-        else if (avg_bmi < 24) return COLOR_2;
-        else if (avg_bmi < 31) return COLOR_3;
-        else return COLOR_4;
-      }
-      break;
-  }
-};
+// const getAnimationByGenderAndBMI = (avg_bmi, gender) => {
+//   switch (gender) {
+//     case true:
+//       {
+//         if (avg_bmi < 20) return require('../../../assets/images/bmi_1.json');
+//         else if (avg_bmi < 26)
+//           return require('../../../assets/images/bmi_2.json');
+//         else if (avg_bmi < 30)
+//           return require('../../../assets/images/bmi_3.json');
+//         else return require('../../../assets/images/bmi_4.json');
+//       }
+//       break;
+//     case false:
+//       {
+//         if (avg_bmi < 18) return require('../../../assets/images/bmi_1.json');
+//         else if (avg_bmi < 24)
+//           return require('../../../assets/images/bmi_2.json');
+//         else if (avg_bmi < 31)
+//           return require('../../../assets/images/bmi_3.json');
+//         else return require('../../../assets/images/bmi_4.json');
+//       }
+//       break;
+//   }
+// };
 
 function InfoScreen({navigation}) {
   const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
+  const last_blood_pressure = useSelector(userLastBloodPressureSelector);
   const notification = useSelector(notificationByBMIMertric);
   const {person, blood} = user_info;
 
+  const {
+    diastole = null,
+    systolic = null,
+    createdAt = null,
+  } = last_blood_pressure;
   const glycemic_case_1 =
     glycemic_last.find(item => item.case === 1)?.metric ?? 0;
 
@@ -58,11 +70,13 @@ function InfoScreen({navigation}) {
     navigation.navigate(RouterKey.GLYCEMIC_SCREEN);
   };
 
+  const handleClickBoxBlood = () => {
+    navigation.navigate(RouterKey.BLOOD_SCREEN);
+  };
   const handleLogout = async () => {
+    navigation.navigate(RouterKey.LOGIN_SCREEN);
     dispatch(infoSlice.actions.resetUserInfo());
     await storage.remove('accessToken');
-
-    navigation.navigate(RouterKey.LOGIN_SCREEN);
   };
 
   return (
@@ -80,15 +94,7 @@ function InfoScreen({navigation}) {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[
-          styles.bmi_container,
-          {
-            backgroundColor: getBackgroundByGenderAndBMI(
-              bmi_avg,
-              person.gender,
-            ),
-          },
-        ]}
+        style={[styles.bmi_container]}
         onPress={handleClickBoxBMI}>
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
@@ -107,9 +113,13 @@ function InfoScreen({navigation}) {
       <TouchableOpacity
         style={styles.bmi_container}
         onPress={handleClickBoxGlycemic}>
-        <Image
-          style={styles.header_info_img}
-          source={require('../../../assets/images/glycemic.png')}
+        <Lottie
+          source={require('../../../assets/images/blood.json')}
+          autoPlay
+          loop
+          style={{
+            marginLeft: 135,
+          }}
         />
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
@@ -121,6 +131,29 @@ function InfoScreen({navigation}) {
             {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
           </Text>
         </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.bmi_container}
+        onPress={handleClickBoxBlood}>
+        <View style={styles.bmi_text}>
+          <Text style={styles.bmi_text_title}>
+            {`Chỉ số Huyết áp mới nhất:`}
+          </Text>
+          <Text style={styles.bmi_text_notification}>
+            {`Tâm thu: ${systolic}\n`}
+            {`Tâm trương: ${diastole}\n`}
+          </Text>
+        </View>
+
+        <Lottie
+          source={require('../../../assets/images/heart.json')}
+          autoPlay
+          loop
+          style={{
+            marginLeft: 135,
+          }}
+        />
       </TouchableOpacity>
 
       <Button
