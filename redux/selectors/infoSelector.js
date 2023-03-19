@@ -12,6 +12,7 @@ export const userLastBloodPressureSelector = state =>
   state.info.blood_pressures[state.info.blood_pressures.length - 1] ?? null;
 export const userListBloodPressureSelector = state =>
   state.info.blood_pressures;
+export const optionBloodSelector = state => state.info.option_blood;
 export const notificationByBMIMertric = state => state.info.rule ?? null;
 export const notificationByGlycemicMetric = state =>
   state?.info?.glycemic_list[state.info.glycemic_list.length - 1]
@@ -60,6 +61,30 @@ export const userGlycemicListSelectorFilter = createSelector(
         );
 
         return _glycemics;
+      }
+    }
+    return [];
+  },
+);
+
+export const userBloodPressureListSelectorFilter = createSelector(
+  userListBloodPressureSelector,
+  optionBloodSelector,
+  (bloods, option) => {
+    const now = new Date();
+    if (bloods.length > 0) {
+      if (option === 'week') {
+        const _bloods = bloods.filter(
+          b => moment(b.createdAt).week() === moment(now).week(),
+        );
+
+        return _bloods;
+      } else if (option === 'month') {
+        const _bloods = bloods.filter(
+          b => moment(b.createdAt).month() === moment(now).month(),
+        );
+
+        return _bloods;
       }
     }
     return [];

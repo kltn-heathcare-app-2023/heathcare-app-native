@@ -18,6 +18,7 @@ import {TITLE_NOTIFICATION} from '../../../common/title';
 import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {
   infoSelector,
+  userBloodPressureListSelectorFilter,
   userGlycemicListSelectorFilter,
   userLastBloodPressureSelector,
   userLastGlycemicSelector,
@@ -25,7 +26,7 @@ import {
   userListGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
-import {postGlycemic} from '../../../services/patient/info';
+import {postBloodPressure, postGlycemic} from '../../../services/patient/info';
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -46,11 +47,11 @@ const optionDateItems = [
 function BloodScreen() {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [glycemic, setGlycemic] = useState('');
-  const [option, setOption] = useState('1');
+  const [diastoleMetric, setDiastoleMetric] = useState('');
+  const [systolicMetric, setSystolicMetric] = useState('');
   const [optionDate, setOptionDate] = useState('week');
 
-  const blood_list = useSelector(userListBloodPressureSelector);
+  const blood_list = useSelector(userBloodPressureListSelectorFilter);
   const last_blood_pressure = useSelector(userLastBloodPressureSelector);
   const {
     diastole = null,
@@ -59,13 +60,9 @@ function BloodScreen() {
   } = last_blood_pressure;
   const user_info = useSelector(infoSelector);
 
-  //   useEffect(() => {
-  //     dispatch(infoSlice.actions.updateOptionGlycemic(optionDate));
-  //   }, [optionDate]);
-
-  //   useEffect(() => {
-  //     dispatch(infoSlice.actions.updateOptionBMI(option));
-  //   }, [option]);
+  useEffect(() => {
+    dispatch(infoSlice.actions.updateOptionBlood(optionDate));
+  }, [optionDate]);
 
   const metrics_1 = blood_list.map(blood => {
     return {
@@ -85,42 +82,47 @@ function BloodScreen() {
     {
       seriesName: 'Tâm thu',
       data: metrics_1,
-      color: '#227c9d',
+      color: '#e76f51',
     },
     {
       seriesName: 'Tâm trương',
       data: metrics_2,
-      color: '#17c3b2',
+      color: '#d00000',
     },
   ];
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  const handlePostGlycemic = () => {
-    // if (glycemic && glycemic > 0) {
-    //   postGlycemic({
-    //     metric: glycemic,
-    //     case: option,
-    //     patient: user_info._id,
-    //   })
-    //     .then(({data}) => {
-    //       dispatch(infoSlice.actions.addGlycemic(data));
-    //       setVisible(false);
-    //       setGlycemic('');
-    //       setOption('1');
-    //     })
-    //     .catch(error => {
-    //       Alert.alert(TITLE_NOTIFICATION, error.message);
-    //       setVisible(false);
-    //     });
-    // } else {
-    //   Alert.alert(TITLE_NOTIFICATION, MESSAGE_MISS_DATA);
-    // }
+  const handlePostBloodPressure = () => {
+    if (
+      diastoleMetric &&
+      diastoleMetric > 0 &&
+      systolicMetric &&
+      systolicMetric > 0
+    ) {
+      postBloodPressure({
+        systolic: systolicMetric,
+        diastole: diastoleMetric,
+        patient: user_info._id,
+      })
+        .then(({data}) => {
+          dispatch(infoSlice.actions.addBlood(data));
+          setVisible(false);
+          setDiastoleMetric('');
+          setSystolicMetric('');
+        })
+        .catch(error => {
+          Alert.alert(TITLE_NOTIFICATION, error.message);
+          setVisible(false);
+        });
+    } else {
+      Alert.alert(TITLE_NOTIFICATION, MESSAGE_MISS_DATA);
+    }
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.bmi_container}>
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
@@ -184,11 +186,16 @@ function BloodScreen() {
         />
       </View>
       <View style={styles.bottom_view}>
-        <View style={{backgroundColor: '#227c9d', padding: 4, borderRadius: 8}}>
-          <Text>Tâm thu</Text>
+        <View
+          style={{
+            backgroundColor: '#e76f51',
+            padding: 4,
+            borderRadius: 8,
+          }}>
+          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm thu</Text>
         </View>
-        <View style={{backgroundColor: '#17c3b2', padding: 4, borderRadius: 8}}>
-          <Text>Tâm trương</Text>
+        <View style={{backgroundColor: '#d00000', padding: 4, borderRadius: 8}}>
+          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm trương</Text>
         </View>
       </View>
 
@@ -201,30 +208,30 @@ function BloodScreen() {
           <Text>Chỉ số huyết áp hôm nay</Text>
 
           <TextInput
-            placeholder="Tâm thu (mg/dl)"
+            placeholder="Tâm thu (mmHG)"
             style={styles.modal_input}
-            value={glycemic}
-            onChangeText={val => setGlycemic(val)}
+            value={systolicMetric}
+            onChangeText={val => setSystolicMetric(val)}
             keyboardType="decimal-pad"
           />
 
           <TextInput
-            placeholder="Tâm trương (mg/dl)"
+            placeholder="Tâm trương (mmHG)"
             style={styles.modal_input}
-            value={glycemic}
-            onChangeText={val => setGlycemic(val)}
+            value={diastoleMetric}
+            onChangeText={val => setDiastoleMetric(val)}
             keyboardType="decimal-pad"
           />
 
           <Button
             mode="elevated"
-            onPress={handlePostGlycemic}
+            onPress={handlePostBloodPressure}
             style={styles.modal_button}>
             Gửi
           </Button>
         </Modal>
       </Portal>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -297,7 +304,7 @@ const styles = StyleSheet.create({
   bottom_view: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     marginTop: 8,
   },
 });

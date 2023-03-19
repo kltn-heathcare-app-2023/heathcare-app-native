@@ -19,6 +19,7 @@ export const infoSlice = createSlice({
     rule: '',
     option_bmi: 'week',
     option_glycemic: 'week',
+    option_blood: 'week',
   },
   reducers: {
     updateAVGBMI: (state, action) => {
@@ -29,6 +30,9 @@ export const infoSlice = createSlice({
     },
     addGlycemic: (state, action) => {
       state.glycemic_list.push(action.payload);
+    },
+    addBlood: (state, action) => {
+      state.blood_pressures.push(action.payload);
     },
     resetUserInfo: state => {
       state.user_info = {};
@@ -42,6 +46,9 @@ export const infoSlice = createSlice({
     },
     updateOptionGlycemic: (state, action) => {
       state.option_glycemic = action.payload;
+    },
+    updateOptionBlood: (state, action) => {
+      state.option_blood = action.payload;
     },
   },
   extraReducers: builder => {
@@ -95,6 +102,8 @@ export const {
   resetUserInfo,
   addGlycemic,
   updateOptionBMI,
+  addBlood,
+  updateOptionBlood,
 } = infoSlice.actions;
 
 export default infoSlice.reducer;

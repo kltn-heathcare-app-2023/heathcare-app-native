@@ -135,7 +135,7 @@ function GlycemicScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.bmi_container}>
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
@@ -253,7 +253,7 @@ function GlycemicScreen() {
           </Button>
         </Modal>
       </Portal>
-    </ScrollView>
+    </View>
   );
 }
 
