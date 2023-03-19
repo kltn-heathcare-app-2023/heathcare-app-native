@@ -74,9 +74,9 @@ function InfoScreen({navigation}) {
     navigation.navigate(RouterKey.BLOOD_SCREEN);
   };
   const handleLogout = async () => {
-    await storage.remove('accessToken');
     navigation.navigate(RouterKey.LOGIN_SCREEN);
     dispatch(infoSlice.actions.resetUserInfo());
+    await storage.remove('accessToken');
   };
 
   return (

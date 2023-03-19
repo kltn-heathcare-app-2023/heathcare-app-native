@@ -117,25 +117,27 @@ function HomeScreen() {
         </View>
       </View>
 
-      <View
-        style={[
-          styles.box_status,
-          {
-            borderColor:
-              status && status.message.code === 0
-                ? '#0ead69'
-                : status.message.code === 1
-                ? '#fb8b240'
-                : status.message.code === 2
-                ? '#f95738'
-                : '#cbdfbd',
-          },
-        ]}>
-        <Text style={styles.box_status_title}>Tổng kết:</Text>
-        <Text style={styles.box_status_content}>
-          {status ? status.message.status : 'Đang tải ...'}
-        </Text>
-      </View>
+      {status && (
+        <View
+          style={[
+            styles.box_status,
+            {
+              borderColor:
+                status && status.message.code === 0
+                  ? '#0ead69'
+                  : status.message.code === 1
+                  ? '#fb8b240'
+                  : status.message.code === 2
+                  ? '#f95738'
+                  : '#cbdfbd',
+            },
+          ]}>
+          <Text style={styles.box_status_title}>Tổng kết:</Text>
+          <Text style={styles.box_status_content}>
+            {status ? status?.message?.status : 'Đang tải ...'}
+          </Text>
+        </View>
+      )}
       <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
       <ScrollView style={styles.box_schedule}>
         {schedules.map(schedule => (

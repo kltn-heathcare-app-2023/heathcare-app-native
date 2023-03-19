@@ -75,7 +75,12 @@ function SendInformationScreen({navigation, route}) {
 
     fetch
       .postFormWithAuth(`/patients`, formData)
-      .then(val => console.log('value -> ', val))
+      .then(val => {
+        if (val?.error) {
+          console.log('value -> ', val);
+        }
+        navigation.navigate(RouterKey.LOADING_SCREEN);
+      })
       .catch(err => console.log('err -> ', err));
   };
 
