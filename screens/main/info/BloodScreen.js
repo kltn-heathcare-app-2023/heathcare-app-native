@@ -78,18 +78,22 @@ function BloodScreen() {
     };
   });
 
-  const data = [
-    {
+  const data = [];
+
+  if (metrics_1.length > 0) {
+    data.push({
       seriesName: 'Tâm thu',
       data: metrics_1,
       color: '#e76f51',
-    },
-    {
+    });
+  }
+  if (metrics_2.length > 0) {
+    data.push({
       seriesName: 'Tâm trương',
       data: metrics_2,
       color: '#d00000',
-    },
-  ];
+    });
+  }
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -176,14 +180,16 @@ function BloodScreen() {
         />
       </View>
       <View style={{marginTop: 12}}>
-        <PureChart
-          data={data}
-          type="line"
-          height={350}
-          // customValueRenderer={(index, point) => {
-          //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
-          // }}
-        />
+        {data.length > 0 && (
+          <PureChart
+            data={data}
+            type="line"
+            height={350}
+            // customValueRenderer={(index, point) => {
+            //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
+            // }}
+          />
+        )}
       </View>
       <View style={styles.bottom_view}>
         <View

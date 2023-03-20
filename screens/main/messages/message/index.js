@@ -54,6 +54,7 @@ function ConversationDetail({route, navigation}) {
 
       try {
         const resp = await postMessage(data);
+        console.log(resp);
         socket.emit('send_message', {message: resp.data});
         dispatch(messageSlice.actions.pushMessage(resp.data));
         setMessage('');

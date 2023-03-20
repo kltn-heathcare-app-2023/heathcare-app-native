@@ -23,7 +23,7 @@ export default function App() {
       <PaperProvider>
         <StatusBar
           animated={true}
-          backgroundColor="#cccc"
+          backgroundColor="#a2d2ff"
           barStyle={'light-content'}
           showHideTransition={'fade'}
           // hidden={''}

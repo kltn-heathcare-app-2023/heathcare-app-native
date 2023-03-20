@@ -14,6 +14,7 @@ import {infoSlice} from '../../../redux/slices/infoSlice';
 import RouterKey from '../../../utils/Routerkey';
 import storage from '../../../utils/storage';
 import Lottie from 'lottie-react-native';
+import moment from 'moment';
 
 // const getAnimationByGenderAndBMI = (avg_bmi, gender) => {
 //   switch (gender) {
@@ -47,21 +48,22 @@ function InfoScreen({navigation}) {
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const last_blood_pressure = useSelector(userLastBloodPressureSelector);
   const notification = useSelector(notificationByBMIMertric);
-  const {person, blood} = user_info;
+  const {person = null, blood} = user_info;
 
   const {
     diastole = null,
     systolic = null,
     createdAt = null,
   } = last_blood_pressure;
-  const glycemic_case_1 =
-    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
 
-  const glycemic_case_2 =
-    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
-  const glycemic_case_3 =
-    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
-
+  let glycemic_case_1 = 0;
+  let glycemic_case_2 = 0;
+  let glycemic_case_3 = 0;
+  if (glycemic_last) {
+    glycemic_case_1 = glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+    glycemic_case_2 = glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+    glycemic_case_3 = glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  }
   const handleClickBoxBMI = () => {
     navigation.navigate(RouterKey.INFO_BMI_SCREEN);
   };
@@ -82,15 +84,21 @@ function InfoScreen({navigation}) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.header_info}>
-        <Image style={styles.header_info_img} source={{uri: person.avatar}} />
+        {person && (
+          <Image style={styles.header_info_img} source={{uri: person.avatar}} />
+        )}
 
-        <View style={styles.header_info_text}>
-          <Text>{`Họ & tên: ${person.username}`}</Text>
-          <Text>{`Năm sinh : ${person.dob}`}</Text>
-          <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
-          <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
-          <Text>{`Nhóm máu : ${blood}`}</Text>
-        </View>
+        {person && (
+          <View style={styles.header_info_text}>
+            <Text>{`Họ & tên: ${person.username}`}</Text>
+            <Text>{`Năm sinh : ${moment(new Date(person.dob)).format(
+              'L',
+            )}`}</Text>
+            <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
+            <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
+            <Text>{`Nhóm máu : ${blood}`}</Text>
+          </View>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity
