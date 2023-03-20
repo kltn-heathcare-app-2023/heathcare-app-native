@@ -15,14 +15,12 @@ function ConversationItem({conversation, onPress}) {
             {conversation.member.username}
           </Text>
           <Text>
-            {moment(conversation.last_message.createdAt)
-              .startOf('day')
-              .fromNow()}
+            {moment(conversation.last_message.createdAt).fromNow() ?? ''}
           </Text>
         </View>
         <View>
           <Text style={styles.conversation_message}>
-            {conversation.last_message.content}
+            {conversation.last_message.content ?? ''}
           </Text>
         </View>
       </View>

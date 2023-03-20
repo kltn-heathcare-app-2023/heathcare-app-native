@@ -22,14 +22,15 @@ function HomeScreen() {
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const status = useSelector(infoStatusSelector);
 
-  console.log(status);
-  const glycemic_case_1 =
-    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
-
-  const glycemic_case_2 =
-    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
-  const glycemic_case_3 =
-    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  // console.log({user_info, bmi_avg, glycemic_last, status});
+  let glycemic_case_1 = 0;
+  let glycemic_case_2 = 0;
+  let glycemic_case_3 = 0;
+  if (glycemic_last) {
+    glycemic_case_1 = glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+    glycemic_case_2 = glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+    glycemic_case_3 = glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  }
 
   const dispatch = useDispatch();
   const schedules = useSelector(scheduleDetailListAfterNow);
@@ -117,7 +118,7 @@ function HomeScreen() {
         </View>
       </View>
 
-      {status && (
+      {status && status.message && (
         <View
           style={[
             styles.box_status,
@@ -132,7 +133,7 @@ function HomeScreen() {
                   : '#cbdfbd',
             },
           ]}>
-          <Text style={styles.box_status_title}>Tổng kết:</Text>
+          <Text style={styles.box_status_title}>Đánh giá:</Text>
           <Text style={styles.box_status_content}>
             {status ? status?.message?.status : 'Đang tải ...'}
           </Text>

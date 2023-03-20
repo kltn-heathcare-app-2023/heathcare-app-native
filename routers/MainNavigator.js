@@ -27,7 +27,7 @@ const screenOptions = ({route}) => ({
   },
   tabBarInactiveTintColor: '#ccc',
   tabBarActiveTintColor: '#219ebc',
-  header: () => null,
+  headerTitleAlign: 'center',
 });
 
 function MainNavigator() {

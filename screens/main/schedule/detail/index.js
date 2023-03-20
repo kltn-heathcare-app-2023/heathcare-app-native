@@ -69,13 +69,17 @@ function DetailScheduleRegister({navigation, route}) {
         <List.Subheader>Lịch khám</List.Subheader>
         <List.Item
           style={styles.list}
-          title={`Bắt đầu: ${moment(scheduleDateStart).format('llll')}`}
+          title={`Bắt đầu: ${moment(new Date(scheduleDateStart)).format(
+            'llll',
+          )}`}
           left={() => <List.Icon icon="timetable" />}
           titleStyle={{fontWeight: '700'}}
         />
         <List.Item
           style={styles.list}
-          title={`Kết thúc: ${moment(scheduleDateEnd).format('llll')}`}
+          title={`Kết thúc: ${moment(new Date(scheduleDateEnd)).format(
+            'llll',
+          )}`}
           left={() => <List.Icon icon="clock-time-ten-outline" />}
           titleStyle={{fontWeight: '700'}}
         />
@@ -102,6 +106,7 @@ function DetailScheduleRegister({navigation, route}) {
           marginHorizontal: 16,
           // borderRadius: 16,
           padding: 8,
+          borderRadius: 16,
         }}
         placeholder={'Lý do muốn khám hoặc một số triệu chứng'}
       />

@@ -54,13 +54,14 @@ function GlycemicScreen() {
     dispatch(infoSlice.actions.updateOptionGlycemic(optionDate));
   }, [optionDate]);
 
-  const glycemic_case_1 =
-    glycemic_last.find(item => item.case === 1)?.metric ?? 0;
-
-  const glycemic_case_2 =
-    glycemic_last.find(item => item.case === 2)?.metric ?? 0;
-  const glycemic_case_3 =
-    glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  let glycemic_case_1 = 0;
+  let glycemic_case_2 = 0;
+  let glycemic_case_3 = 0;
+  if (glycemic_last) {
+    glycemic_case_1 = glycemic_last.find(item => item.case === 1)?.metric ?? 0;
+    glycemic_case_2 = glycemic_last.find(item => item.case === 2)?.metric ?? 0;
+    glycemic_case_3 = glycemic_last.find(item => item.case === 3)?.metric ?? 0;
+  }
   useEffect(() => {
     dispatch(infoSlice.actions.updateOptionBMI(option));
   }, [option]);
@@ -91,23 +92,29 @@ function GlycemicScreen() {
       };
     });
 
-  const data = [
-    {
+  const data = [];
+  if (metrics_1.length > 0) {
+    data.push({
       seriesName: 'Trước ăn',
       data: metrics_1,
       color: '#227c9d',
-    },
-    {
+    });
+  }
+  if (metrics_2.length > 0) {
+    data.push({
       seriesName: 'Sau ăn',
       data: metrics_2,
       color: '#17c3b2',
-    },
-    {
+    });
+  }
+
+  if (metrics_3.length > 0) {
+    data.push({
       seriesName: 'Trước ngủ',
       data: metrics_3,
       color: '#ffcb77',
-    },
-  ];
+    });
+  }
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -140,7 +147,7 @@ function GlycemicScreen() {
         <View style={styles.bmi_text}>
           <Text style={styles.bmi_text_title}>
             {`Chỉ số đường huyết mới nhất: \n${moment(
-              glycemic_last[0].createdAt,
+              glycemic_last ? glycemic_last[0].createdAt : new Date(),
             ).fromNow()}`}
           </Text>
           <Text style={styles.bmi_text_notification}>
@@ -191,14 +198,16 @@ function GlycemicScreen() {
         />
       </View>
       <View style={{marginTop: 12}}>
-        <PureChart
-          data={data}
-          type="line"
-          height={350}
-          // customValueRenderer={(index, point) => {
-          //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
-          // }}
-        />
+        {data[0].data.length > 0 && (
+          <PureChart
+            data={data}
+            type="line"
+            height={350}
+            // customValueRenderer={(index, point) => {
+            //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
+            // }}
+          />
+        )}
       </View>
       <View style={styles.bottom_view}>
         <View style={{backgroundColor: '#227c9d', padding: 4, borderRadius: 8}}>
