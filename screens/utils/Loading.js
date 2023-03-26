@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {infoSelector} from '../../redux/selectors/infoSelector';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 
-function LoadingScreen({navigation}) {
+function LoadingScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
   const dispatch = useDispatch();
 

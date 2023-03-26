@@ -164,13 +164,23 @@ function ScheduleDetail({navigation, route}) {
           <View style={{height: 500}}></View>
         )}
 
-        <Button
-          icon="content-save-move-outline"
-          mode="contained-tonal"
-          onPress={handleRegisterSchedule}
-          style={{backgroundColor: '#FFFF', margin: 16}}>
-          Xem chi tiết lịch khám
-        </Button>
+        {dateSelected ? (
+          <Button
+            icon="content-save-move-outline"
+            mode="contained-tonal"
+            onPress={handleRegisterSchedule}
+            style={{backgroundColor: '#FFFF', margin: 16}}>
+            Xem chi tiết lịch khám
+          </Button>
+        ) : (
+          <Button
+            icon="content-save-move-outline"
+            mode="contained-tonal"
+            onPress={() => navigation.navigate(RouterKey.HOME_SCREEN)}
+            style={{backgroundColor: '#FFFF', margin: 16}}>
+            Trở về
+          </Button>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

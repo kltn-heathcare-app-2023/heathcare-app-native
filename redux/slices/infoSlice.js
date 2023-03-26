@@ -51,6 +51,9 @@ export const infoSlice = createSlice({
     updateOptionBlood: (state, action) => {
       state.option_blood = action.payload;
     },
+    updateUserInfoAfterChange: (state, action) => {
+      state.user_info = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -115,6 +118,7 @@ export const {
   updateOptionBMI,
   addBlood,
   updateOptionBlood,
+  updateUserInfoAfterChange,
 } = infoSlice.actions;
 
 export default infoSlice.reducer;

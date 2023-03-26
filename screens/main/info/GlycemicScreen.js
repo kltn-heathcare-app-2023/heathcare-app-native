@@ -127,7 +127,7 @@ function GlycemicScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
-          dispatch(infoSlice.actions.addGlycemic(data));
+          dispatch(infoSlice.actions.addGlycemic(data.doc));
           setVisible(false);
           setGlycemic('');
           setOption('1');
@@ -198,11 +198,11 @@ function GlycemicScreen() {
         />
       </View>
       <View style={{marginTop: 12}}>
-        {data[0].data.length > 0 && (
+        {data.length > 0 && (
           <PureChart
             data={data}
             type="line"
-            height={350}
+            height={320}
             // customValueRenderer={(index, point) => {
             //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
             // }}
