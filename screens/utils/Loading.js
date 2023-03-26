@@ -20,7 +20,7 @@ function LoadingScreen({navigation, route}) {
       const decode = jwtDecode(token);
       if (decode['rule'] === 'patient') {
         dispatch(fetchUserInfo());
-      } else navigation.navigate(RouterKey.ADMIN_SCREEN);
+      } else navigation.navigate(RouterKey.DOCTOR_SCREEN);
     } else {
       navigation.navigate(RouterKey.LOGIN_SCREEN);
     }
@@ -31,7 +31,6 @@ function LoadingScreen({navigation, route}) {
   }, []);
 
   useEffect(() => {
-    console.log(user_info);
     if (Object.keys(user_info).length > 0) {
       navigation.navigate(RouterKey.MAIN_SCREEN);
     }

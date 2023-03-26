@@ -10,7 +10,7 @@ import {
 } from '../screens/utils';
 import RouterKey from '../utils/Routerkey';
 import MainScreen from '../screens/main/Main';
-import AdminScreen from '../screens/admin/AdminScreen';
+import DoctorScreen from '../screens/doctor/DoctorScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,8 +40,8 @@ function StackNavigator() {
         options={{gestureEnabled: false}}
       />
       <Stack.Screen
-        name={RouterKey.ADMIN_SCREEN}
-        component={AdminScreen}
+        name={RouterKey.DOCTOR_SCREEN}
+        component={DoctorScreen}
         options={{gestureEnabled: false}}
       />
       <Stack.Screen

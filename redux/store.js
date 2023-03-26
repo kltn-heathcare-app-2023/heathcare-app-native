@@ -5,7 +5,7 @@ import conversationReducer from './slices/conversationSlice';
 import messageReducer from './slices/messageSlice';
 import scheduleDetailReducer from './slices/scheduleDetailSlice';
 import notificationReducer from './slices/notificationSlice';
-
+import doctorInfoReducer from './slices/doctor/doctorInfoSlice';
 export const store = configureStore({
   reducer: {
     info: infoReducer,
@@ -14,6 +14,7 @@ export const store = configureStore({
     messages: messageReducer,
     schedule_details: scheduleDetailReducer,
     notifications: notificationReducer,
+    doctor_info: doctorInfoReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

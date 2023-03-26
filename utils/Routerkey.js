@@ -20,8 +20,11 @@ const RouterKey = {
   GLYCEMIC_SCREEN: 'GlycemicScreen',
   NOTIFICATION_SCREEN: 'NotificationScreen',
   BLOOD_SCREEN: 'BloodScreen',
-  ADMIN_SCREEN: 'AdminScreen',
   PROFILE_PATIENT_SCREEN: 'ProfilePatientScreen',
+  DOCTOR_SCREEN: 'DoctorScreen',
+  DOCTOR_HOME_SCREEN: 'DoctorHomeScreen',
+  DOCTOR_CONVERSATION_SCREEN: 'DoctorConversationScreen',
+  DOCTOR_NOTIFICATION_SCREEN: 'DoctorNotificatonScreen',
 };
 
 export default RouterKey;
