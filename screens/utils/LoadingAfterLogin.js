@@ -11,7 +11,7 @@ import {infoSelector} from '../../redux/selectors/infoSelector';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
 
-function LoadingScreen({navigation, route}) {
+function LoadingAfterLoginScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
   const dispatch = useDispatch();
 
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadingScreen;
+export default LoadingAfterLoginScreen;

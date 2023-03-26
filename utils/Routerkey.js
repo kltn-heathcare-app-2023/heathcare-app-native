@@ -16,6 +16,7 @@ const RouterKey = {
   CONVERSATION_SCREEN: 'ConversationScreen',
   CONVERSATION_DETAIL_SCREEN: 'ConversationDetailScreen',
   LOADING_SCREEN: 'LoadingScreen',
+  LOADING_AFTER_LOGIN_SCREEN: 'LoadingAfterLoginScreen',
   CALL_VIDEO_SCREEN: 'CallVideoScreen',
   GLYCEMIC_SCREEN: 'GlycemicScreen',
   NOTIFICATION_SCREEN: 'NotificationScreen',

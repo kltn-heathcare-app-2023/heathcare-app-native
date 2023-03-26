@@ -6,6 +6,7 @@ import messageReducer from './slices/messageSlice';
 import scheduleDetailReducer from './slices/scheduleDetailSlice';
 import notificationReducer from './slices/notificationSlice';
 import doctorInfoReducer from './slices/doctor/doctorInfoSlice';
+
 export const store = configureStore({
   reducer: {
     info: infoReducer,

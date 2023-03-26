@@ -26,8 +26,8 @@ function LoginScreen({navigation}) {
           await storage.set('accessToken', data.accessToken);
           const decode = jwtDecode(data.accessToken);
           if (decode['rule'] === 'patient')
-            navigation.navigate(RouterKey.MAIN_SCREEN);
-          else navigation.navigate(RouterKey.ADMIN_SCREEN);
+            navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
+          else navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
           setPhone('');
           setPassword('');
         }
