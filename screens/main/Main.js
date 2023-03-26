@@ -33,9 +33,6 @@ function MainScreen({navigation}) {
           PermissionsAndroid.RECORD_AUDIO,
         )
       : undefined;
-
-  const dispatch = useDispatch();
-
   useEffect(() => {
     // storage.remove('accessToken').then(() => {});
     granted
@@ -59,14 +56,11 @@ function MainScreen({navigation}) {
       .catch(err => {
         console.log('error get permission ->', err);
       });
-
-    dispatch(fetchUserInfo());
-  }, [user_info]);
+  }, []);
 
   useEffect(() => {
     user_info._id && socket.emit('status_user', user_info._id);
-    console.log(user_info);
-  }, []);
+  }, [user_info]);
 
   useEffect(() => {
     socket.on('call_id_room_to_user_success', resp => {
@@ -98,8 +92,11 @@ function MainScreen({navigation}) {
                 }}
                 onPress={() => {
                   console.log('call');
-                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-                    room_id: room,
+                  navigation.navigate(RouterKey.MESSAGE_SCREEN, {
+                    screen: RouterKey.CALL_VIDEO_SCREEN,
+                    params: {
+                      room_id: room,
+                    },
                   });
                   setVisible(false);
                 }}

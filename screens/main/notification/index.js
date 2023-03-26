@@ -66,6 +66,7 @@ function NotificationScreen() {
       />
       <ScrollView style={styles.container_scroll_view}>
         {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
+          console.log(rule);
           return (
             <TouchableOpacity
               style={[
@@ -77,12 +78,18 @@ function NotificationScreen() {
                     ? '#a8dadc'
                     : rule.includes(type.RULE_NOTIFICATION_CANCEL_SCHEDULE)
                     ? '#fec89a'
+                    : rule === type.RULE_SYSTEM
+                    ? '#ccc'
                     : '#f6bd60',
                 },
               ]}
               key={_id}>
               <Text style={styles.header_notification}>
-                {rule.includes('SCHEDULE') ? 'Lịch khám' : 'Nhắc nhở'}
+                {rule.includes('SCHEDULE')
+                  ? 'Lịch khám'
+                  : rule.includes('REMIND')
+                  ? 'Nhắc nhở'
+                  : 'Hệ thống'}
               </Text>
               <Text style={styles.content_notification}>{content}</Text>
               <Text style={styles.time_notification}>
@@ -100,7 +107,7 @@ function NotificationScreen() {
           </Button>
         ) : choose === type.RULE_HAS_SEEN ? null : (
           <Text style={{textAlign: 'center', fontSize: 16}}>
-            Bạn chưa có thông báo nào
+            Bạn chưa có thông báo mới nào
           </Text>
         )}
       </ScrollView>

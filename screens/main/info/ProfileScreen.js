@@ -1,28 +1,47 @@
-import {Image, ScrollView, StyleSheet} from 'react-native';
+import {Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import {View, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {List} from 'react-native-paper';
+import {Button, List} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import {infoSelector} from '../../../redux/selectors/infoSelector';
 import RouterKey from '../../../utils/Routerkey';
+import Lottie from 'lottie-react-native';
 
 function ProfilePatientScreen({navigation}) {
   const user_info = useSelector(infoSelector);
   const {person, blood, anamnesis, doctor_blood_id, doctor_glycemic_id} =
     user_info;
 
-  const handleViewDoctorInfo = doctor => {
-    console.log('click', doctor);
-    // navigation.navigate(RouterKey.SCHEDULE_ROUTER_SCREEN, {
-    //   screen: RouterKey.SCHEDULE_DETAIL_SCREEN,
-    //   params: {schedule: {doctor: doctor}},
-    // });
+  const handleViewDoctorInfo = () => {
+    console.log('click ', doctor_glycemic_id);
+    navigation.navigate(RouterKey.SCHEDULE_ROUTER_SCREEN, {
+      screen: RouterKey.SCHEDULE_DETAIL_SCREEN,
+      params: {schedule: {doctor: doctor_glycemic_id}},
+    });
+  };
+
+  const handleOpenModal = () => {
+    console.log('click ');
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Image source={{uri: person.avatar}} style={styles.header_image} />
+        <TouchableOpacity
+          onPress={() => {
+            console.log('clicked');
+          }}>
+          <Lottie
+            source={require('../../../assets/images/update-info.json')}
+            autoPlay
+            loop
+            style={{
+              width: 32,
+              height: 32,
+              marginRight: 24,
+            }}
+          />
+        </TouchableOpacity>
       </View>
       <List.Section>
         <List.Subheader>Thông tin cá nhân:</List.Subheader>
@@ -68,7 +87,7 @@ function ProfilePatientScreen({navigation}) {
       {doctor_glycemic_id && (
         <TouchableOpacity
           style={styles.doctor_info}
-          onPress={() => handleViewDoctorInfo(doctor_glycemic_id)}>
+          onPress={handleViewDoctorInfo}>
           <Image
             source={{uri: doctor_glycemic_id.person.avatar}}
             style={styles.doctor_info_image}
@@ -95,13 +114,18 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 24,
     width: '100%',
-    height: 80,
+    height: 64,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   header_image: {
-    width: 80,
-    height: 80,
+    width: 64,
+    height: 64,
     backgroundColor: '#fff',
     borderRadius: 50,
+    marginLeft: 16,
   },
   doctor_info: {
     backgroundColor: '#a2d2ff',
@@ -111,7 +135,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: 8,
     borderRadius: 16,
-    marginTop: 8,
+    marginTop: 4,
   },
   doctor_info_image: {
     width: 64,

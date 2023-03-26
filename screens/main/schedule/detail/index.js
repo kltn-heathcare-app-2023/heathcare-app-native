@@ -18,6 +18,9 @@ function DetailScheduleRegister({navigation, route}) {
   const {doctor, time, fee} = schedule;
   const [text, setText] = useState();
 
+  // console.log('schedule in detail -> ', schedule);
+  // console.log('time in detail -> ', time);
+  // console.log('dateSelected-> ', dateSelected);
   const dispatch = useDispatch();
 
   const timeStart = new Date(time.time_start);

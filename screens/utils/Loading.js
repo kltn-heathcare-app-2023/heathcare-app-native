@@ -6,16 +6,21 @@ import {useEffect} from 'react';
 import storage from '../../utils/storage';
 import RouterKey from '../../utils/Routerkey';
 import jwtDecode from 'jwt-decode';
+import {useDispatch, useSelector} from 'react-redux';
+import {infoSelector} from '../../redux/selectors/infoSelector';
+import {fetchUserInfo} from '../../redux/slices/infoSlice';
 
 function LoadingScreen({navigation}) {
+  const user_info = useSelector(infoSelector);
+  const dispatch = useDispatch();
+
   const init = async () => {
     const token = await storage.get('accessToken');
-
     if (token) {
       const decode = jwtDecode(token);
-      if (decode['rule'] === 'patient')
-        navigation.navigate(RouterKey.MAIN_SCREEN);
-      else navigation.navigate(RouterKey.ADMIN_SCREEN);
+      if (decode['rule'] === 'patient') {
+        dispatch(fetchUserInfo());
+      } else navigation.navigate(RouterKey.ADMIN_SCREEN);
     } else {
       navigation.navigate(RouterKey.LOGIN_SCREEN);
     }
@@ -24,6 +29,13 @@ function LoadingScreen({navigation}) {
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    console.log(user_info);
+    if (Object.keys(user_info).length > 0) {
+      navigation.navigate(RouterKey.MAIN_SCREEN);
+    }
+  }, [user_info]);
 
   return (
     <View style={styles.container}>

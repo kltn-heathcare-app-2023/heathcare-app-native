@@ -20,21 +20,20 @@ moment.locale('vi');
 
 function ScheduleDetail({navigation, route}) {
   const {schedule, dateSelected} = route.params;
-  const {doctor, time = null, fee} = schedule;
+  const {doctor} = schedule;
   const [profile, setProfile] = useState();
+  console.log('schedule -> ', dateSelected);
 
-  if (time) {
-    const timeStart = new Date(time.time_start);
-    const timeEnd = new Date(time.time_end);
+  // const timeStart = new Date(time.time_start);
+  // const timeEnd = new Date(time.time_end);
 
-    const scheduleDateStart = new Date();
-    scheduleDateStart.setTime(timeStart.getTime());
-    scheduleDateStart.setDate(new Date(dateSelected).getDate());
+  // const scheduleDateStart = new Date();
+  // scheduleDateStart.setTime(timeStart.getTime());
+  // scheduleDateStart.setDate(new Date(dateSelected).getDate());
 
-    const scheduleDateEnd = new Date();
-    scheduleDateEnd.setTime(timeEnd.getTime());
-    scheduleDateEnd.setDate(new Date(dateSelected).getDate());
-  }
+  // const scheduleDateEnd = new Date();
+  // scheduleDateEnd.setTime(timeEnd.getTime());
+  // scheduleDateEnd.setDate(new Date(dateSelected).getDate());
 
   useEffect(() => {
     getProfileDoctorById(doctor._id).then(({data}) => data && setProfile(data));
