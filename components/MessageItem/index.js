@@ -23,8 +23,16 @@ function MessageItem({message}) {
               : '#caf0f8',
           },
         ]}>
-        <Text style={styles.message_username}>{message.sender.username}</Text>
-        <Text>{message.content}</Text>
+        <Text
+          style={[
+            styles.message_username,
+            message.isMe && {textAlign: 'right'},
+          ]}>
+          {message.sender.username}
+        </Text>
+        <Text style={message.isMe && {textAlign: 'right'}}>
+          {message.content}
+        </Text>
       </View>
     </View>
   );

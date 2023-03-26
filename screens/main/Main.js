@@ -44,10 +44,16 @@ function MainScreen({navigation}) {
           const permissions = [
             PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
             PermissionsAndroid.PERMISSIONS.CAMERA,
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           ];
           //返回得是对象类型
-          PermissionsAndroid.requestMultiple(permissions);
-          console.log('get permission ok!');
+          PermissionsAndroid.requestMultiple(permissions)
+            .then(data => {
+              console.log('get permission ok!', data);
+            })
+            .catch(err => {
+              return Promise.reject(err);
+            });
         }
       })
       .catch(err => {
@@ -55,11 +61,12 @@ function MainScreen({navigation}) {
       });
 
     dispatch(fetchUserInfo());
-  }, []);
+  }, [user_info]);
 
   useEffect(() => {
     user_info._id && socket.emit('status_user', user_info._id);
-  }, [user_info]);
+    console.log(user_info);
+  }, []);
 
   useEffect(() => {
     socket.on('call_id_room_to_user_success', resp => {

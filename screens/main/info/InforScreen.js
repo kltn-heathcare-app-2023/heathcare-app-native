@@ -75,6 +75,11 @@ function InfoScreen({navigation}) {
   const handleClickBoxBlood = () => {
     navigation.navigate(RouterKey.BLOOD_SCREEN);
   };
+
+  const handleGoToMyProfile = () => {
+    navigation.navigate(RouterKey.PROFILE_PATIENT_SCREEN);
+  };
+
   const handleLogout = async () => {
     navigation.navigate(RouterKey.LOGIN_SCREEN);
     dispatch(infoSlice.actions.resetUserInfo());
@@ -83,7 +88,9 @@ function InfoScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.header_info}>
+      <TouchableOpacity
+        style={styles.header_info}
+        onPress={handleGoToMyProfile}>
         {person && (
           <Image style={styles.header_info_img} source={{uri: person.avatar}} />
         )}

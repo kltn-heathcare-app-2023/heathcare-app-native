@@ -5,13 +5,17 @@ import Lottie from 'lottie-react-native';
 import {useEffect} from 'react';
 import storage from '../../utils/storage';
 import RouterKey from '../../utils/Routerkey';
+import jwtDecode from 'jwt-decode';
 
 function LoadingScreen({navigation}) {
   const init = async () => {
     const token = await storage.get('accessToken');
-    console.log(token);
+
     if (token) {
-      navigation.navigate(RouterKey.MAIN_SCREEN);
+      const decode = jwtDecode(token);
+      if (decode['rule'] === 'patient')
+        navigation.navigate(RouterKey.MAIN_SCREEN);
+      else navigation.navigate(RouterKey.ADMIN_SCREEN);
     } else {
       navigation.navigate(RouterKey.LOGIN_SCREEN);
     }

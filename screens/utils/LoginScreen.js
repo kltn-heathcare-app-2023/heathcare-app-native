@@ -9,6 +9,7 @@ import {login} from '../../services/auth';
 import storage from '../../utils/storage';
 
 import styles from '../../styles/global.js';
+import jwtDecode from 'jwt-decode';
 
 function LoginScreen({navigation}) {
   const [phone, setPhone] = useState('');
@@ -23,7 +24,10 @@ function LoginScreen({navigation}) {
         const {data} = resp;
         if (data) {
           await storage.set('accessToken', data.accessToken);
-          navigation.navigate(RouterKey.MAIN_SCREEN);
+          const decode = jwtDecode(data.accessToken);
+          if (decode['rule'] === 'patient')
+            navigation.navigate(RouterKey.MAIN_SCREEN);
+          else navigation.navigate(RouterKey.ADMIN_SCREEN);
           setPhone('');
           setPassword('');
         }
