@@ -24,6 +24,8 @@ const RouterKey = {
   PROFILE_PATIENT_SCREEN: 'ProfilePatientScreen',
   DOCTOR_SCREEN: 'DoctorScreen',
   DOCTOR_HOME_SCREEN: 'DoctorHomeScreen',
+  DOCTOR_HOME_LIST_EXAM_SCREEN: 'DoctorHomeListExamScreen',
+  DOCTOR_HOME_PATIENT_INFO_SCREEN: 'DoctorPatientInfoScreen',
   DOCTOR_CONVERSATION_SCREEN: 'DoctorConversationScreen',
   DOCTOR_NOTIFICATION_SCREEN: 'DoctorNotificatonScreen',
 };

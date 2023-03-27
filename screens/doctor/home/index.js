@@ -1,19 +1,7 @@
-import {Text, View} from 'react-native';
-import {Button} from 'react-native-paper';
-import RouterKey from '../../../utils/Routerkey';
-import storage from '../../../utils/storage';
+import {DoctorHomeStackNavigator} from '../../../routers/doctor/DoctorNavigator';
 
-function DoctorHomeScreen({navigation}) {
-  const handleLogoutByDoctor = async () => {
-    await storage.remove('accessToken');
-    navigation.navigate(RouterKey.LOGIN_SCREEN);
-  };
-  return (
-    <View>
-      <Text>This is page home Doctor</Text>
-      <Button onPress={handleLogoutByDoctor}>Đăng xuất</Button>
-    </View>
-  );
+function DoctorHomeScreen() {
+  return <DoctorHomeStackNavigator />;
 }
 
 export default DoctorHomeScreen;

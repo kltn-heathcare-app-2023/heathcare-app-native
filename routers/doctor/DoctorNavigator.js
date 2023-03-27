@@ -4,6 +4,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DoctorHomeScreen from '../../screens/doctor/home';
 import DoctorConversationScreen from '../../screens/doctor/conversation';
 import DoctorNotificationScreen from '../../screens/doctor/notification';
+import PatientInfo from '../../screens/doctor/home/PatientInfo';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import DoctorHomeListPatientExamScreen from '../../screens/doctor/home/ListPatientExam';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,14 +27,34 @@ const screenOptions = ({route}) => ({
   headerTitleAlign: 'center',
 });
 
+const Stack = createNativeStackNavigator();
+
+export function DoctorHomeStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName={RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN}>
+      <Stack.Screen
+        name={RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN}
+        component={DoctorHomeListPatientExamScreen}
+      />
+      <Stack.Screen
+        name={RouterKey.DOCTOR_HOME_PATIENT_INFO_SCREEN}
+        component={PatientInfo}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function AdminNavigator() {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name={RouterKey.DOCTOR_HOME_SCREEN}
         component={DoctorHomeScreen}
-        options={{tabBarLabel: 'Trang chủ', title: 'Trang chủ'}}
-      />
+        options={{tabBarLabel: 'Trang chủ', title: 'Trang chủ'}}></Tab.Screen>
       <Tab.Screen
         name={RouterKey.DOCTOR_CONVERSATION_SCREEN}
         component={DoctorConversationScreen}

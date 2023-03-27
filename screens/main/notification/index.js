@@ -66,7 +66,6 @@ function NotificationScreen() {
       />
       <ScrollView style={styles.container_scroll_view}>
         {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
-          console.log(rule);
           return (
             <TouchableOpacity
               style={[

@@ -13,6 +13,9 @@ const RULE_INFORMATION = 'RULE_INFORMATION';
 const RULE_ALL = 'RULE_ALL';
 const RULE_HAS_SEEN = 'RULE_HAS_SEEN';
 
+export const AVATAR_DEFAULT =
+  'https://png.pngtree.com/png-clipart/20221207/ourlarge/pngtree-fashion-boy-avatar-png-image_6514592.png';
+
 export const type = {
   RULE_DOCTOR_REMIND,
   RULE_INFORMATION,

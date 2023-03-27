@@ -7,7 +7,15 @@ export const doctorInfoSlice = createSlice({
     doctor_profile: {},
   },
   reducers: {},
-  extraReducers: builder => {},
+  extraReducers: builder => {
+    builder
+      .addCase(fetchInfoDoctor.fulfilled, (state, action) => {
+        state.doctor_profile = action.payload;
+      })
+      .addCase(fetchInfoDoctor.pending, () => {
+        console.log('pending load profile doctor');
+      });
+  },
 });
 
 export const fetchInfoDoctor = createAsyncThunk(
@@ -15,7 +23,7 @@ export const fetchInfoDoctor = createAsyncThunk(
   async () => {
     try {
       const profile = await getDoctorProfile();
-      console.log(profile);
+      return profile.data;
     } catch (error) {
       console.log('error fetch info doctor', error);
     }

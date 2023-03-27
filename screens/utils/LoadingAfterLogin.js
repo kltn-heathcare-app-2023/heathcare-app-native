@@ -13,6 +13,7 @@ import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
 
 function LoadingAfterLoginScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
+  const doctor_profile = useSelector(doctorProfileSelector);
   const dispatch = useDispatch();
 
   const init = async () => {
@@ -23,8 +24,6 @@ function LoadingAfterLoginScreen({navigation, route}) {
         dispatch(fetchUserInfo());
       } else {
         dispatch(fetchInfoDoctor());
-        console.log(RouterKey.DOCTOR_SCREEN);
-        navigation.navigate(RouterKey.DOCTOR_SCREEN);
       }
     } else {
       navigation.navigate(RouterKey.LOGIN_SCREEN);
@@ -39,7 +38,10 @@ function LoadingAfterLoginScreen({navigation, route}) {
     if (Object.keys(user_info).length > 0) {
       navigation.navigate(RouterKey.MAIN_SCREEN);
     }
-  }, [user_info]);
+    if (Object.keys(doctor_profile).length > 0) {
+      navigation.navigate(RouterKey.DOCTOR_SCREEN);
+    }
+  }, [user_info, doctor_profile]);
 
   return (
     <View style={styles.container}>

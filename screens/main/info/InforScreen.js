@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   header_info_img: {
-    width: 100,
+    width: 80,
     height: 'auto',
     minHeight: 80,
     borderRadius: 16,

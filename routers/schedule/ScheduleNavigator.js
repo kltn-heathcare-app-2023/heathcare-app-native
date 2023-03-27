@@ -27,7 +27,6 @@ function ScheduleNavigator() {
       />
     </Stack.Navigator>
   );
-  return null;
 }
 
 export default ScheduleNavigator;

@@ -10,9 +10,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {infoSelector} from '../../redux/selectors/infoSelector';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
+import {doctorProfileSelector} from '../../redux/selectors/doctor/infoSelector';
 
 function LoadingScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
+  const doctor_profile = useSelector(doctorProfileSelector);
   const dispatch = useDispatch();
 
   const init = async () => {
@@ -23,8 +25,6 @@ function LoadingScreen({navigation, route}) {
         dispatch(fetchUserInfo());
       } else {
         dispatch(fetchInfoDoctor());
-        console.log(RouterKey.DOCTOR_SCREEN);
-        navigation.navigate(RouterKey.DOCTOR_SCREEN);
       }
     } else {
       navigation.navigate(RouterKey.LOGIN_SCREEN);
@@ -39,7 +39,10 @@ function LoadingScreen({navigation, route}) {
     if (Object.keys(user_info).length > 0) {
       navigation.navigate(RouterKey.MAIN_SCREEN);
     }
-  }, [user_info]);
+    if (Object.keys(doctor_profile).length > 0) {
+      navigation.navigate(RouterKey.DOCTOR_SCREEN);
+    }
+  }, [user_info, doctor_profile]);
 
   return (
     <View style={styles.container}>
