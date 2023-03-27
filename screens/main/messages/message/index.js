@@ -52,8 +52,13 @@ function ConversationDetail({route, navigation}) {
         content: message,
       };
 
+      const formData = new FormData();
+      formData.append('conversation', conversation._id);
+      formData.append('senderId', user._id);
+      formData.append('content', message);
+      console.log(formData);
       try {
-        const resp = await postMessage(data);
+        const resp = await postMessage(formData);
         console.log(resp);
         socket.emit('send_message', {message: resp.data});
         dispatch(messageSlice.actions.pushMessage(resp.data));

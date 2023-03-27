@@ -20,19 +20,20 @@ moment.locale('vi');
 
 function ScheduleDetail({navigation, route}) {
   const {schedule, dateSelected} = route.params;
-  const {doctor, time, fee} = schedule;
+  const {doctor} = schedule;
   const [profile, setProfile] = useState();
+  console.log('schedule -> ', dateSelected);
 
-  const timeStart = new Date(time.time_start);
-  const timeEnd = new Date(time.time_end);
+  // const timeStart = new Date(time.time_start);
+  // const timeEnd = new Date(time.time_end);
 
-  const scheduleDateStart = new Date();
-  scheduleDateStart.setTime(timeStart.getTime());
-  scheduleDateStart.setDate(new Date(dateSelected).getDate());
+  // const scheduleDateStart = new Date();
+  // scheduleDateStart.setTime(timeStart.getTime());
+  // scheduleDateStart.setDate(new Date(dateSelected).getDate());
 
-  const scheduleDateEnd = new Date();
-  scheduleDateEnd.setTime(timeEnd.getTime());
-  scheduleDateEnd.setDate(new Date(dateSelected).getDate());
+  // const scheduleDateEnd = new Date();
+  // scheduleDateEnd.setTime(timeEnd.getTime());
+  // scheduleDateEnd.setDate(new Date(dateSelected).getDate());
 
   useEffect(() => {
     getProfileDoctorById(doctor._id).then(({data}) => data && setProfile(data));
@@ -163,13 +164,23 @@ function ScheduleDetail({navigation, route}) {
           <View style={{height: 500}}></View>
         )}
 
-        <Button
-          icon="content-save-move-outline"
-          mode="contained-tonal"
-          onPress={handleRegisterSchedule}
-          style={{backgroundColor: '#FFFF', margin: 16}}>
-          Xem chi tiết lịch khám
-        </Button>
+        {dateSelected ? (
+          <Button
+            icon="content-save-move-outline"
+            mode="contained-tonal"
+            onPress={handleRegisterSchedule}
+            style={{backgroundColor: '#FFFF', margin: 16}}>
+            Xem chi tiết lịch khám
+          </Button>
+        ) : (
+          <Button
+            icon="content-save-move-outline"
+            mode="contained-tonal"
+            onPress={() => navigation.navigate(RouterKey.HOME_SCREEN)}
+            style={{backgroundColor: '#FFFF', margin: 16}}>
+            Trở về
+          </Button>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

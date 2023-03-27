@@ -51,23 +51,34 @@ export const infoSlice = createSlice({
     updateOptionBlood: (state, action) => {
       state.option_blood = action.payload;
     },
+    updateUserInfoAfterChange: (state, action) => {
+      state.user_info = action.payload;
+    },
   },
   extraReducers: builder => {
-    builder.addCase(fetchUserInfo.fulfilled, (state, action) => {
-      state.user_info = action.payload.user;
-      state.bmi_avg = action.payload.bmis.avgBMI ?? 0;
-      state.bmi_list = action.payload.bmis.bmis;
-      state.glycemic_list = action.payload.glycemic;
-      state.glycemic_last = action.payload.last_glycemic;
-      state.blood_pressures = action.payload.blood_pressures;
-      state.rule = action.payload.bmis.rule.notification ?? null;
-      state.status = action.payload.status;
-    });
+    builder
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.user_info = action.payload.user;
+        state.bmi_avg = action.payload.bmis.avgBMI ?? 0;
+        state.bmi_list = action.payload.bmis.bmis;
+        state.glycemic_list = action.payload.glycemic;
+        state.glycemic_last = action.payload.last_glycemic;
+        state.blood_pressures = action.payload.blood_pressures;
+        state.rule = action.payload.bmis.rule.notification ?? null;
+        state.status = action.payload.status;
+      })
+      .addCase(fetchUserInfo.pending, (state, action) => {
+        console.log('pending load user info');
+      })
+      .addCase(fetchUserInfo.rejected, (state, action) => {
+        console.log('rejected load user info');
+      });
   },
 });
 
 export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   try {
+    console.log('get user info');
     const resp = await getIn4();
     const {patient, status} = resp.data;
 
@@ -107,6 +118,7 @@ export const {
   updateOptionBMI,
   addBlood,
   updateOptionBlood,
+  updateUserInfoAfterChange,
 } = infoSlice.actions;
 
 export default infoSlice.reducer;

@@ -22,27 +22,27 @@ import RouterKey from '../../utils/Routerkey';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import moment from 'moment';
 
-const genderItems = [
+export const genderItems = [
   {label: 'Nam', value: 'Nam'},
   {label: 'Nữ', value: 'Nữ'},
 ];
 
-const bloodITems = [
+export const bloodITems = [
   {label: 'O', value: 'O'},
   {label: 'A', value: 'A'},
   {label: 'B', value: 'B'},
   {label: 'AB', value: 'AB'},
 ];
 
-const anamnesisITems = [
+export const anamnesisITems = [
   {label: 'Tiền sử đường huyết: Bình thường', value: '0'},
   {label: 'Tiền sử đường huyết: Típ 1', value: '1'},
   {label: 'Tiền sử đường huyết: Típ 2', value: '2'},
 ];
 
 function SendInformationScreen({navigation, route}) {
-  // const { name } = route.params;
-  const name = 'Le Tuan';
+  const {name} = route.params;
+  // const name = 'Le Tuan';
   const [gender, setGender] = useState('Nam');
   const [blood, setBlood] = useState('O');
   const [anamnesis, setAnamnesis] = useState('0');
@@ -79,7 +79,7 @@ function SendInformationScreen({navigation, route}) {
         if (val?.error) {
           console.log('value -> ', val);
         }
-        navigation.navigate(RouterKey.LOADING_SCREEN);
+        navigation.navigate(RouterKey.LOGIN_SCREEN);
       })
       .catch(err => console.log('err -> ', err));
   };

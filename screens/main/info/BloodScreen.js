@@ -111,7 +111,7 @@ function BloodScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
-          dispatch(infoSlice.actions.addBlood(data));
+          dispatch(infoSlice.actions.addBlood(data.doc));
           setVisible(false);
           setDiastoleMetric('');
           setSystolicMetric('');

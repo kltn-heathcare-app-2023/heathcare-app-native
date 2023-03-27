@@ -71,11 +71,13 @@ export const notification_list_filter = createSelector(
       return notifications.filter(notification => !notification.hasSeen);
     } else if (rule === type.RULE_HAS_SEEN) {
       return notifications.filter(notification => notification.hasSeen);
+    } else if (rule === type.RULE_DOCTOR_REMIND) {
+      return notifications.filter(
+        notification => notification.rule === type.RULE_DOCTOR_REMIND,
+      );
     } else {
       return notifications.filter(notification =>
-        notification.rule === type.RULE_DOCTOR_REMIND
-          ? notification.rule.includes(rule)
-          : notification.rule.includes(rule) && !notification.hasSeen,
+        notification.rule.includes('SCHEDULE'),
       );
     }
   },

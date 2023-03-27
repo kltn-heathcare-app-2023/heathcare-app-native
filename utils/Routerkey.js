@@ -16,10 +16,18 @@ const RouterKey = {
   CONVERSATION_SCREEN: 'ConversationScreen',
   CONVERSATION_DETAIL_SCREEN: 'ConversationDetailScreen',
   LOADING_SCREEN: 'LoadingScreen',
+  LOADING_AFTER_LOGIN_SCREEN: 'LoadingAfterLoginScreen',
   CALL_VIDEO_SCREEN: 'CallVideoScreen',
   GLYCEMIC_SCREEN: 'GlycemicScreen',
   NOTIFICATION_SCREEN: 'NotificationScreen',
   BLOOD_SCREEN: 'BloodScreen',
+  PROFILE_PATIENT_SCREEN: 'ProfilePatientScreen',
+  DOCTOR_SCREEN: 'DoctorScreen',
+  DOCTOR_HOME_SCREEN: 'DoctorHomeScreen',
+  DOCTOR_HOME_LIST_EXAM_SCREEN: 'DoctorHomeListExamScreen',
+  DOCTOR_HOME_PATIENT_INFO_SCREEN: 'DoctorPatientInfoScreen',
+  DOCTOR_CONVERSATION_SCREEN: 'DoctorConversationScreen',
+  DOCTOR_NOTIFICATION_SCREEN: 'DoctorNotificatonScreen',
 };
 
 export default RouterKey;

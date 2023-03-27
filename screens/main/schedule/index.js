@@ -1,7 +1,7 @@
-import ScheduleNavigator from "../../../routers/schedule/ScheduleNavigator";
+import ScheduleNavigator from '../../../routers/schedule/ScheduleNavigator';
 
 function MainScheduleScreen() {
-    return <ScheduleNavigator />;
+  return <ScheduleNavigator />;
 }
 
 export default MainScheduleScreen;

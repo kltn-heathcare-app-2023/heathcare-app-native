@@ -33,9 +33,6 @@ function MainScreen({navigation}) {
           PermissionsAndroid.RECORD_AUDIO,
         )
       : undefined;
-
-  const dispatch = useDispatch();
-
   useEffect(() => {
     // storage.remove('accessToken').then(() => {});
     granted
@@ -44,17 +41,21 @@ function MainScreen({navigation}) {
           const permissions = [
             PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
             PermissionsAndroid.PERMISSIONS.CAMERA,
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           ];
           //返回得是对象类型
-          PermissionsAndroid.requestMultiple(permissions);
-          console.log('get permission ok!');
+          PermissionsAndroid.requestMultiple(permissions)
+            .then(data => {
+              console.log('get permission ok!', data);
+            })
+            .catch(err => {
+              return Promise.reject(err);
+            });
         }
       })
       .catch(err => {
         console.log('error get permission ->', err);
       });
-
-    dispatch(fetchUserInfo());
   }, []);
 
   useEffect(() => {
@@ -91,8 +92,11 @@ function MainScreen({navigation}) {
                 }}
                 onPress={() => {
                   console.log('call');
-                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-                    room_id: room,
+                  navigation.navigate(RouterKey.MESSAGE_SCREEN, {
+                    screen: RouterKey.CALL_VIDEO_SCREEN,
+                    params: {
+                      room_id: room,
+                    },
                   });
                   setVisible(false);
                 }}
