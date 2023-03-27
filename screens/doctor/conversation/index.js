@@ -1,10 +1,8 @@
 import {Text, View} from 'react-native';
+import {DoctorConversationStackNavigator} from '../../../routers/doctor/DoctorNavigator';
+
 function DoctorConversationScreen() {
-  return (
-    <View>
-      <Text>This is page conversation</Text>
-    </View>
-  );
+  return <DoctorConversationStackNavigator />;
 }
 
 export default DoctorConversationScreen;

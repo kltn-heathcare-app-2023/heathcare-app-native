@@ -7,6 +7,8 @@ import DoctorNotificationScreen from '../../screens/doctor/notification';
 import PatientInfo from '../../screens/doctor/home/PatientInfo';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DoctorHomeListPatientExamScreen from '../../screens/doctor/home/ListPatientExam';
+import DoctorConversationList from '../../screens/doctor/conversation/conversations';
+import DoctorConversationDetail from '../../screens/doctor/conversation/messages';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,6 +45,25 @@ export function DoctorHomeStackNavigator() {
       <Stack.Screen
         name={RouterKey.DOCTOR_HOME_PATIENT_INFO_SCREEN}
         component={PatientInfo}
+      />
+    </Stack.Navigator>
+  );
+}
+
+export function DoctorConversationStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}>
+      <Stack.Screen
+        name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}
+        component={DoctorConversationList}
+      />
+      <Stack.Screen
+        name={RouterKey.DOCTOR_CONVERSATION_DETAIL_SCREEN}
+        component={DoctorConversationDetail}
       />
     </Stack.Navigator>
   );

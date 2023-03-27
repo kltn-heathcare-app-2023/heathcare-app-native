@@ -12,6 +12,7 @@ import RouterKey from '../utils/Routerkey';
 import MainScreen from '../screens/main/Main';
 import DoctorScreen from '../screens/doctor/DoctorScreen';
 import LoadingAfterLoginScreen from '../screens/utils/LoadingAfterLogin';
+import CallVideoScreen from '../screens/main/messages/call-video';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,10 @@ function StackNavigator() {
         name={RouterKey.LOADING_AFTER_LOGIN_SCREEN}
         component={LoadingAfterLoginScreen}
         options={{gestureEnabled: false}}
+      />
+      <Stack.Screen
+        name={RouterKey.CALL_VIDEO_SCREEN}
+        component={CallVideoScreen}
       />
     </Stack.Navigator>
   );

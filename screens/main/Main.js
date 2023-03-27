@@ -92,11 +92,8 @@ function MainScreen({navigation}) {
                 }}
                 onPress={() => {
                   console.log('call');
-                  navigation.navigate(RouterKey.MESSAGE_SCREEN, {
-                    screen: RouterKey.CALL_VIDEO_SCREEN,
-                    params: {
-                      room_id: room,
-                    },
+                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+                    room_id: room,
                   });
                   setVisible(false);
                 }}

@@ -217,11 +217,14 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                             width: '100%',
                             height: 'auto',
                             color:
-                              status.message.code === 1
-                                ? '#fb8500'
-                                : status.message.code === 2
+                              status.message.code === 2
                                 ? '#f08080'
-                                : '#ccc',
+                                : status.message.code === 1
+                                ? '#fb8500'
+                                : status.message.code === 0
+                                ? '#38a3a5'
+                                : '#0077b6',
+                            fontWeight: '600',
                           }}>
                           {status.message.status}
                         </Text>

@@ -10,7 +10,10 @@ import {TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import MessageItem from '../../../../components/MessageItem';
 import {infoSelector} from '../../../../redux/selectors/infoSelector';
-import {messageListByConversationSelector} from '../../../../redux/selectors/messageSelector';
+import {
+  messageDoctorListByConversationSelector,
+  messageListByConversationSelector,
+} from '../../../../redux/selectors/messageSelector';
 import {
   fetchMessagesByIdConversation,
   messageSlice,
@@ -19,24 +22,26 @@ import {postMessage} from '../../../../services/patient/conversation';
 import ICon from 'react-native-vector-icons/Ionicons';
 import {socket} from '../../../../utils/config';
 import RouterKey from '../../../../utils/Routerkey';
+import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
-function ConversationDetail({route, navigation}) {
+function DoctorConversationDetail({route, navigation}) {
   const {conversation} = route.params;
-  const dispatch = useDispatch();
-  const user = useSelector(infoSelector);
-  const messages = useSelector(messageListByConversationSelector);
 
+  const dispatch = useDispatch();
+  const doctor_profile = useSelector(doctorProfileSelector);
+  const messages = useSelector(messageDoctorListByConversationSelector);
   const [message, setMessage] = useState('');
+  const [images, setImages] = useState([]);
 
   const scrollViewRef = useRef();
 
   useEffect(() => {
     socket.emit('join_room', conversation);
     dispatch(fetchMessagesByIdConversation(conversation._id));
-  }, []);
+  }, [conversation._id]);
 
   useEffect(() => {
     socket.on('receiver_message', ({message}) => {
@@ -93,76 +98,78 @@ function ConversationDetail({route, navigation}) {
 
   return (
     <>
-      <View style={styles.header}>
-        <View style={styles.header_left}>
+      <View style={{flex: 1}}>
+        <View style={styles.header}>
+          <View style={styles.header_left}>
+            <ICon
+              name={'arrow-back'}
+              color="black"
+              size={20}
+              onPress={() => navigation.goBack()}
+            />
+            <Text style={styles.header_left_username}>
+              {`BN. ${conversation.member.username}`}
+            </Text>
+          </View>
+
           <ICon
-            name={'arrow-back'}
+            name={'videocam-outline'}
             color="black"
             size={20}
-            onPress={() => navigation.goBack()}
+            onPress={() =>
+              navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+                room_id: conversation._id,
+              })
+            }
           />
-          <Text style={styles.header_left_username}>
-            {`BS. ${conversation.member.username}`}
-          </Text>
         </View>
-
-        {/* <ICon
-          name={'videocam-outline'}
-          color="black"
-          size={20}
-          onPress={() =>
-            navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-              room_id: conversation._id,
-            })
-          }
-        /> */}
-      </View>
-      {/* <KeyboardAvoidingView
+        {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
         keyboardVerticalOffset={keyboardVerticalOffset}></KeyboardAvoidingView> */}
-      <ScrollView
-        style={styles.content}
-        ref={scrollViewRef}
-        onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({animated: true})
-        }>
-        {messages.map(message => {
-          // console.log(message);
-          return <MessageItem message={message} key={message._id} />;
-        })}
-      </ScrollView>
-      <TextInput
-        right={
-          message ? (
-            <TextInput.Icon
-              icon={'send-circle-outline'}
-              size={32}
-              style={{
-                marginLeft: 16,
-              }}
-              onPress={handleSendMessage}
-            />
-          ) : (
-            <TextInput.Icon
-              icon={'camera-outline'}
-              size={32}
-              style={{
-                marginLeft: 16,
-              }}
-              onPress={handleChooseImage}
-            />
-          )
-        }
-        style={{
-          backgroundColor: '#fff',
-          borderWidth: 1,
-          height: 48,
-          borderColor: '#cccc',
-        }}
-        value={message}
-        onChangeText={val => setMessage(val)}
-        mode={'flat'}
-      />
+        <ScrollView
+          style={styles.content}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current.scrollToEnd({animated: true})
+          }>
+          {messages.map(message => {
+            // console.log(message);
+            return <MessageItem message={message} key={message._id} />;
+          })}
+        </ScrollView>
+        <TextInput
+          right={
+            message ? (
+              <TextInput.Icon
+                icon={'send-circle-outline'}
+                size={32}
+                style={{
+                  marginLeft: 16,
+                }}
+                onPress={handleSendMessage}
+              />
+            ) : (
+              <TextInput.Icon
+                icon={'camera-outline'}
+                size={32}
+                style={{
+                  marginLeft: 16,
+                }}
+                onPress={handleChooseImage}
+              />
+            )
+          }
+          style={{
+            backgroundColor: '#fff',
+            borderWidth: 1,
+            height: 48,
+            borderColor: '#cccc',
+          }}
+          value={message}
+          onChangeText={val => setMessage(val)}
+          mode={'flat'}
+        />
+      </View>
     </>
   );
 }
@@ -180,7 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header_left: {
-    width: '50%',
+    width: '70%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -219,4 +226,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConversationDetail;
+export default DoctorConversationDetail;
