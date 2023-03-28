@@ -28,7 +28,7 @@ function ConversationDetail({route, navigation}) {
   const dispatch = useDispatch();
   const user = useSelector(infoSelector);
   const messages = useSelector(messageListByConversationSelector);
-
+  const [images, setImages] = useState([]);
   const [message, setMessage] = useState('');
 
   const scrollViewRef = useRef();
@@ -49,13 +49,13 @@ function ConversationDetail({route, navigation}) {
     if (message) {
       const data = {
         conversation: conversation._id,
-        senderId: doctor_profile.doctor._id,
+        senderId: user._id,
         content: message,
       };
 
       const formData = new FormData();
       formData.append('conversation', conversation._id);
-      formData.append('senderId', doctor_profile.doctor._id);
+      formData.append('senderId', user._id);
       formData.append('content', message);
       images.forEach(image => {
         formData.append('image', image);

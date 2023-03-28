@@ -20,7 +20,9 @@ function ConversationItem({conversation, onPress}) {
         </View>
         <View>
           <Text style={styles.conversation_message}>
-            {conversation.last_message.content ?? ''}
+            {conversation.last_message.content.length > 50
+              ? conversation.last_message.content.slice(0, 50) + ' ...' ?? ''
+              : conversation.last_message.content}
           </Text>
         </View>
       </View>

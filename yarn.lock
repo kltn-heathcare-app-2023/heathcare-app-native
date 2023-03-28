@@ -6440,6 +6440,11 @@ react-native-gradle-plugin@^0.71.15:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.15.tgz#9e6b506f30729fe8eb086981702f4e3c891d2b13"
   integrity sha512-7S3pAuPaQJlhax6EZ4JMsDNpj05TfuzX9gPgWLrFfAIWIFLuJ6aDQYAZy2TEI9QJALPoWrj8LWaqP/DGYh14pw==
 
+react-native-internal-notification@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-internal-notification/-/react-native-internal-notification-1.0.7.tgz#8fef90170fe3e989a95fc754db440f3d036d1bbe"
+  integrity sha512-p8w3+bLZR6eSA1AayjYLsbLWePsrWNCqqnibrZdnQAunTlYHNisp4rPecPtZwhY2jVkRjpLYhhYsvkx+jYjFcQ==
+
 react-native-modal@13.0.1:
   version "13.0.1"
   resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-13.0.1.tgz#691f1e646abb96fa82c1788bf18a16d585da37cd"

@@ -36,11 +36,15 @@ function LoadingScreen({navigation, route}) {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(user_info).length > 0) {
-      navigation.navigate(RouterKey.MAIN_SCREEN);
-    }
-    if (Object.keys(doctor_profile).length > 0) {
-      navigation.navigate(RouterKey.DOCTOR_SCREEN);
+    if (user_info && doctor_profile) {
+      if (Object.keys(user_info).length > 0) {
+        navigation.navigate(RouterKey.MAIN_SCREEN);
+      }
+      if (Object.keys(doctor_profile).length > 0) {
+        navigation.navigate(RouterKey.DOCTOR_SCREEN);
+      }
+    } else {
+      navigation.navigate(RouterKey.LOGIN_SCREEN);
     }
   }, [user_info, doctor_profile]);
 

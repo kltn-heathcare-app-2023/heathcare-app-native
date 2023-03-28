@@ -112,7 +112,7 @@ function PatientInfo({navigation, route}) {
                       : glycemics[glycemics.length - 1].case === 2
                       ? 'weather-sunny'
                       : 'weather-partly-cloudy'
-                    : null
+                    : 'weather-sunny'
                 }
               />
             )}

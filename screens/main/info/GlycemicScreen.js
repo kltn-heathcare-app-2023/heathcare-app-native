@@ -127,6 +127,9 @@ function GlycemicScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
+          socket.emit('notification_register_schedule_from_patient', {
+            data: data.notification,
+          });
           dispatch(infoSlice.actions.addGlycemic(data.doc));
           setVisible(false);
           setGlycemic('');

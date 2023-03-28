@@ -63,6 +63,7 @@ function MainScreen({navigation}) {
   }, [user_info]);
 
   useEffect(() => {
+    socket.emit('add_user', user_info._id);
     socket.on('call_id_room_to_user_success', resp => {
       const {room_id, doctor_username} = resp;
       setRoom(room_id);

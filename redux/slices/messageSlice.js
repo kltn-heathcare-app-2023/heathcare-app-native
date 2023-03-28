@@ -9,7 +9,13 @@ export const messageSlice = createSlice({
   },
   reducers: {
     pushMessage: (state, action) => {
-      state.messages.push(action.payload);
+      const isExist = state.messages.findIndex(
+        message => message._id === action.payload._id,
+      );
+
+      if (isExist < 0) {
+        state.messages.push(action.payload);
+      }
     },
   },
   extraReducers: builder => {

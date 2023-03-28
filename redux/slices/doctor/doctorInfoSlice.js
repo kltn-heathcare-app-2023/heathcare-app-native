@@ -6,7 +6,11 @@ export const doctorInfoSlice = createSlice({
   initialState: {
     doctor_profile: {},
   },
-  reducers: {},
+  reducers: {
+    resetDoctorProfile: state => {
+      state.doctor_profile = {};
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchInfoDoctor.fulfilled, (state, action) => {

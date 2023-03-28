@@ -10,8 +10,8 @@ function MessageItem({message}) {
         message.isMe && {
           flexDirection: 'row-reverse',
           alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginRight: '22%',
+          justifyContent: 'flex-start',
+          // marginRight: '22%',
         },
       ]}>
       <Avatar.Image size={24} source={{uri: message.sender.avatar}} />
@@ -31,7 +31,7 @@ function MessageItem({message}) {
           ]}>
           {message.sender.username}
         </Text>
-        <Text style={{textAlign: message.isMe ? 'right' : 'left'}}>
+        <Text style={{textAlign: message.isMe ? 'left' : 'left'}}>
           {message.content}
         </Text>
 
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     // marginRight: "20%",
   },
   message_text: {
-    width: '70%',
+    maxWidth: '70%',
     minHeight: 50,
     backgroundColor: '#caf0f8',
     borderRadius: 16,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   message_image: {
     marginTop: 8,
-    width: '100%',
+    minWidth: 200,
     height: 250,
   },
 });

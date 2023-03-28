@@ -31,6 +31,7 @@ import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
 
 import AnimatedLottieView from 'lottie-react-native';
+import {socket} from '../../../utils/config';
 
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
@@ -111,6 +112,10 @@ function BloodScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
+          console.log(data);
+          socket.emit('notification_register_schedule_from_patient', {
+            data: data.notification,
+          });
           dispatch(infoSlice.actions.addBlood(data.doc));
           setVisible(false);
           setDiastoleMetric('');

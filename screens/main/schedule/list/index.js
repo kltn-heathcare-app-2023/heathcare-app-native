@@ -43,7 +43,9 @@ function ScheduleListScreen({navigation}) {
               'Vui lòng chọn ngày lớn hơn hoặc bằng ngày hôm nay',
             );
           } else {
-            dispatch(scheduleSlice.actions.chooseDayOfWeek(date.getDay()));
+            dispatch(
+              scheduleSlice.actions.chooseDayOfWeek(new Date(date).getDay()),
+            );
             setSelectedDate(date);
           }
         }}

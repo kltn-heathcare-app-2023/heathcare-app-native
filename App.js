@@ -5,10 +5,7 @@ import {store} from './redux/store';
 import {Provider, useSelector} from 'react-redux';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {StatusBar} from 'react-native';
-
-import env from './utils/env';
-import storage from './utils/storage';
-import {useEffect, useState} from 'react';
+import {NotificationProvider} from 'react-native-internal-notification';
 
 LogBox.ignoreLogs([
   'Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead',
@@ -19,18 +16,22 @@ LogBox.ignoreLogs([
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <PaperProvider>
-        <StatusBar
-          animated={true}
-          backgroundColor="#a2d2ff"
-          barStyle={'light-content'}
-          showHideTransition={'fade'}
-          // hidden={''}
-        />
-        <RootStackNavigator />
-        {/* </ZegoUIKitPrebuiltCallWithInvitation> */}
-      </PaperProvider>
-    </Provider>
+    <>
+      <Provider store={store}>
+        <PaperProvider>
+          <StatusBar
+            animated={true}
+            backgroundColor="#a2d2ff"
+            barStyle={'light-content'}
+            showHideTransition={'fade'}
+            // hidden={''}
+          />
+          <NotificationProvider>
+            <RootStackNavigator />
+          </NotificationProvider>
+          {/* </ZegoUIKitPrebuiltCallWithInvitation> */}
+        </PaperProvider>
+      </Provider>
+    </>
   );
 }
