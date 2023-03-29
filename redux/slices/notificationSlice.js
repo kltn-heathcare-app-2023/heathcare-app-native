@@ -25,7 +25,13 @@ export const notificationSlice = createSlice({
         state.notification_list = state.notification_list.filter(
           notification => !action.payload.includes(notification._id),
         );
-      });
+      })
+      .addCase(
+        updateStatusSeenNotificationByDoctor.fulfilled,
+        (state, action) => {
+          state.notification_list = action.payload;
+        },
+      );
   },
 });
 
@@ -45,6 +51,19 @@ export const fetchNotificationListById = createAsyncThunk(
 
 export const updateStatusSeenNotification = createAsyncThunk(
   'notifications/update/hasSeen',
+  async ids => {
+    try {
+      const resp = await updateStatusNotification({ids});
+      const resp_ids = resp.map(notification => notification._id);
+      return resp_ids;
+    } catch (error) {
+      console.error('error update notifications -> ', error);
+    }
+  },
+);
+
+export const updateStatusSeenNotificationByDoctor = createAsyncThunk(
+  'notifications/update/hasSeen/doctor',
   async ids => {
     try {
       const resp = await updateStatusNotification({ids});
@@ -80,6 +99,17 @@ export const notification_list_filter = createSelector(
         notification.rule.includes('SCHEDULE'),
       );
     }
+  },
+);
+
+export const notification_list_unread_filter = createSelector(
+  notification_list_selector,
+  notifications => {
+    if (notifications) {
+      return notifications.filter(notification => !notification.hasSeen).length;
+    }
+
+    return 0;
   },
 );
 

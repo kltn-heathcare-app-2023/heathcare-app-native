@@ -9,14 +9,7 @@ import {getAllConversation} from '../../../../services/doctor/patient';
 import RouterKey from '../../../../utils/Routerkey';
 
 function DoctorConversationList({navigation}) {
-  const doctor_profile = useSelector(doctorProfileSelector);
-  const dispatch = useDispatch();
-
   const doctor_conversations = useSelector(cleanDoctorConversationListSelector);
-
-  useEffect(() => {
-    dispatch(fetchConversationByDoctorId(doctor_profile.doctor._id));
-  }, []);
 
   const onPressConversation = conversation => {
     navigation.navigate(RouterKey.DOCTOR_CONVERSATION_DETAIL_SCREEN, {

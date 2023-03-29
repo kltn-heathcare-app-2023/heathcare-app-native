@@ -12,7 +12,8 @@ const RULE_SYSTEM = 'RULE_SYSTEM';
 const RULE_INFORMATION = 'RULE_INFORMATION';
 const RULE_ALL = 'RULE_ALL';
 const RULE_HAS_SEEN = 'RULE_HAS_SEEN';
-
+const RULE_WARNING = 'RULE_WARNING';
+const RULE_SOS = 'RULE_SOS';
 export const AVATAR_DEFAULT =
   'https://png.pngtree.com/png-clipart/20221207/ourlarge/pngtree-fashion-boy-avatar-png-image_6514592.png';
 
@@ -25,4 +26,6 @@ export const type = {
   RULE_ALL,
   RULE__SCHEDULE,
   RULE_HAS_SEEN,
+  RULE_WARNING,
+  RULE_SOS,
 };

@@ -40,6 +40,8 @@ function LoadingAfterLoginScreen({navigation, route}) {
       navigation.navigate(RouterKey.MAIN_SCREEN);
     }
     if (Object.keys(doctor_profile).length > 0) {
+      dispatch(fetchNotificationListById(doctor_profile.doctor._id));
+      dispatch(fetchConversationByDoctorId(doctor_profile.doctor._id));
       navigation.navigate(RouterKey.DOCTOR_SCREEN);
     }
   }, [user_info, doctor_profile]);

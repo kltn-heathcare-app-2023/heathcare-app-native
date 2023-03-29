@@ -33,4 +33,7 @@ export const fetchInfoDoctor = createAsyncThunk(
     }
   },
 );
+
+const {resetDoctorProfile} = doctorInfoSlice.actions;
+
 export default doctorInfoSlice.reducer;

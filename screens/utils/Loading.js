@@ -11,6 +11,8 @@ import {infoSelector} from '../../redux/selectors/infoSelector';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
 import {doctorProfileSelector} from '../../redux/selectors/doctor/infoSelector';
+import {fetchNotificationListById} from '../../redux/slices/notificationSlice';
+import {fetchConversationByDoctorId} from '../../redux/slices/doctor/doctorConversationSlice';
 
 function LoadingScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
@@ -41,6 +43,8 @@ function LoadingScreen({navigation, route}) {
         navigation.navigate(RouterKey.MAIN_SCREEN);
       }
       if (Object.keys(doctor_profile).length > 0) {
+        dispatch(fetchNotificationListById(doctor_profile.doctor._id));
+        dispatch(fetchConversationByDoctorId(doctor_profile.doctor._id));
         navigation.navigate(RouterKey.DOCTOR_SCREEN);
       }
     } else {

@@ -8,39 +8,42 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   fetchNotificationListById,
   notification_list_selector,
+  updateStatusSeenNotification,
+  notification_list_unread_filter,
 } from '../../../redux/slices/notificationSlice';
 import {doctorProfileSelector} from '../../../redux/selectors/doctor/infoSelector';
 import {ScrollView} from 'react-native-gesture-handler';
 import {type} from '../../../common/constant';
 import moment from 'moment';
+import {doctorInfoSlice} from '../../../redux/slices/doctor/doctorInfoSlice';
 
 function DoctorNotificationScreen({navigation}) {
   const dispatch = useDispatch();
-  const doctor_profile = useSelector(doctorProfileSelector);
   const notification_list = useSelector(notification_list_selector);
+  const notification_list_unread = useSelector(notification_list_unread_filter);
 
   const handleLogoutByDoctor = async () => {
-    await storage.remove('accessToken');
     navigation.navigate(RouterKey.LOGIN_SCREEN);
+    await storage.remove('accessToken');
+    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
   };
 
-  const notification = useNotification();
-
-  useEffect(() => {
-    // notification.showNotification({
-    //   title: 'My first notification',
-    //   message: 'Hello from my first message',
-    //   icon: null,
-    //   onPress: () => {
-    //     alert('Pressed');
-    //   },
-    // });
-    dispatch(fetchNotificationListById(doctor_profile.doctor._id));
-  }, []);
+  const handleSeenNotification = async () => {
+    const ids = notification_list.map(notification => notification._id);
+    dispatch(updateStatusSeenNotification(ids));
+  };
 
   return (
     <ScrollView>
       <Button onPress={handleLogoutByDoctor}>Đăng xuất</Button>
+      {notification_list_unread.length > 0 && (
+        <Button
+          onPress={handleSeenNotification}
+          style={{marginBottom: 8}}
+          mode="elevated">
+          Đánh dấu đã xem
+        </Button>
+      )}
       {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
         return (
           <TouchableOpacity
@@ -51,10 +54,14 @@ function DoctorNotificationScreen({navigation}) {
                   type.RULE_NOTIFICATION_REGISTER_SCHEDULE,
                 )
                   ? '#a8dadc'
-                  : rule.includes(type.RULE_NOTIFICATION_CANCEL_SCHEDULE)
+                  : rule === type.RULE_NOTIFICATION_CANCEL_SCHEDULE
                   ? '#fec89a'
                   : rule === type.RULE_SYSTEM
                   ? '#ccc'
+                  : rule === type.RULE_WARNING
+                  ? '#fca311'
+                  : rule === type.RULE_SOS
+                  ? '#e63946'
                   : '#f6bd60',
               },
             ]}
@@ -64,6 +71,10 @@ function DoctorNotificationScreen({navigation}) {
                 ? 'Lịch khám'
                 : rule.includes('REMIND')
                 ? 'Nhắc nhở'
+                : rule === type.RULE_WARNING
+                ? 'Cảnh báo'
+                : rule === type.RULE_SOS
+                ? 'SOS'
                 : 'Hệ thống'}
             </Text>
             <Text style={styles.content_notification}>{content}</Text>

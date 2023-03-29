@@ -9,6 +9,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DoctorHomeListPatientExamScreen from '../../screens/doctor/home/ListPatientExam';
 import DoctorConversationList from '../../screens/doctor/conversation/conversations';
 import DoctorConversationDetail from '../../screens/doctor/conversation/messages';
+import {useSelector} from 'react-redux';
+import {notification_list_unread_filter} from '../../redux/slices/notificationSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +22,7 @@ const screenOptions = ({route}) => ({
     } else if (route.name === RouterKey.DOCTOR_HOME_SCREEN) {
       iconName = 'book-account';
     } else if (route.name === RouterKey.DOCTOR_NOTIFICATION_SCREEN) {
-      iconName = 'account';
+      iconName = 'bell-ring-outline';
     }
     return <Icon name={iconName} size={20} color={color} />;
   },
@@ -70,6 +72,8 @@ export function DoctorConversationStackNavigator() {
 }
 
 function AdminNavigator() {
+  const notification_unread = useSelector(notification_list_unread_filter);
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -87,6 +91,7 @@ function AdminNavigator() {
         options={{
           tabBarLabel: 'Thông báo',
           title: 'Thông báo',
+          tabBarBadge: notification_unread > 0 ? notification_unread : null,
         }}
       />
       {/* <Tab.Screen
