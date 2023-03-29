@@ -40,6 +40,7 @@ function LoadingScreen({navigation, route}) {
   useEffect(() => {
     if (user_info && doctor_profile) {
       if (Object.keys(user_info).length > 0) {
+        dispatch(fetchNotificationListById(user_info._id));
         navigation.navigate(RouterKey.MAIN_SCREEN);
       }
       if (Object.keys(doctor_profile).length > 0) {

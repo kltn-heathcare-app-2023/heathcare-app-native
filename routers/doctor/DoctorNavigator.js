@@ -11,6 +11,7 @@ import DoctorConversationList from '../../screens/doctor/conversation/conversati
 import DoctorConversationDetail from '../../screens/doctor/conversation/messages';
 import {useSelector} from 'react-redux';
 import {notification_list_unread_filter} from '../../redux/slices/notificationSlice';
+import DoctorInfoScreen from '../../screens/doctor/info';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +24,8 @@ const screenOptions = ({route}) => ({
       iconName = 'book-account';
     } else if (route.name === RouterKey.DOCTOR_NOTIFICATION_SCREEN) {
       iconName = 'bell-ring-outline';
+    } else if (route.name === RouterKey.DOCTOR_INFO_SCREEN) {
+      iconName = 'account';
     }
     return <Icon name={iconName} size={20} color={color} />;
   },
@@ -94,14 +97,14 @@ function AdminNavigator() {
           tabBarBadge: notification_unread > 0 ? notification_unread : null,
         }}
       />
-      {/* <Tab.Screen
-        name={RouterKey.ROUTER_INFO_SCREEN}
-        component={MainInfo}
+      <Tab.Screen
+        name={RouterKey.DOCTOR_INFO_SCREEN}
+        component={DoctorInfoScreen}
         options={{
           tabBarLabel: 'Cá nhân',
           title: 'Cá nhân',
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 }

@@ -6,6 +6,8 @@ import MainInfo from '../screens/main/info';
 import MainScheduleScreen from '../screens/main/schedule';
 import NotificationScreen from '../screens/main/notification';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {notification_list_unread_filter} from '../redux/slices/notificationSlice';
+import {useSelector} from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +33,8 @@ const screenOptions = ({route}) => ({
 });
 
 function MainNavigator() {
+  const notification_unread = useSelector(notification_list_unread_filter);
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -54,6 +58,7 @@ function MainNavigator() {
         options={{
           tabBarLabel: 'Thông báo',
           title: 'Thông báo',
+          tabBarBadge: notification_unread > 0 ? notification_unread : null,
         }}
       />
       <Tab.Screen

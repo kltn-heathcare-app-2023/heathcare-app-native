@@ -22,12 +22,6 @@ function DoctorNotificationScreen({navigation}) {
   const notification_list = useSelector(notification_list_selector);
   const notification_list_unread = useSelector(notification_list_unread_filter);
 
-  const handleLogoutByDoctor = async () => {
-    navigation.navigate(RouterKey.LOGIN_SCREEN);
-    await storage.remove('accessToken');
-    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
-  };
-
   const handleSeenNotification = async () => {
     const ids = notification_list.map(notification => notification._id);
     dispatch(updateStatusSeenNotification(ids));
@@ -35,7 +29,6 @@ function DoctorNotificationScreen({navigation}) {
 
   return (
     <ScrollView>
-      <Button onPress={handleLogoutByDoctor}>Đăng xuất</Button>
       {notification_list_unread.length > 0 && (
         <Button
           onPress={handleSeenNotification}
