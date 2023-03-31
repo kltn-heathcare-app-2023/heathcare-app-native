@@ -1,4 +1,5 @@
 import AnimatedLottieView from 'lottie-react-native';
+import moment from 'moment';
 import {useState} from 'react';
 import {
   Image,
@@ -91,7 +92,9 @@ function PatientInfo({navigation, route}) {
             style={{marginLeft: 16}}
             title={`Chỉ số BMI: ${
               bmis && bmis.length > 0
-                ? bmis[bmis.length - 1].cal_bmi
+                ? `${bmis[bmis.length - 1].cal_bmi} - ${moment(
+                    bmis[bmis.length - 1].createdAt,
+                  ).fromNow()}`
                 : 'Chưa cập nhật'
             }`}
             left={() => <List.Icon icon="human-male-height" />}
@@ -100,7 +103,9 @@ function PatientInfo({navigation, route}) {
             style={{marginLeft: 16}}
             title={`Chỉ số đường huyết: ${
               glycemics && glycemics.length > 0
-                ? glycemics[glycemics.length - 1].metric
+                ? `${glycemics[glycemics.length - 1].metric} - ${moment(
+                    glycemics[glycemics.length - 1].createdAt,
+                  ).fromNow()}`
                 : 'Chưa cập nhật'
             }`}
             left={() => (
@@ -112,7 +117,7 @@ function PatientInfo({navigation, route}) {
                       : glycemics[glycemics.length - 1].case === 2
                       ? 'weather-sunny'
                       : 'weather-partly-cloudy'
-                    : null
+                    : 'weather-sunny'
                 }
               />
             )}
@@ -123,7 +128,9 @@ function PatientInfo({navigation, route}) {
               blood_pressures && blood_pressures.length > 0
                 ? `${blood_pressures[blood_pressures.length - 1].systolic} - ${
                     blood_pressures[blood_pressures.length - 1].diastole
-                  }`
+                  } -  ${moment(
+                    blood_pressures[blood_pressures.length - 1].createdAt,
+                  ).fromNow()}`
                 : 'Chỉ số chưa cập nhật'
             }`}
             left={() => <List.Icon icon={'heart-pulse'} />}

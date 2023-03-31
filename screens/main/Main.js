@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {
+  Alert,
   PermissionsAndroid,
   Platform,
   StyleSheet,
@@ -16,6 +17,8 @@ import RouterKey from '../../utils/Routerkey';
 import {socket} from '../../utils/config';
 import {infoSelector} from '../../redux/selectors/infoSelector';
 import storage from '../../utils/storage';
+import {Root, Popup} from 'popup-ui';
+import moment from 'moment';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
@@ -30,7 +33,8 @@ function MainScreen({navigation}) {
     Platform.OS == 'android'
       ? PermissionsAndroid.check(
           PermissionsAndroid.PERMISSIONS.CAMERA,
-          PermissionsAndroid.RECORD_AUDIO,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         )
       : undefined;
   useEffect(() => {
@@ -56,6 +60,163 @@ function MainScreen({navigation}) {
       .catch(err => {
         console.log('error get permission ->', err);
       });
+
+    if (Object.keys(user_info.metrics).length > 0) {
+      //alter remind give bmi
+      const now = new Date();
+      if (now.getHours() > 9 && user_info.metrics?.last_bmi) {
+        const now_day = new Date();
+        const last_bmi_created = new Date(
+          user_info.metrics?.last_bmi.createdAt,
+        );
+
+        if (
+          now_day.getDate() > last_bmi_created.getDate() &&
+          now_day.getMonth() === last_bmi_created.getMonth()
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số BMI cho hôm nay. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.INFO_BMI_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      }
+
+      if (
+        now.getHours() > 6 &&
+        now.getHours() <= 8 &&
+        user_info.metrics?.glycemic
+      ) {
+        const now_day = new Date();
+        const last_glycemic_created = new Date(
+          user_info.metrics?.glycemic.createdAt,
+        );
+
+        if (
+          now_day.getDate() > last_glycemic_created.getDate() &&
+          now_day.getMonth() === last_glycemic_created.getMonth() &&
+          metrics?.glycemic.case != 1
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số đường huyết trước bữa ăn. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.GLYCEMIC_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      }
+
+      if (
+        now.getHours() > 8 &&
+        now.getHours() < 11 &&
+        user_info.metrics?.glycemic
+      ) {
+        const now_day = new Date();
+        const last_glycemic_created = new Date(
+          user_info.metrics?.glycemic.createdAt,
+        );
+
+        if (
+          now_day.getDate() > last_glycemic_created.getDate() &&
+          now_day.getMonth() === last_glycemic_created.getMonth() &&
+          metrics?.glycemic.case != 2
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số đường huyết trước sau bữa ăn. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.GLYCEMIC_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      }
+
+      if (
+        now.getHours() > 20 &&
+        now.getHours() < 22 &&
+        user_info.metrics?.last_blood_pressures
+      ) {
+        const now_day = new Date();
+        const last_blood_pressures_created = new Date(
+          user_info.metrics?.last_blood_pressures.createdAt,
+        );
+
+        if (
+          now_day.getDate() > last_blood_pressures_created.getDate() &&
+          now_day.getMonth() === last_blood_pressures_created.getMonth() &&
+          user_info.metrics?.last_blood_pressures
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số  huyết áp cho ngày hôm nay. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.BLOOD_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      } else if (!user_info.metrics?.last_blood_pressures) {
+        Popup.show({
+          type: 'Warning',
+          title: 'Nhắc nhở',
+          button: true,
+          textBody:
+            'Hình như, bạn chưa nhập chỉ số  huyết áp lần nào. Nhập ngay nào!',
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              screen: RouterKey.BLOOD_SCREEN,
+            });
+            Popup.hide();
+          },
+        });
+      }
+    } else {
+      Popup.show({
+        type: 'Success',
+        title: 'Xin chào',
+        button: true,
+        textBody:
+          'Chào bạn, để các bác sĩ có thể hiểu rõ hơn tình trạng của bạn. Vui lòng nhập các chỉ số',
+        buttontext: 'Nhập ngay',
+        callback: () => {
+          navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+            screen: RouterKey.INFO_SCREEN,
+          });
+          Popup.hide();
+        },
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -63,6 +224,7 @@ function MainScreen({navigation}) {
   }, [user_info]);
 
   useEffect(() => {
+    socket.emit('add_user', user_info._id);
     socket.on('call_id_room_to_user_success', resp => {
       const {room_id, doctor_username} = resp;
       setRoom(room_id);
@@ -92,11 +254,8 @@ function MainScreen({navigation}) {
                 }}
                 onPress={() => {
                   console.log('call');
-                  navigation.navigate(RouterKey.MESSAGE_SCREEN, {
-                    screen: RouterKey.CALL_VIDEO_SCREEN,
-                    params: {
-                      room_id: room,
-                    },
+                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+                    room_id: room,
                   });
                   setVisible(false);
                 }}

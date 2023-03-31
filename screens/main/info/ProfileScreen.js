@@ -99,6 +99,7 @@ function ProfilePatientScreen({navigation}) {
         if (val?.error) {
           console.log('value -> ', val);
         }
+        console.log(val);
         dispatch(infoSlice.actions.updateUserInfoAfterChange(val.data));
         hideModal();
       })
@@ -109,7 +110,9 @@ function ProfilePatientScreen({navigation}) {
     <>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <Image source={{uri: person.avatar}} style={styles.header_image} />
+          {person?.avatar && (
+            <Image source={{uri: person.avatar}} style={styles.header_image} />
+          )}
           <TouchableOpacity onPress={showModal}>
             <Lottie
               source={require('../../../assets/images/update-info.json')}

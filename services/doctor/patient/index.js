@@ -15,3 +15,7 @@ export const getAllWorkingDay = id => {
 export const createRemindToPatient = (patientId, data) => {
   return fetch.postWithAuth(`/doctors/remind/${patientId}`, data);
 };
+
+export const getAllConversation = id => {
+  return fetch.get(`/conversations/doctor/${id}`);
+};

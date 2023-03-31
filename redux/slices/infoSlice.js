@@ -80,7 +80,7 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
   try {
     console.log('get user info');
     const resp = await getIn4();
-    const {patient, status} = resp.data;
+    const {patient, status, metrics} = resp.data;
 
     if (patient) {
       const user_id = patient._id;
@@ -95,6 +95,8 @@ export const fetchUserInfo = createAsyncThunk('info/fetchInfo', async () => {
       const glycemic = resp_values[1].data;
       const last_glycemic = resp_values[2].data;
       const blood_pressures = resp_values[3].data;
+
+      patient['metrics'] = metrics;
 
       return {
         user: patient,

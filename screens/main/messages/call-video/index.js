@@ -8,18 +8,21 @@ import RouterKey from '../../../../utils/Routerkey';
 import env from '../../../../utils/env';
 import {useSelector} from 'react-redux';
 import {infoSelector} from '../../../../redux/selectors/infoSelector';
+import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 
 function CallVideoScreen({navigation, route}) {
   const {room_id} = route.params;
   const user_info = useSelector(infoSelector);
-
+  const doctor_profile = useSelector(doctorProfileSelector);
   return (
     <View style={{flex: 1}}>
       <ZegoUIKitPrebuiltCall
         appID={env.CALL_APP_ID}
         appSign={env.CALL_APP_SIGN_IN}
-        userID={user_info._id}
-        userName={user_info.person.username}
+        userID={user_info?._id ?? doctor_profile?.doctor?._id}
+        userName={
+          user_info?.person?.username ?? doctor_profile?.doctor?.person.username
+        }
         callID={room_id}
         notifyWhenAppRunningInBackgroundOrQuit={true}
         isIOSSandboxEnvironment={false} // Ignore this if you are not building an iOS app.
@@ -27,11 +30,19 @@ function CallVideoScreen({navigation, route}) {
           ...ONE_ON_ONE_VIDEO_CALL_CONFIG,
           onOnlySelfInRoom: () => {
             navigation.goBack();
-            navigation.navigate(RouterKey.HOME_SCREEN);
+            navigation.navigate(
+              Object.keys(user_info).length > 0
+                ? RouterKey.HOME_SCREEN
+                : RouterKey.DOCTOR_HOME_SCREEN,
+            );
           },
           onHangUp: () => {
             navigation.goBack();
-            navigation.navigate(RouterKey.HOME_SCREEN);
+            navigation.navigate(
+              Object.keys(user_info).length > 0
+                ? RouterKey.HOME_SCREEN
+                : RouterKey.DOCTOR_HOME_SCREEN,
+            );
           },
 
           layout: {

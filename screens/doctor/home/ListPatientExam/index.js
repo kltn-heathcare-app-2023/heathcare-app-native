@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useNotification} from 'react-native-internal-notification';
 import {
   ActivityIndicator,
   Button,
@@ -12,22 +13,37 @@ import {
 import {useSelector} from 'react-redux';
 import {AVATAR_DEFAULT} from '../../../../common/constant';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
+import {notification_list_selector} from '../../../../redux/slices/notificationSlice';
 import {
   getAllScheduleDetailUnAccepted,
   getAllWorkingDay,
   getPatientExamByDoctorId,
 } from '../../../../services/doctor/patient';
 import RouterKey from '../../../../utils/Routerkey';
-import storage from '../../../../utils/storage';
+
+import Icon from 'react-native-vector-icons/Ionicons';
 
 function DoctorHomeListPatientExamScreen({navigation}) {
+  const notification = useNotification();
   const doctor_profile = useSelector(doctorProfileSelector);
   const [patientList, setPatientList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [scheduleWaiting, setScheduleWaiting] = useState(0);
   const [numberWorkingDay, setNumberWorkingDay] = useState(0);
+  const notification_list = useSelector(notification_list_selector);
+
+  const last_notification = notification_list[notification_list.length - 1];
 
   useEffect(() => {
+    if (last_notification) {
+      notification.showNotification({
+        title: 'Thông báo',
+        message: last_notification.content,
+        icon: <Icon name={'ios-notifications-outline'} size={24} />,
+        color: '#fff',
+      });
+    }
+
     setLoading(true);
     if (doctor_profile?.doctor?._id) {
       getPatientExamByDoctorId(doctor_profile.doctor._id)
@@ -217,11 +233,14 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                             width: '100%',
                             height: 'auto',
                             color:
-                              status.message.code === 1
-                                ? '#fb8500'
-                                : status.message.code === 2
+                              status.message.code === 2
                                 ? '#f08080'
-                                : '#ccc',
+                                : status.message.code === 1
+                                ? '#fb8500'
+                                : status.message.code === 0
+                                ? '#38a3a5'
+                                : '#0077b6',
+                            fontWeight: '600',
                           }}>
                           {status.message.status}
                         </Text>

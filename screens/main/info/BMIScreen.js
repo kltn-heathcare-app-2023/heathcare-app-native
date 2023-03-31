@@ -23,6 +23,8 @@ import {postBMI} from '../../../services/patient/info';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 
 import DropDownPicker from '../../../components/Input/DropdownPicker';
+import {socket} from '../../../utils/config';
+import {Popup} from 'popup-ui';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -88,10 +90,31 @@ function BMIScreen() {
       };
       const bmi = await postBMI(data);
       if (bmi?.data) {
+        const {avgBMI, doc, notifications, rule} = bmi.data;
+        console.log(bmi.data);
+        notifications &&
+          notifications.length > 0 &&
+          notifications.forEach(notification => {
+            socket.emit('notification_register_schedule_from_patient', {
+              data: notification,
+            });
+          });
         // console.log(bmi);
-        Alert.alert('Thông báo sức khỏe', bmi?.data?.rule?.notification ?? '');
-        dispatch(infoSlice.actions.updateAVGBMI(bmi.data.avgBMI));
-        dispatch(infoSlice.actions.addBMI(bmi.data.doc));
+        Popup.show({
+          type: 'Success',
+          title: 'Thông báo sức khỏe',
+          button: true,
+          textBody: rule?.notification ?? '',
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+            //   screen: RouterKey.INFO_SCREEN,
+            // });
+            Popup.hide();
+          },
+        });
+        dispatch(infoSlice.actions.updateAVGBMI(avgBMI));
+        dispatch(infoSlice.actions.addBMI(doc));
         hideModal();
       }
     } catch ({error, message}) {

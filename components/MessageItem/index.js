@@ -1,4 +1,5 @@
-import {StyleSheet, Text, View} from 'react-native';
+import moment from 'moment';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {Avatar} from 'react-native-paper';
 
 function MessageItem({message}) {
@@ -9,8 +10,8 @@ function MessageItem({message}) {
         message.isMe && {
           flexDirection: 'row-reverse',
           alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginRight: '22%',
+          justifyContent: 'flex-start',
+          // marginRight: '22%',
         },
       ]}>
       <Avatar.Image size={24} source={{uri: message.sender.avatar}} />
@@ -30,8 +31,28 @@ function MessageItem({message}) {
           ]}>
           {message.sender.username}
         </Text>
-        <Text style={message.isMe && {textAlign: 'right'}}>
+        <Text style={{textAlign: message.isMe ? 'left' : 'left'}}>
           {message.content}
+        </Text>
+
+        {message?.images &&
+          message.images.length > 0 &&
+          message.images.map((image, index) => {
+            return (
+              <Image
+                source={{uri: image}}
+                key={index}
+                style={styles.message_image}
+              />
+            );
+          })}
+        <Text
+          style={{
+            textAlign: message.isMe ? 'right' : 'left',
+            fontSize: 12,
+            marginTop: 4,
+          }}>
+          {moment(message.createdAt).fromNow()}
         </Text>
       </View>
     </View>
@@ -54,7 +75,7 @@ const styles = StyleSheet.create({
     // marginRight: "20%",
   },
   message_text: {
-    width: '70%',
+    maxWidth: '70%',
     minHeight: 50,
     backgroundColor: '#caf0f8',
     borderRadius: 16,
@@ -63,6 +84,11 @@ const styles = StyleSheet.create({
   },
   message_username: {
     fontWeight: '700',
+  },
+  message_image: {
+    marginTop: 8,
+    minWidth: 200,
+    height: 250,
   },
 });
 

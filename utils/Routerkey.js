@@ -27,7 +27,10 @@ const RouterKey = {
   DOCTOR_HOME_LIST_EXAM_SCREEN: 'DoctorHomeListExamScreen',
   DOCTOR_HOME_PATIENT_INFO_SCREEN: 'DoctorPatientInfoScreen',
   DOCTOR_CONVERSATION_SCREEN: 'DoctorConversationScreen',
+  DOCTOR_CONVERSATION_LIST_SCREEN: 'DoctorConversationListScreen',
+  DOCTOR_CONVERSATION_DETAIL_SCREEN: 'DoctorConversationDetail',
   DOCTOR_NOTIFICATION_SCREEN: 'DoctorNotificatonScreen',
+  DOCTOR_INFO_SCREEN: 'DoctorInfoScreen',
 };
 
 export default RouterKey;

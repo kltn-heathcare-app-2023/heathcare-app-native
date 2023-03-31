@@ -31,7 +31,8 @@ import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
 
 import AnimatedLottieView from 'lottie-react-native';
-
+import {socket} from '../../../utils/config';
+import {Popup} from 'popup-ui';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -111,17 +112,60 @@ function BloodScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
+          console.log(data);
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: `Chỉ số  huyết áp đã được cập nhật`,
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
+          socket.emit('notification_register_schedule_from_patient', {
+            data: data.notification,
+          });
           dispatch(infoSlice.actions.addBlood(data.doc));
           setVisible(false);
           setDiastoleMetric('');
           setSystolicMetric('');
         })
         .catch(error => {
-          Alert.alert(TITLE_NOTIFICATION, error.message);
+          Popup.show({
+            type: 'Danger',
+            title: 'Lỗi',
+            button: true,
+            textBody: `${error.message}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
           setVisible(false);
         });
     } else {
-      Alert.alert(TITLE_NOTIFICATION, MESSAGE_MISS_DATA);
+      setVisible(false);
+      Popup.show({
+        type: 'Warning',
+        title: 'Chú ý',
+        button: true,
+        textBody: MESSAGE_MISS_DATA,
+        buttontext: 'OK',
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
     }
   };
 

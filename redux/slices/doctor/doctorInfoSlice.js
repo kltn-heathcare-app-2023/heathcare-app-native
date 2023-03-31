@@ -6,7 +6,11 @@ export const doctorInfoSlice = createSlice({
   initialState: {
     doctor_profile: {},
   },
-  reducers: {},
+  reducers: {
+    resetDoctorProfile: state => {
+      state.doctor_profile = {};
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchInfoDoctor.fulfilled, (state, action) => {
@@ -29,4 +33,7 @@ export const fetchInfoDoctor = createAsyncThunk(
     }
   },
 );
+
+const {resetDoctorProfile} = doctorInfoSlice.actions;
+
 export default doctorInfoSlice.reducer;

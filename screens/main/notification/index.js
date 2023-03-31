@@ -31,10 +31,6 @@ function NotificationScreen() {
   const notification_list = useSelector(notification_list_filter);
 
   useEffect(() => {
-    dispatch(fetchNotificationListById(user_info._id));
-  }, []);
-
-  useEffect(() => {
     dispatch(notificationSlice.actions.updateNotificationType(choose));
   }, [choose]);
 

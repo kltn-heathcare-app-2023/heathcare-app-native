@@ -11,6 +11,8 @@ import {infoSelector} from '../../redux/selectors/infoSelector';
 import {fetchUserInfo} from '../../redux/slices/infoSlice';
 import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
 import {doctorProfileSelector} from '../../redux/selectors/doctor/infoSelector';
+import {fetchNotificationListById} from '../../redux/slices/notificationSlice';
+import {fetchConversationByDoctorId} from '../../redux/slices/doctor/doctorConversationSlice';
 
 function LoadingScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
@@ -36,11 +38,18 @@ function LoadingScreen({navigation, route}) {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(user_info).length > 0) {
-      navigation.navigate(RouterKey.MAIN_SCREEN);
-    }
-    if (Object.keys(doctor_profile).length > 0) {
-      navigation.navigate(RouterKey.DOCTOR_SCREEN);
+    if (user_info && doctor_profile) {
+      if (Object.keys(user_info).length > 0) {
+        dispatch(fetchNotificationListById(user_info._id));
+        navigation.navigate(RouterKey.MAIN_SCREEN);
+      }
+      if (Object.keys(doctor_profile).length > 0) {
+        dispatch(fetchNotificationListById(doctor_profile.doctor._id));
+        dispatch(fetchConversationByDoctorId(doctor_profile.doctor._id));
+        navigation.navigate(RouterKey.DOCTOR_SCREEN);
+      }
+    } else {
+      navigation.navigate(RouterKey.LOGIN_SCREEN);
     }
   }, [user_info, doctor_profile]);
 

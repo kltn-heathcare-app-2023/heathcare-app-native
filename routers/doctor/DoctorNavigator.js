@@ -7,6 +7,11 @@ import DoctorNotificationScreen from '../../screens/doctor/notification';
 import PatientInfo from '../../screens/doctor/home/PatientInfo';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import DoctorHomeListPatientExamScreen from '../../screens/doctor/home/ListPatientExam';
+import DoctorConversationList from '../../screens/doctor/conversation/conversations';
+import DoctorConversationDetail from '../../screens/doctor/conversation/messages';
+import {useSelector} from 'react-redux';
+import {notification_list_unread_filter} from '../../redux/slices/notificationSlice';
+import DoctorInfoScreen from '../../screens/doctor/info';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,6 +23,8 @@ const screenOptions = ({route}) => ({
     } else if (route.name === RouterKey.DOCTOR_HOME_SCREEN) {
       iconName = 'book-account';
     } else if (route.name === RouterKey.DOCTOR_NOTIFICATION_SCREEN) {
+      iconName = 'bell-ring-outline';
+    } else if (route.name === RouterKey.DOCTOR_INFO_SCREEN) {
       iconName = 'account';
     }
     return <Icon name={iconName} size={20} color={color} />;
@@ -48,7 +55,28 @@ export function DoctorHomeStackNavigator() {
   );
 }
 
+export function DoctorConversationStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}>
+      <Stack.Screen
+        name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}
+        component={DoctorConversationList}
+      />
+      <Stack.Screen
+        name={RouterKey.DOCTOR_CONVERSATION_DETAIL_SCREEN}
+        component={DoctorConversationDetail}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function AdminNavigator() {
+  const notification_unread = useSelector(notification_list_unread_filter);
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -66,16 +94,17 @@ function AdminNavigator() {
         options={{
           tabBarLabel: 'Thông báo',
           title: 'Thông báo',
+          tabBarBadge: notification_unread > 0 ? notification_unread : null,
         }}
       />
-      {/* <Tab.Screen
-        name={RouterKey.ROUTER_INFO_SCREEN}
-        component={MainInfo}
+      <Tab.Screen
+        name={RouterKey.DOCTOR_INFO_SCREEN}
+        component={DoctorInfoScreen}
         options={{
           tabBarLabel: 'Cá nhân',
           title: 'Cá nhân',
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 }
