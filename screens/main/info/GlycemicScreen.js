@@ -27,7 +27,8 @@ import {postGlycemic} from '../../../services/patient/info';
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
 import AnimatedLottieView from 'lottie-react-native';
-
+import {socket} from '../../../utils/config';
+import {Popup} from 'popup-ui';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -127,6 +128,19 @@ function GlycemicScreen() {
         patient: user_info._id,
       })
         .then(({data}) => {
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: `Chỉ số đường huyết đã được cập nhật`,
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
           socket.emit('notification_register_schedule_from_patient', {
             data: data.notification,
           });
@@ -136,11 +150,38 @@ function GlycemicScreen() {
           setOption('1');
         })
         .catch(error => {
-          Alert.alert(TITLE_NOTIFICATION, error.message);
           setVisible(false);
+          Popup.show({
+            type: 'Danger',
+            title: 'Lỗi',
+            button: true,
+            textBody: `${error.message}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
+          // Alert.alert(TITLE_NOTIFICATION);
         });
     } else {
-      Alert.alert(TITLE_NOTIFICATION, MESSAGE_MISS_DATA);
+      setVisible(false);
+      Popup.show({
+        type: 'Warning',
+        title: 'Chú ý',
+        button: true,
+        textBody: MESSAGE_MISS_DATA,
+        buttontext: 'OK',
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
     }
   };
 

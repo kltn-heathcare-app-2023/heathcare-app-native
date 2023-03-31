@@ -6,7 +6,7 @@ import {Provider, useSelector} from 'react-redux';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {StatusBar} from 'react-native';
 import {NotificationProvider} from 'react-native-internal-notification';
-
+import {Root} from 'popup-ui';
 LogBox.ignoreLogs([
   'Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead',
   'Non-serializable values were found in the navigation state',
@@ -26,9 +26,11 @@ export default function App() {
             showHideTransition={'fade'}
             // hidden={''}
           />
-          <NotificationProvider>
-            <RootStackNavigator />
-          </NotificationProvider>
+          <Root>
+            <NotificationProvider>
+              <RootStackNavigator />
+            </NotificationProvider>
+          </Root>
           {/* </ZegoUIKitPrebuiltCallWithInvitation> */}
         </PaperProvider>
       </Provider>
