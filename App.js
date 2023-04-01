@@ -12,6 +12,7 @@ LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
   'componentWillMount has been renamed, and is not recommended for use',
   'componentWillReceiveProps has been renamed, and is not recommended for use',
+  'ReactImageView: Image source "null" doesn\'t exist',
 ]); // Ignore log notification by message
 
 export default function App() {

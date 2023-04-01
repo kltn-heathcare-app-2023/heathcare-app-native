@@ -10,14 +10,31 @@ import storage from '../../utils/storage';
 
 import styles from '../../styles/global.js';
 import jwtDecode from 'jwt-decode';
+import regex from '../../common/regex';
+
+import {Popup} from 'popup-ui';
 
 function LoginScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [errorInputPhone, setErrorInput] = useState('');
 
   const handleLogin = async () => {
     if (!(phone.trim() && password.trim())) {
-      Alert.alert('Thông báo', 'Bạn phải điền đầy đủ thông tin!');
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${('Thông báo', 'Bạn phải điền đầy đủ thông tin!')}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
     } else {
       try {
         const resp = await login({phone_number: phone, password});
@@ -33,7 +50,20 @@ function LoginScreen({navigation}) {
         }
       } catch (error) {
         const {message} = error;
-        Alert.alert('Thông báo', message ?? error);
+        Popup.show({
+          type: 'Danger',
+          title: 'Thông báo',
+          button: true,
+          textBody: `${message ?? error}`,
+          buttontext: 'OK',
+          timing: 3000,
+          callback: () => {
+            // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+            //   screen: RouterKey.INFO_SCREEN,
+            // });
+            Popup.hide();
+          },
+        });
       }
     }
   };
@@ -45,7 +75,17 @@ function LoginScreen({navigation}) {
   const handleChangePhoneInput = useCallback(
     val => {
       // console.log(val);
-      setPhone(val);
+      if (val) {
+        if (!regex.isValidVNPhoneNumber(val)) {
+          setErrorInput('Số điện thoại không hợp lệ');
+        } else {
+          setErrorInput('');
+        }
+        setPhone(val);
+      } else {
+        setPhone(val);
+        setErrorInput('');
+      }
     },
     [phone],
   );
@@ -72,6 +112,7 @@ function LoginScreen({navigation}) {
           placeholder="Số điện thoại"
           value={phone}
           onChangeText={handleChangePhoneInput}
+          error={errorInputPhone}
         />
         <TextInputPrimary
           isPass={true}
