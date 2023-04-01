@@ -21,7 +21,8 @@ import env from '../../utils/env';
 import RouterKey from '../../utils/Routerkey';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import moment from 'moment';
-
+import {Popup} from 'popup-ui';
+import {MESSAGE_MISS_DATA} from '../../common/message';
 export const genderItems = [
   {label: 'Nam', value: 'Nam'},
   {label: 'Nữ', value: 'Nữ'},
@@ -65,23 +66,82 @@ function SendInformationScreen({navigation, route}) {
   };
 
   const handleUpdateIn4 = async () => {
-    const formData = new FormData();
-    formData.append('username', name);
-    formData.append('dob', `${date}`);
-    formData.append('address', address);
-    formData.append('gender', gender === 'Nam' ? true : false);
-    formData.append('blood', blood);
-    formData.append('avatar', image);
+    if (address && image) {
+      const formData = new FormData();
+      formData.append('username', name);
+      formData.append('dob', `${date}`);
+      formData.append('address', address);
+      formData.append('gender', gender === 'Nam' ? true : false);
+      formData.append('blood', blood);
+      formData.append('avatar', image);
 
-    fetch
-      .postFormWithAuth(`/patients`, formData)
-      .then(val => {
-        if (val?.error) {
-          console.log('value -> ', val);
-        }
-        navigation.navigate(RouterKey.LOGIN_SCREEN);
-      })
-      .catch(err => console.log('err -> ', err));
+      fetch
+        .postFormWithAuth(`/patients`, formData)
+        .then(val => {
+          if (val?.error) {
+            Popup.show({
+              type: 'Warning',
+              title: 'Thông báo',
+              button: true,
+              textBody: `${val?.error?.message}`,
+              buttontext: 'OK',
+              timing: 3000,
+              callback: () => {
+                // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                //   screen: RouterKey.INFO_SCREEN,
+                // });
+                Popup.hide();
+              },
+            });
+          }
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: `Đăng ký tài khoản thành công tiến hành đăng nhập`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
+          navigation.navigate(RouterKey.LOGIN_SCREEN);
+        })
+        .catch(err => {
+          Popup.show({
+            type: 'Warning',
+            title: 'Thông báo',
+            button: true,
+            textBody: `${('Thông báo', err?.message)}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
+        });
+    } else {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${MESSAGE_MISS_DATA}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
+    }
   };
 
   const openDatePicker = () => {

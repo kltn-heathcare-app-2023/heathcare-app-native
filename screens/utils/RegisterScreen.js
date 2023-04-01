@@ -54,7 +54,7 @@ function RegisterScreen({navigation}) {
   };
 
   const handleRegister = () => {
-    if (phone && password && confirmPass && name) {
+    if (phone && password && confirmPass && name && !errorInputPhone) {
       // signInWithPhoneNumber();
       // .then(confirm => {
       //   navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
@@ -76,7 +76,20 @@ function RegisterScreen({navigation}) {
           navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
         })
         .catch(err => {
-          Alert.alert(TITLE_NOTIFICATION, err?.message);
+          Popup.show({
+            type: 'Warning',
+            title: 'Thông báo',
+            button: true,
+            textBody: `${('Thông báo', err?.message)}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
         });
     } else {
       Popup.show({
