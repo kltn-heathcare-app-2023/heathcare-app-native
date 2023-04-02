@@ -1,5 +1,11 @@
 import {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   infoSelector,
@@ -10,13 +16,13 @@ import {
 import ScheduleItem from '../../../components/ScheduleItem';
 import {ProgressChart} from 'react-native-chart-kit';
 import {fetchAllScheduleDetailListById} from '../../../redux/slices/scheduleDetailSlice';
-import {
-  scheduleDetailList,
-  scheduleDetailListAfterNow,
-} from '../../../redux/selectors/scheduleDetailSelector';
+import {scheduleDetailListAfterNow} from '../../../redux/selectors/scheduleDetailSelector';
 import {socket} from '../../../utils/config';
+import {Button} from 'react-native-paper';
+import RouterKey from '../../../utils/Routerkey';
+import AnimatedLottieView from 'lottie-react-native';
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
@@ -89,8 +95,8 @@ function HomeScreen() {
         <View style={styles.chart}>
           <ProgressChart
             data={data}
-            width={160}
-            height={160}
+            width={146}
+            height={146}
             strokeWidth={12}
             radius={32}
             chartConfig={chartBMIConfig}
@@ -103,8 +109,8 @@ function HomeScreen() {
         <View style={styles.chart}>
           <ProgressChart
             data={dataGlycemic}
-            width={160}
-            height={160}
+            width={146}
+            height={146}
             strokeWidth={12}
             radius={32}
             chartConfig={chartGlycemicConfig}
@@ -139,6 +145,59 @@ function HomeScreen() {
           </Text>
         </View>
       )}
+
+      <View style={{display: 'flex', flexDirection: 'row'}}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouterKey.UTILS_CHAT_GPT_SCREEN);
+          }}
+          style={{
+            marginTop: 4,
+            padding: 4,
+            borderWidth: 2,
+            width: 72,
+            height: 'auto',
+            borderRadius: 16,
+            borderColor: '#06d6a0',
+          }}>
+          <AnimatedLottieView
+            source={require('../../../assets/images/bot.json')}
+            autoPlay
+            loop
+            style={{
+              width: 64,
+              height: 64,
+            }}
+          />
+          {/* <Text style={{textAlign: 'center'}}>Chat Bot</Text> */}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouterKey.UTILS_CHAT_GPT_SCREEN);
+          }}
+          style={{
+            marginTop: 4,
+            marginLeft: 8,
+            padding: 4,
+            borderWidth: 2,
+            width: 72,
+            height: 'auto',
+            borderRadius: 16,
+            borderColor: '#4cc9f0',
+          }}>
+          <AnimatedLottieView
+            source={require('../../../assets/images/post.json')}
+            autoPlay
+            loop
+            style={{
+              width: 64,
+              height: 64,
+            }}
+          />
+          {/* <Text style={{textAlign: 'center'}}>Cộng đồng</Text> */}
+        </TouchableOpacity>
+      </View>
       <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
       <ScrollView style={styles.box_schedule}>
         {schedules.map(schedule => (
@@ -165,7 +224,7 @@ const styles = StyleSheet.create({
   box_chart: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   chart: {
     padding: 8,
@@ -174,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   chart_text: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   box_schedule: {
     height: '65%',
