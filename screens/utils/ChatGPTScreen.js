@@ -6,11 +6,14 @@ import {TextInput} from 'react-native-paper';
 import ICon from 'react-native-vector-icons/Ionicons';
 import MessageItem from '../../components/MessageItem';
 import env from '../../utils/env';
+import {useSelector} from 'react-redux';
+import {infoSelector} from '../../redux/selectors/infoSelector';
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
 function ChatGPTScreen({navigation}) {
   const scrollViewRef = useRef();
+  const user_info = useSelector(infoSelector);
   const [messages, setMessages] = useState([
     {
       sender: {
@@ -30,8 +33,9 @@ function ChatGPTScreen({navigation}) {
     if (message) {
       const _message = {
         sender: {
-          username: 'Tui nè',
+          username: user_info?.person?.username ?? 'Tui nè',
           avatar:
+            user_info?.person.avatar ??
             'https://media.istockphoto.com/id/1073076312/vi/vec-to/robot-m%E1%BB%89m-c%C6%B0%E1%BB%9Di-d%E1%BB%85-th%C6%B0%C6%A1ng-bot-tr%C3%B2-chuy%E1%BB%87n-n%C3%B3i-ch%C3%A0o-vector-hi%E1%BB%87n-%C4%91%E1%BA%A1i-ph%E1%BA%B3ng-h%C3%ACnh-minh-h%E1%BB%8Da-nh%C3%A2n.jpg?s=1024x1024&w=is&k=20&c=gCqq3LF7PLfY-sdYrKUvpdgcnSsm5FVFjuw5sF6pWn8=',
         },
         content: message,
@@ -118,8 +122,8 @@ function ChatGPTScreen({navigation}) {
         onContentSizeChange={() =>
           scrollViewRef.current.scrollToEnd({animated: true})
         }>
-        {messages.map(message => {
-          return <MessageItem message={message} key={message._id} />;
+        {messages.map((message, index) => {
+          return <MessageItem message={message} key={index} />;
         })}
       </ScrollView>
 

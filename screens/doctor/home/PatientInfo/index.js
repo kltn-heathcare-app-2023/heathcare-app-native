@@ -71,7 +71,9 @@ function PatientInfo({navigation, route}) {
         <List.Section>
           <List.Subheader>Thông tin cá nhân:</List.Subheader>
           <List.Item title={`Tên: ${person.username}`} />
-          <List.Item title={`Ngày sinh: ${person.dob}`} />
+          <List.Item
+            title={`Ngày sinh: ${moment(new Date(person.dob)).format('l')}`}
+          />
           <List.Item title={`Địa chỉ: ${person.address}`} />
           <List.Item title={`Giới Tính: ${person.gender ? 'Nam' : 'Nữ'} `} />
           <List.Item title={`Nhóm máu: ${blood}`} />

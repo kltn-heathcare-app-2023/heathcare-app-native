@@ -92,7 +92,10 @@ function ConversationDetail({route, navigation}) {
   };
 
   return (
-    <>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      keyboardVerticalOffset={keyboardVerticalOffset}
+      behavior={'padding'}>
       <View style={styles.header}>
         <View style={styles.header_left}>
           <ICon
@@ -163,7 +166,7 @@ function ConversationDetail({route, navigation}) {
         onChangeText={val => setMessage(val)}
         mode={'flat'}
       />
-    </>
+    </KeyboardAvoidingView>
   );
 }
 

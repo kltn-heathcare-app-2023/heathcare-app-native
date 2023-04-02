@@ -10,7 +10,7 @@ import {
   MD3Colors,
   ProgressBar,
 } from 'react-native-paper';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {AVATAR_DEFAULT} from '../../../../common/constant';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import {notification_list_selector} from '../../../../redux/slices/notificationSlice';
@@ -22,8 +22,11 @@ import {
 import RouterKey from '../../../../utils/Routerkey';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import {doctorInfoSlice} from '../../../../redux/slices/doctor/doctorInfoSlice';
+import storage from '../../../../utils/storage';
 
 function DoctorHomeListPatientExamScreen({navigation}) {
+  const dispatch = useDispatch();
   const notification = useNotification();
   const doctor_profile = useSelector(doctorProfileSelector);
   const [patientList, setPatientList] = useState([]);
@@ -70,6 +73,12 @@ function DoctorHomeListPatientExamScreen({navigation}) {
     }
   }, [doctor_profile]);
 
+  const handleLogoutByDoctor = async () => {
+    navigation.navigate(RouterKey.LOGIN_SCREEN);
+    await storage.remove('accessToken');
+    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
+  };
+
   return (
     <>
       {!loading && (
@@ -92,6 +101,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'center',
                 padding: 8,
                 position: 'relative',
               }}>
@@ -126,6 +136,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'center',
                 padding: 8,
                 position: 'relative',
               }}>
@@ -160,6 +171,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'center',
                 padding: 8,
                 position: 'relative',
               }}>
@@ -183,6 +195,26 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 {numberWorkingDay}
               </Text>
             </View>
+
+            <TouchableOpacity
+              onPress={handleLogoutByDoctor}
+              style={{
+                height: 80,
+                width: 80,
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 16,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 8,
+              }}>
+              <Image
+                source={require('../../../../assets/images/logout.png')}
+                style={{width: 52, height: 48}}
+              />
+            </TouchableOpacity>
           </View>
 
           <Text

@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {
   KeyboardAvoidingView,
+  KeyboardAvoidingViewBase,
   ScrollView,
   StyleSheet,
   Text,
@@ -94,11 +95,15 @@ function DoctorConversationDetail({route, navigation}) {
     } catch (error) {
       console.log('err chooose image -> ', error);
     }
+    Date;
   };
 
   return (
     <>
-      <View style={{flex: 1}}>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        keyboardVerticalOffset={keyboardVerticalOffset}
+        behavior={'padding'}>
         <View style={styles.header}>
           <View style={styles.header_left}>
             <ICon
@@ -169,7 +174,7 @@ function DoctorConversationDetail({route, navigation}) {
           onChangeText={val => setMessage(val)}
           mode={'flat'}
         />
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 }
