@@ -13,6 +13,7 @@ import MainScreen from '../screens/main/Main';
 import DoctorScreen from '../screens/doctor/DoctorScreen';
 import LoadingAfterLoginScreen from '../screens/utils/LoadingAfterLogin';
 import CallVideoScreen from '../screens/main/messages/call-video';
+import ChatGPTScreen from '../screens/utils/ChatGPTScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -59,6 +60,10 @@ function StackNavigator() {
       <Stack.Screen
         name={RouterKey.CALL_VIDEO_SCREEN}
         component={CallVideoScreen}
+      />
+      <Stack.Screen
+        name={RouterKey.UTILS_CHAT_GPT_SCREEN}
+        component={ChatGPTScreen}
       />
     </Stack.Navigator>
   );

@@ -31,6 +31,7 @@ const RouterKey = {
   DOCTOR_CONVERSATION_DETAIL_SCREEN: 'DoctorConversationDetail',
   DOCTOR_NOTIFICATION_SCREEN: 'DoctorNotificatonScreen',
   DOCTOR_INFO_SCREEN: 'DoctorInfoScreen',
+  UTILS_CHAT_GPT_SCREEN: 'ChatGPTScreen',
 };
 
 export default RouterKey;

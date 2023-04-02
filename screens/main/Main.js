@@ -71,8 +71,9 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_bmi_created.getDate() &&
           now_day.getMonth() === last_bmi_created.getMonth()
+            ? now_day.getDate() > last_bmi_created.getDate()
+            : now_day.getMonth() > last_bmi_created.getMonth()
         ) {
           Popup.show({
             type: 'Warning',
@@ -102,9 +103,10 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_glycemic_created.getDate() &&
-          now_day.getMonth() === last_glycemic_created.getMonth() &&
-          metrics?.glycemic.case != 1
+          now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth() &&
+              user_info.metrics?.glycemic.case != 1
         ) {
           Popup.show({
             type: 'Warning',
@@ -134,16 +136,50 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_glycemic_created.getDate() &&
-          now_day.getMonth() === last_glycemic_created.getMonth() &&
-          metrics?.glycemic.case != 2
+          (now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth()) &&
+          user_info.metrics?.glycemic.case != 2
         ) {
           Popup.show({
             type: 'Warning',
             title: 'Nhắc nhở',
             button: true,
             textBody:
-              'Hình như, bạn chưa nhập chỉ số đường huyết trước sau bữa ăn. Nhập ngay nào!',
+              'Hình như, bạn chưa nhập chỉ số đường huyết sau bữa ăn. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.GLYCEMIC_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      }
+
+      if (
+        now.getHours() > 21 &&
+        now.getHours() < 22 &&
+        user_info.metrics?.glycemic
+      ) {
+        const now_day = new Date();
+        const last_glycemic_created = new Date(
+          user_info.metrics?.glycemic.createdAt,
+        );
+
+        if (
+          (now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth()) &&
+          user_info.metrics?.glycemic.case != 3
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số đường huyết trước khi ngủ. Nhập ngay nào!',
             buttontext: 'Nhập ngay',
             callback: () => {
               navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
@@ -166,8 +202,9 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_blood_pressures_created.getDate() &&
-          now_day.getMonth() === last_blood_pressures_created.getMonth() &&
+          (now_day.getMonth() === last_blood_pressures_created.getMonth()
+            ? now_day.getDate() > last_blood_pressures_created.getDate()
+            : now_day.getMonth() > last_blood_pressures_created.getMonth()) &&
           user_info.metrics?.last_blood_pressures
         ) {
           Popup.show({
