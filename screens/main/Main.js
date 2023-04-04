@@ -19,13 +19,15 @@ import {infoSelector} from '../../redux/selectors/infoSelector';
 import storage from '../../utils/storage';
 import {Root, Popup} from 'popup-ui';
 import moment from 'moment';
+import {useNotification} from 'react-native-internal-notification';
+import IIcon from 'react-native-vector-icons/Ionicons';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
   const [room, setRoom] = useState('');
   const [username, setUsername] = useState('');
   const user_info = useSelector(infoSelector);
-
+  const notificationFromSocket = useNotification();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
@@ -71,8 +73,9 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_bmi_created.getDate() &&
           now_day.getMonth() === last_bmi_created.getMonth()
+            ? now_day.getDate() > last_bmi_created.getDate()
+            : now_day.getMonth() > last_bmi_created.getMonth()
         ) {
           Popup.show({
             type: 'Warning',
@@ -102,9 +105,10 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_glycemic_created.getDate() &&
-          now_day.getMonth() === last_glycemic_created.getMonth() &&
-          metrics?.glycemic.case != 1
+          now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth() &&
+              user_info.metrics?.glycemic.case != 1
         ) {
           Popup.show({
             type: 'Warning',
@@ -134,16 +138,50 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_glycemic_created.getDate() &&
-          now_day.getMonth() === last_glycemic_created.getMonth() &&
-          metrics?.glycemic.case != 2
+          (now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth()) &&
+          user_info.metrics?.glycemic.case != 2
         ) {
           Popup.show({
             type: 'Warning',
             title: 'Nhắc nhở',
             button: true,
             textBody:
-              'Hình như, bạn chưa nhập chỉ số đường huyết trước sau bữa ăn. Nhập ngay nào!',
+              'Hình như, bạn chưa nhập chỉ số đường huyết sau bữa ăn. Nhập ngay nào!',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                screen: RouterKey.GLYCEMIC_SCREEN,
+              });
+              Popup.hide();
+            },
+          });
+        }
+      }
+
+      if (
+        now.getHours() > 21 &&
+        now.getHours() < 22 &&
+        user_info.metrics?.glycemic
+      ) {
+        const now_day = new Date();
+        const last_glycemic_created = new Date(
+          user_info.metrics?.glycemic.createdAt,
+        );
+
+        if (
+          (now_day.getMonth() === last_glycemic_created.getMonth()
+            ? now_day.getDate() > last_glycemic_created.getDate()
+            : now_day.getMonth() > last_glycemic_created.getMonth()) &&
+          user_info.metrics?.glycemic.case != 3
+        ) {
+          Popup.show({
+            type: 'Warning',
+            title: 'Nhắc nhở',
+            button: true,
+            textBody:
+              'Hình như, bạn chưa nhập chỉ số đường huyết trước khi ngủ. Nhập ngay nào!',
             buttontext: 'Nhập ngay',
             callback: () => {
               navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
@@ -166,8 +204,9 @@ function MainScreen({navigation}) {
         );
 
         if (
-          now_day.getDate() > last_blood_pressures_created.getDate() &&
-          now_day.getMonth() === last_blood_pressures_created.getMonth() &&
+          (now_day.getMonth() === last_blood_pressures_created.getMonth()
+            ? now_day.getDate() > last_blood_pressures_created.getDate()
+            : now_day.getMonth() > last_blood_pressures_created.getMonth()) &&
           user_info.metrics?.last_blood_pressures
         ) {
           Popup.show({
@@ -221,16 +260,28 @@ function MainScreen({navigation}) {
 
   useEffect(() => {
     user_info._id && socket.emit('status_user', user_info._id);
+    user_info._id && socket.emit('add_user', user_info._id);
   }, [user_info]);
 
   useEffect(() => {
-    socket.emit('add_user', user_info._id);
     socket.on('call_id_room_to_user_success', resp => {
       const {room_id, doctor_username} = resp;
       setRoom(room_id);
       setUsername(doctor_username);
       showModal();
     });
+    socket.on(
+      'notification_confirm_register_schedule_success',
+      notification => {
+        notificationFromSocket.showNotification({
+          title: 'Thông báo',
+          message: notification.content,
+          icon: <IIcon name={'notifications-outline'} size={24} />,
+          color: '#fff',
+          onPress: () => navigation.navigate(RouterKey.NOTIFICATION_SCREEN),
+        });
+      },
+    );
   }, []);
 
   return (

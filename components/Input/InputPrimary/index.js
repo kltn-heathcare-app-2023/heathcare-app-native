@@ -1,5 +1,5 @@
 import {forwardRef, useState} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import FIcon from 'react-native-vector-icons/Ionicons';
@@ -19,6 +19,7 @@ function TextInputPrimary({
   selectTextOnFocus,
   openPicker,
   style,
+  error,
 }) {
   const [isPassState, setIsPassState] = useState(isPass);
   const [nameIcon, setNameIcon] = useState('eye-off-outline');
@@ -31,37 +32,46 @@ function TextInputPrimary({
   };
 
   return (
-    <View style={[styles.container, style]}>
-      {isPhone && <FAIcon name="phone" size={24} color="gray" />}
-      {isPass && <FAIcon name="lock" size={24} color="gray" />}
-      {isName && <FAIcon name="user" size={24} color="gray" />}
-      {isAddress && <FIcon name="location-sharp" size={24} color="gray" />}
-      {isInsurance && (
-        <FMIcon name="text-box-plus-outline" size={24} color="gray" />
-      )}
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        style={styles.textInput}
-        placeholder={placeholder}
-        secureTextEntry={isPassState}
-        keyboardType={isPhone ? 'phone-pad' : 'default'}
-        editable={editable}
-        selectTextOnFocus={selectTextOnFocus}
-      />
-      {isPass && (
-        <Icon
-          name={nameIcon}
-          color="#000"
-          size={20}
-          onPress={() => handleClickIcon()}
+    <>
+      <View
+        style={[
+          styles.container,
+          style,
+          {borderColor: error ? '#e76f51' : '#5D90F5'},
+        ]}>
+        {isPhone && <FAIcon name="phone" size={24} color="gray" />}
+        {isPass && <FAIcon name="lock" size={24} color="gray" />}
+        {isName && <FAIcon name="user" size={24} color="gray" />}
+        {isAddress && <FIcon name="location-sharp" size={24} color="gray" />}
+        {isInsurance && (
+          <FMIcon name="text-box-plus-outline" size={24} color="gray" />
+        )}
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          style={[styles.textInput]}
+          placeholder={placeholder}
+          secureTextEntry={isPassState}
+          keyboardType={isPhone ? 'phone-pad' : 'default'}
+          editable={editable}
+          selectTextOnFocus={selectTextOnFocus}
         />
-      )}
 
-      {isDate && (
-        <Icon name={'calendar'} color="#000" size={20} onPress={openPicker} />
-      )}
-    </View>
+        {isPass && (
+          <Icon
+            name={nameIcon}
+            color="#000"
+            size={20}
+            onPress={() => handleClickIcon()}
+          />
+        )}
+
+        {isDate && (
+          <Icon name={'calendar'} color="#000" size={20} onPress={openPicker} />
+        )}
+      </View>
+      {error && <Text style={styles.text_error}>{error}</Text>}
+    </>
   );
 }
 
@@ -83,6 +93,11 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
     width: '85%',
+  },
+  text_error: {
+    color: '#e76f51',
+    fontWeight: '700',
+    textAlign: 'left',
   },
 });
 

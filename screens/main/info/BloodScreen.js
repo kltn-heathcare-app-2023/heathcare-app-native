@@ -33,6 +33,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import AnimatedLottieView from 'lottie-react-native';
 import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
+import Header from '../../../components/Header';
+import RouterKey from '../../../utils/Routerkey';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -45,7 +47,7 @@ const optionDateItems = [
   {label: 'Tháng', value: 'month'},
 ];
 
-function BloodScreen() {
+function BloodScreen({navigation}) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [diastoleMetric, setDiastoleMetric] = useState('');
@@ -170,118 +172,125 @@ function BloodScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.bmi_container}>
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số Huyết áp mới nhất:`}
-          </Text>
-          <Text style={styles.bmi_text_notification}>
-            {`Tâm thu: ${systolic}\n`}
-            {`Tâm trương: ${diastole}\n`}
-          </Text>
-        </View>
+    <>
+      <Header
+        handle={() => navigation.navigate(RouterKey.INFO_SCREEN)}
+        title={'Chỉ số huyết áp'}
+      />
+      <View style={styles.container}>
+        <View style={styles.bmi_container}>
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số Huyết áp mới nhất:`}
+            </Text>
+            <Text style={styles.bmi_text_notification}>
+              {`Tâm thu: ${systolic}\n`}
+              {`Tâm trương: ${diastole}\n`}
+            </Text>
+          </View>
 
-        <AnimatedLottieView
-          source={require('../../../assets/images/heart.json')}
-          autoPlay
-          loop
-          style={{
-            marginLeft: 135,
-          }}
-        />
-      </View>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 4,
-          zIndex: 1,
-        }}>
-        <DropDownPicker
-          items={optionDateItems}
-          _setValue={setOptionDate}
-          value={optionDate}
-          style={{
-            width: '80%',
-            margin: 0,
-            marginTop: 8,
-          }}
-          stylePicker={{
-            width: '99%',
-          }}
-          childPicker={{
-            marginRight: 0,
-          }}
-        />
-        <ICon
-          name={'plus-circle-outline'}
-          size={32}
-          onPress={showModal}
-          color={'#02c39a'}
-        />
-      </View>
-      <View style={{marginTop: 12}}>
-        {data.length > 0 && (
-          <PureChart
-            data={data}
-            type="line"
-            height={350}
-            // customValueRenderer={(index, point) => {
-            //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
-            // }}
+          <AnimatedLottieView
+            source={require('../../../assets/images/heart.json')}
+            autoPlay
+            loop
+            style={{
+              marginLeft: 135,
+            }}
           />
-        )}
-      </View>
-      <View style={styles.bottom_view}>
+        </View>
         <View
           style={{
-            backgroundColor: '#e76f51',
-            padding: 4,
-            borderRadius: 8,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 4,
+            zIndex: 1,
           }}>
-          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm thu</Text>
+          <DropDownPicker
+            items={optionDateItems}
+            _setValue={setOptionDate}
+            value={optionDate}
+            style={{
+              width: '80%',
+              margin: 0,
+              marginTop: 8,
+            }}
+            stylePicker={{
+              width: '99%',
+            }}
+            childPicker={{
+              marginRight: 0,
+            }}
+          />
+          <ICon
+            name={'plus-circle-outline'}
+            size={32}
+            onPress={showModal}
+            color={'#02c39a'}
+          />
         </View>
-        <View style={{backgroundColor: '#d00000', padding: 4, borderRadius: 8}}>
-          <Text style={{fontWeight: '600', color: '#fff'}}>Tâm trương</Text>
+        <View style={{marginTop: 12}}>
+          {data.length > 0 && (
+            <PureChart
+              data={data}
+              type="line"
+              height={350}
+              // customValueRenderer={(index, point) => {
+              //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
+              // }}
+            />
+          )}
         </View>
+        <View style={styles.bottom_view}>
+          <View
+            style={{
+              backgroundColor: '#e76f51',
+              padding: 4,
+              borderRadius: 8,
+            }}>
+            <Text style={{fontWeight: '600', color: '#fff'}}>Tâm thu</Text>
+          </View>
+          <View
+            style={{backgroundColor: '#d00000', padding: 4, borderRadius: 8}}>
+            <Text style={{fontWeight: '600', color: '#fff'}}>Tâm trương</Text>
+          </View>
+        </View>
+
+        <Portal>
+          <Modal
+            visible={visible}
+            auto
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modal}>
+            <Text>Chỉ số huyết áp hôm nay</Text>
+
+            <TextInput
+              placeholder="Tâm thu (mmHG)"
+              style={styles.modal_input}
+              value={systolicMetric}
+              onChangeText={val => setSystolicMetric(val)}
+              keyboardType="decimal-pad"
+            />
+
+            <TextInput
+              placeholder="Tâm trương (mmHG)"
+              style={styles.modal_input}
+              value={diastoleMetric}
+              onChangeText={val => setDiastoleMetric(val)}
+              keyboardType="decimal-pad"
+            />
+
+            <Button
+              mode="elevated"
+              onPress={handlePostBloodPressure}
+              style={styles.modal_button}>
+              Gửi
+            </Button>
+          </Modal>
+        </Portal>
       </View>
-
-      <Portal>
-        <Modal
-          visible={visible}
-          auto
-          onDismiss={hideModal}
-          contentContainerStyle={styles.modal}>
-          <Text>Chỉ số huyết áp hôm nay</Text>
-
-          <TextInput
-            placeholder="Tâm thu (mmHG)"
-            style={styles.modal_input}
-            value={systolicMetric}
-            onChangeText={val => setSystolicMetric(val)}
-            keyboardType="decimal-pad"
-          />
-
-          <TextInput
-            placeholder="Tâm trương (mmHG)"
-            style={styles.modal_input}
-            value={diastoleMetric}
-            onChangeText={val => setDiastoleMetric(val)}
-            keyboardType="decimal-pad"
-          />
-
-          <Button
-            mode="elevated"
-            onPress={handlePostBloodPressure}
-            style={styles.modal_button}>
-            Gửi
-          </Button>
-        </Modal>
-      </Portal>
-    </View>
+    </>
   );
 }
 

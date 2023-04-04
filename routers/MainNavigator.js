@@ -40,7 +40,11 @@ function MainNavigator() {
       <Tab.Screen
         name={RouterKey.HOME_SCREEN}
         component={HomeScreen}
-        options={{tabBarLabel: 'Trang chủ', title: 'Trang chủ'}}
+        options={{
+          tabBarLabel: 'Trang chủ',
+          title: 'Trang chủ',
+          header: () => null,
+        }}
       />
       <Tab.Screen
         name={RouterKey.SCHEDULE_ROUTER_SCREEN}
@@ -50,7 +54,11 @@ function MainNavigator() {
       <Tab.Screen
         name={RouterKey.MESSAGE_SCREEN}
         component={MessageScreen}
-        options={{tabBarLabel: 'Tin nhắn', title: 'Tin nhắn'}}
+        options={{
+          tabBarLabel: 'Tin nhắn',
+          title: 'Tin nhắn',
+          header: () => null,
+        }}
       />
       <Tab.Screen
         name={RouterKey.NOTIFICATION_SCREEN}
@@ -67,6 +75,7 @@ function MainNavigator() {
         options={{
           tabBarLabel: 'Cá nhân',
           title: 'Cá nhân',
+          header: () => null,
         }}
       />
     </Tab.Navigator>

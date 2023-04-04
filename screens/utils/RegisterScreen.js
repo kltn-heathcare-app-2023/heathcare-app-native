@@ -19,12 +19,17 @@ import storage from '../../utils/storage';
 import {register} from '../../services/auth';
 import {Alert} from 'react-native';
 import {TITLE_NOTIFICATION} from '../../common/title';
+import regex from '../../common/regex';
+import {Popup} from 'popup-ui';
 
 function RegisterScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
+  const [errorInputPhone, setErrorInputPhone] = useState('');
+  const [errorInputPass, setErrorInputPass] = useState('');
+  const [errorConfirmPass, setErrorConfirmPass] = useState('');
 
   //function get OTP with phone number
   // const sendOTP = async () => {
@@ -49,7 +54,7 @@ function RegisterScreen({navigation}) {
   };
 
   const handleRegister = () => {
-    if (phone && password && confirmPass && name) {
+    if (phone && password && confirmPass && name && !errorInputPhone) {
       // signInWithPhoneNumber();
       // .then(confirm => {
       //   navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
@@ -71,14 +76,53 @@ function RegisterScreen({navigation}) {
           navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
         })
         .catch(err => {
-          Alert.alert(TITLE_NOTIFICATION, err?.message);
+          Popup.show({
+            type: 'Warning',
+            title: 'Thông báo',
+            button: true,
+            textBody: `${('Thông báo', err?.message)}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
         });
+    } else {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${('Thông báo', 'Bạn phải điền đầy đủ thông tin!')}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
     }
   };
 
   const handleChangePhoneInput = useCallback(
     val => {
-      setPhone(val);
+      // console.log(val);
+      if (val) {
+        if (!regex.isValidVNPhoneNumber(val)) {
+          setErrorInputPhone('Số điện thoại không hợp lệ');
+        } else {
+          setErrorInputPhone('');
+        }
+        setPhone(val);
+      } else {
+        setPhone(val);
+        setErrorInputPhone('');
+      }
     },
     [phone],
   );
@@ -92,14 +136,34 @@ function RegisterScreen({navigation}) {
 
   const handleChangePassInput = useCallback(
     val => {
-      setPassword(val);
+      if (val) {
+        if (val.length < 8) {
+          setErrorInputPass('Mật khẩu phải lớn hơn 8 ký tự');
+        } else {
+          setErrorInputPass('');
+        }
+        setPassword(val);
+      } else {
+        setPassword(val);
+        setErrorInputPass('');
+      }
     },
     [password],
   );
 
   const handleChangeConfirmPassInput = useCallback(
     val => {
-      setConfirmPass(val);
+      if (val) {
+        if (!(val === password)) {
+          setErrorConfirmPass('Mật khẩu nhập lại phải giống với mật khẩu trên');
+        } else {
+          setErrorConfirmPass('');
+        }
+        setConfirmPass(val);
+      } else {
+        setConfirmPass(val);
+        setErrorConfirmPass('');
+      }
     },
     [confirmPass],
   );
@@ -128,6 +192,7 @@ function RegisterScreen({navigation}) {
           placeholder="Số điện thoại"
           value={phone}
           onChangeText={handleChangePhoneInput}
+          error={errorInputPhone}
         />
 
         <TextInputPrimary
@@ -143,6 +208,7 @@ function RegisterScreen({navigation}) {
           placeholder="Mật khẩu"
           value={password}
           onChangeText={handleChangePassInput}
+          error={errorInputPass}
         />
 
         <TextInputPrimary
@@ -150,9 +216,15 @@ function RegisterScreen({navigation}) {
           placeholder="Nhập lại mật khẩu"
           value={confirmPass}
           onChangeText={handleChangeConfirmPassInput}
+          error={errorConfirmPass}
         />
-
-        <ButtonPrimary title="Đăng ký" handle={handleRegister} />
+        <ButtonPrimary
+          title="Đăng ký"
+          handle={handleRegister}
+          // disabled={
+          //   !!!errorInputPhone && !!!errorInputPass && !!!errorConfirmPass
+          // }
+        />
         <ActionView title="Quay lại" handle={handleBackLogin} />
       </ImageBackground>
     </>
