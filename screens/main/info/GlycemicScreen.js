@@ -29,6 +29,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import AnimatedLottieView from 'lottie-react-native';
 import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
+import Header from '../../../components/Header';
+import RouterKey from '../../../utils/Routerkey';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -41,7 +43,7 @@ const optionDateItems = [
   {label: 'Tháng', value: 'month'},
 ];
 
-function GlycemicScreen() {
+function GlycemicScreen({navigation}) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [glycemic, setGlycemic] = useState('');
@@ -186,107 +188,49 @@ function GlycemicScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.bmi_container}>
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số đường huyết mới nhất: \n${moment(
-              glycemic_last ? glycemic_last[0].createdAt : new Date(),
-            ).fromNow()}`}
-          </Text>
-          <Text style={styles.bmi_text_notification}>
-            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
-          </Text>
-        </View>
-        <AnimatedLottieView
-          source={require('../../../assets/images/blood.json')}
-          autoPlay
-          loop
-          style={{
-            marginLeft: 135,
-          }}
-        />
-      </View>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 4,
-          zIndex: 1,
-        }}>
-        <DropDownPicker
-          items={optionDateItems}
-          _setValue={setOptionDate}
-          value={optionDate}
-          style={{
-            width: '80%',
-            margin: 0,
-            marginTop: 8,
-          }}
-          stylePicker={{
-            width: '99%',
-          }}
-          childPicker={{
-            marginRight: 0,
-          }}
-        />
-        <ICon
-          name={'plus-circle-outline'}
-          size={32}
-          onPress={showModal}
-          color={'#02c39a'}
-        />
-      </View>
-      <View style={{marginTop: 12}}>
-        {data.length > 0 && (
-          <PureChart
-            data={data}
-            type="line"
-            height={320}
-            // customValueRenderer={(index, point) => {
-            //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
-            // }}
-          />
-        )}
-      </View>
-      <View style={styles.bottom_view}>
-        <View style={{backgroundColor: '#227c9d', padding: 4, borderRadius: 8}}>
-          <Text>Trước ăn</Text>
-        </View>
-        <View style={{backgroundColor: '#17c3b2', padding: 4, borderRadius: 8}}>
-          <Text>Sau ăn</Text>
-        </View>
-        <View style={{backgroundColor: '#ffcb77', padding: 4, borderRadius: 8}}>
-          <Text>Trước ngủ</Text>
-        </View>
-      </View>
-
-      <Portal>
-        <Modal
-          visible={visible}
-          auto
-          onDismiss={hideModal}
-          contentContainerStyle={styles.modal}>
-          <Text>Chỉ số đường huyết hôm nay</Text>
-
-          <TextInput
-            placeholder="Đường huyết (mg/dl)"
-            style={styles.modal_input}
-            value={glycemic}
-            onChangeText={val => setGlycemic(val)}
-            keyboardType="decimal-pad"
-          />
-
-          <DropDownPicker
-            items={optionItems}
-            _setValue={setOption}
-            value={option}
+    <>
+      <Header
+        handle={() => navigation.navigate(RouterKey.INFO_SCREEN)}
+        title={'Chỉ số Đường Huyết'}
+      />
+      <View style={styles.container}>
+        <View style={styles.bmi_container}>
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số đường huyết mới nhất: \n${moment(
+                glycemic_last ? glycemic_last[0].createdAt : new Date(),
+              ).fromNow()}`}
+            </Text>
+            <Text style={styles.bmi_text_notification}>
+              {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
+              {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
+              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+            </Text>
+          </View>
+          <AnimatedLottieView
+            source={require('../../../assets/images/blood.json')}
+            autoPlay
+            loop
             style={{
-              width: '100%',
+              marginLeft: 135,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 4,
+            zIndex: 1,
+          }}>
+          <DropDownPicker
+            items={optionDateItems}
+            _setValue={setOptionDate}
+            value={optionDate}
+            style={{
+              width: '80%',
               margin: 0,
               marginTop: 8,
             }}
@@ -297,16 +241,83 @@ function GlycemicScreen() {
               marginRight: 0,
             }}
           />
+          <ICon
+            name={'plus-circle-outline'}
+            size={32}
+            onPress={showModal}
+            color={'#02c39a'}
+          />
+        </View>
+        <View style={{marginTop: 12}}>
+          {data.length > 0 && (
+            <PureChart
+              data={data}
+              type="line"
+              height={320}
+              // customValueRenderer={(index, point) => {
+              //   return <Text style={{textAlign: 'center'}}>{point.y}</Text>;
+              // }}
+            />
+          )}
+        </View>
+        <View style={styles.bottom_view}>
+          <View
+            style={{backgroundColor: '#227c9d', padding: 4, borderRadius: 8}}>
+            <Text>Trước ăn</Text>
+          </View>
+          <View
+            style={{backgroundColor: '#17c3b2', padding: 4, borderRadius: 8}}>
+            <Text>Sau ăn</Text>
+          </View>
+          <View
+            style={{backgroundColor: '#ffcb77', padding: 4, borderRadius: 8}}>
+            <Text>Trước ngủ</Text>
+          </View>
+        </View>
 
-          <Button
-            mode="elevated"
-            onPress={handlePostGlycemic}
-            style={styles.modal_button}>
-            Gửi
-          </Button>
-        </Modal>
-      </Portal>
-    </View>
+        <Portal>
+          <Modal
+            visible={visible}
+            auto
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modal}>
+            <Text>Chỉ số đường huyết hôm nay</Text>
+
+            <TextInput
+              placeholder="Đường huyết (mg/dl)"
+              style={styles.modal_input}
+              value={glycemic}
+              onChangeText={val => setGlycemic(val)}
+              keyboardType="decimal-pad"
+            />
+
+            <DropDownPicker
+              items={optionItems}
+              _setValue={setOption}
+              value={option}
+              style={{
+                width: '100%',
+                margin: 0,
+                marginTop: 8,
+              }}
+              stylePicker={{
+                width: '99%',
+              }}
+              childPicker={{
+                marginRight: 0,
+              }}
+            />
+
+            <Button
+              mode="elevated"
+              onPress={handlePostGlycemic}
+              style={styles.modal_button}>
+              Gửi
+            </Button>
+          </Modal>
+        </Portal>
+      </View>
+    </>
   );
 }
 

@@ -67,6 +67,7 @@ function MainNavigator() {
         options={{
           tabBarLabel: 'Cá nhân',
           title: 'Cá nhân',
+          header: () => null,
         }}
       />
     </Tab.Navigator>

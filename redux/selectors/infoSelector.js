@@ -37,7 +37,7 @@ export const userBMIListSelectorFilter = createSelector(
         return _bmis;
       } else if (option === 'month') {
         const _bmis = bmis.filter(
-          b => moment(b.createdAt).month() === moment(now).month(),
+          b => moment(b.createdAt).month() <= moment(now).month(),
         );
 
         return _bmis;
@@ -51,6 +51,7 @@ export const userGlycemicListSelectorFilter = createSelector(
   userListGlycemicSelector,
   optionGlycemicSelector,
   (glycemics, option) => {
+    console.log(glycemics);
     const now = new Date();
     if (glycemics.length > 0) {
       if (option === 'week') {
@@ -61,7 +62,7 @@ export const userGlycemicListSelectorFilter = createSelector(
         return _glycemics;
       } else if (option === 'month') {
         const _glycemics = glycemics.filter(
-          b => moment(b.createdAt).month() === moment(now).month(),
+          b => moment(b.createdAt).month() <= moment(now).month(),
         );
 
         return _glycemics;

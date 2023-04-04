@@ -25,6 +25,8 @@ import {infoSlice} from '../../../redux/slices/infoSlice';
 import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
+import Header from '../../../components/Header';
+import RouterKey from '../../../utils/Routerkey';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -51,7 +53,7 @@ const optionItems = [
   {label: 'Tháng', value: 'month'},
 ];
 
-function BMIScreen() {
+function BMIScreen({navigation}) {
   const [visible, setVisible] = useState(false);
   const [height, setHeight] = useState('0');
   const [weight, setWeight] = useState('0');
@@ -124,91 +126,97 @@ function BMIScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.bmi_container}>
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số BMI Trung Bình: ${bmi_avg_selector}`}
-          </Text>
-          <Text>
-            {notification || `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
-          </Text>
-        </View>
-        <Image
-          style={styles.header_info_img}
-          source={require('../../../assets/images/bmi.png')}
-        />
-      </View>
-
-      <DropDownPicker
-        items={optionItems}
-        _setValue={setOption}
-        value={option}
-        style={{
-          width: '100%',
-          margin: 0,
-          marginTop: 8,
-        }}
-        stylePicker={{
-          width: '99%',
-        }}
-        childPicker={{
-          marginRight: 0,
-        }}
+    <>
+      <Header
+        handle={() => navigation.navigate(RouterKey.INFO_SCREEN)}
+        title={'Chỉ số sức khỏe'}
       />
+      <View style={styles.container}>
+        <View style={styles.bmi_container}>
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số BMI Trung Bình: ${bmi_avg_selector}`}
+            </Text>
+            <Text>
+              {notification || `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            </Text>
+          </View>
+          <Image
+            style={styles.header_info_img}
+            source={require('../../../assets/images/bmi.png')}
+          />
+        </View>
 
-      {metrics.length > 0 && (
-        <LineChart
-          data={data}
-          width={screenWidth - 16}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chart}
-          fromZero
-          onDataPointClick={({value}) => {
-            console.log(value);
+        <DropDownPicker
+          items={optionItems}
+          _setValue={setOption}
+          value={option}
+          style={{
+            width: '100%',
+            margin: 0,
+            marginTop: 8,
+          }}
+          stylePicker={{
+            width: '99%',
+          }}
+          childPicker={{
+            marginRight: 0,
           }}
         />
-      )}
 
-      <Portal>
-        <Modal
-          visible={visible}
-          auto
-          onDismiss={hideModal}
-          contentContainerStyle={styles.modal}>
-          <Text>Chỉ số BMI hôm nay</Text>
-
-          <TextInput
-            placeholder="Chiều cao (cm)"
-            style={styles.modal_input}
-            value={height}
-            onChangeText={val => setHeight(val)}
-            keyboardType="decimal-pad"
+        {metrics.length > 0 && (
+          <LineChart
+            data={data}
+            width={screenWidth - 16}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chart}
+            fromZero
+            onDataPointClick={({value}) => {
+              console.log(value);
+            }}
           />
+        )}
 
-          <TextInput
-            placeholder="Cân nặng (kg)"
-            style={styles.modal_input}
-            value={weight}
-            onChangeText={val => setWeight(val)}
-            keyboardType="decimal-pad"
-          />
+        <Portal>
+          <Modal
+            visible={visible}
+            auto
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modal}>
+            <Text>Chỉ số BMI hôm nay</Text>
 
-          <Button
-            mode="elevated"
-            onPress={handleSendBMI}
-            style={styles.modal_button}>
-            Gửi
-          </Button>
-        </Modal>
-      </Portal>
+            <TextInput
+              placeholder="Chiều cao (cm)"
+              style={styles.modal_input}
+              value={height}
+              onChangeText={val => setHeight(val)}
+              keyboardType="decimal-pad"
+            />
 
-      <TouchableOpacity style={styles.btn_container} onPress={showModal}>
-        <Text style={styles.btn_text}>{'Nhập BMI cho hôm nay'}</Text>
-      </TouchableOpacity>
-    </View>
+            <TextInput
+              placeholder="Cân nặng (kg)"
+              style={styles.modal_input}
+              value={weight}
+              onChangeText={val => setWeight(val)}
+              keyboardType="decimal-pad"
+            />
+
+            <Button
+              mode="elevated"
+              onPress={handleSendBMI}
+              style={styles.modal_button}>
+              Gửi
+            </Button>
+          </Modal>
+        </Portal>
+
+        <TouchableOpacity style={styles.btn_container} onPress={showModal}>
+          <Text style={styles.btn_text}>{'Nhập BMI cho hôm nay'}</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 }
 
