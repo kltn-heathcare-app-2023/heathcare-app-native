@@ -40,7 +40,11 @@ function MainNavigator() {
       <Tab.Screen
         name={RouterKey.HOME_SCREEN}
         component={HomeScreen}
-        options={{tabBarLabel: 'Trang chủ', title: 'Trang chủ'}}
+        options={{
+          tabBarLabel: 'Trang chủ',
+          title: 'Trang chủ',
+          header: () => null,
+        }}
       />
       <Tab.Screen
         name={RouterKey.SCHEDULE_ROUTER_SCREEN}

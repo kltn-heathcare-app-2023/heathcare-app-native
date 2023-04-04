@@ -24,6 +24,7 @@ import moment from 'moment';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import fetch from '../../../utils/fetch';
 import {infoSlice} from '../../../redux/slices/infoSlice';
+import Header from '../../../components/Header';
 
 function ProfilePatientScreen({navigation}) {
   const user_info = useSelector(infoSelector);
@@ -108,6 +109,10 @@ function ProfilePatientScreen({navigation}) {
 
   return (
     <>
+      <Header
+        handle={() => navigation.navigate(RouterKey.INFO_SCREEN)}
+        title={'Thông tin cá nhân'}
+      />
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           {person?.avatar && (

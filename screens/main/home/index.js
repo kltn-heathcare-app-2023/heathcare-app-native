@@ -174,7 +174,7 @@ function HomeScreen({navigation}) {
 
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate(RouterKey.UTILS_CHAT_GPT_SCREEN);
+            navigation.navigate(RouterKey.UTILS_POST_LIST_SCREEN);
           }}
           style={{
             marginTop: 4,

@@ -51,7 +51,6 @@ export const userGlycemicListSelectorFilter = createSelector(
   userListGlycemicSelector,
   optionGlycemicSelector,
   (glycemics, option) => {
-    console.log(glycemics);
     const now = new Date();
     if (glycemics.length > 0) {
       if (option === 'week') {
