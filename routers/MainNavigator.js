@@ -54,7 +54,11 @@ function MainNavigator() {
       <Tab.Screen
         name={RouterKey.MESSAGE_SCREEN}
         component={MessageScreen}
-        options={{tabBarLabel: 'Tin nhắn', title: 'Tin nhắn'}}
+        options={{
+          tabBarLabel: 'Tin nhắn',
+          title: 'Tin nhắn',
+          header: () => null,
+        }}
       />
       <Tab.Screen
         name={RouterKey.NOTIFICATION_SCREEN}

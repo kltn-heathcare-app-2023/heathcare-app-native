@@ -70,7 +70,11 @@ function PostDetailScreen({navigation, route}) {
         </View>
 
         {postItem.images.map(image => (
-          <Image source={{uri: image}} style={styles.content_image} />
+          <Image
+            source={{uri: image}}
+            style={styles.content_image}
+            key={image}
+          />
         ))}
       </View>
 
@@ -102,12 +106,12 @@ function PostDetailScreen({navigation, route}) {
       </View>
 
       <ScrollView style={{height: '83%'}}>
-        {comments.slice(0, 2).map(comment => {
+        {comments.slice(0, 2).map((comment, index) => {
           comment.patient_id
             ? (comment['author'] = comment.patient_id)
             : (comment['author'] = comment.doctor_id);
 
-          return <PostItem post={comment} is_comment={true} />;
+          return <PostItem post={comment} is_comment={true} key={index} />;
         })}
       </ScrollView>
     </View>

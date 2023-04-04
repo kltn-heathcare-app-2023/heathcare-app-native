@@ -19,13 +19,15 @@ import {infoSelector} from '../../redux/selectors/infoSelector';
 import storage from '../../utils/storage';
 import {Root, Popup} from 'popup-ui';
 import moment from 'moment';
+import {useNotification} from 'react-native-internal-notification';
+import IIcon from 'react-native-vector-icons/Ionicons';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
   const [room, setRoom] = useState('');
   const [username, setUsername] = useState('');
   const user_info = useSelector(infoSelector);
-
+  const notificationFromSocket = useNotification();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
@@ -258,16 +260,28 @@ function MainScreen({navigation}) {
 
   useEffect(() => {
     user_info._id && socket.emit('status_user', user_info._id);
+    user_info._id && socket.emit('add_user', user_info._id);
   }, [user_info]);
 
   useEffect(() => {
-    socket.emit('add_user', user_info._id);
     socket.on('call_id_room_to_user_success', resp => {
       const {room_id, doctor_username} = resp;
       setRoom(room_id);
       setUsername(doctor_username);
       showModal();
     });
+    socket.on(
+      'notification_confirm_register_schedule_success',
+      notification => {
+        notificationFromSocket.showNotification({
+          title: 'Thông báo',
+          message: notification.content,
+          icon: <IIcon name={'notifications-outline'} size={24} />,
+          color: '#fff',
+          onPress: () => navigation.navigate(RouterKey.NOTIFICATION_SCREEN),
+        });
+      },
+    );
   }, []);
 
   return (

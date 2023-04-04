@@ -10,7 +10,7 @@ import {TITLE_NOTIFICATION} from '../../../../common/title';
 import {useDispatch} from 'react-redux';
 import {scheduleDetailSlice} from '../../../../redux/slices/scheduleDetailSlice';
 import {socket} from '../../../../utils/config';
-
+import {Popup} from 'popup-ui';
 moment.locale('vi');
 
 function DetailScheduleRegister({navigation, route}) {
@@ -53,7 +53,19 @@ function DetailScheduleRegister({navigation, route}) {
         }
         if (schedule_detail) {
           setText('');
-          Alert.alert(TITLE_NOTIFICATION, 'Đăng ký ca khám thành công');
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: 'Đăng ký ca khám thành công',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
           dispatch(
             scheduleDetailSlice.actions.pushScheduleDetail(schedule_detail),
           );
@@ -61,7 +73,17 @@ function DetailScheduleRegister({navigation, route}) {
           navigation.navigate(RouterKey.HOME_SCREEN);
         }
       } catch (error) {
-        Alert.alert(TITLE_NOTIFICATION, error.message);
+        Popup.show({
+          type: 'Success',
+          title: 'Thông báo',
+          button: true,
+          textBody: error.message,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            navigation.navigate(RouterKey.SCHEDULE_LIST_SCREEN);
+            Popup.hide();
+          },
+        });
       }
     }
   };
