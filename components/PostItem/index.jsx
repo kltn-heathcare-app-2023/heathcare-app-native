@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     borderColor: '#2a9d8f',
     borderRadius: 8,
     padding: 8,
+    backgroundColor: '#fff',
   },
 
   header: {
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
 
   content_image: {
     width: 'auto',
-    height: 302,
+    height: 'auto',
   },
 
   actions: {

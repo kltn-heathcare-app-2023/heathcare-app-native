@@ -15,6 +15,8 @@ import {useSelector} from 'react-redux';
 import {AVATAR_DEFAULT} from '../../../../common/constant';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import {createRemindToPatient} from '../../../../services/doctor/patient';
+import {Root, Popup} from 'popup-ui';
+import RouterKey from '../../../../utils/Routerkey';
 
 function PatientInfo({navigation, route}) {
   const {patient, bmis, glycemics, blood_pressures} = route.params;
@@ -33,6 +35,16 @@ function PatientInfo({navigation, route}) {
       content: note,
     })
       .then(value => {
+        Popup.show({
+          type: 'Success',
+          title: 'Thông báo',
+          button: true,
+          textBody: 'Gửi nhắc nhở cho bệnh nhân thành công',
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            Popup.hide();
+          },
+        });
         hideModal();
         setNote('');
       })

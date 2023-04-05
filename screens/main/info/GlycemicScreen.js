@@ -35,7 +35,7 @@ const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
   {label: 'Trước khi ngủ', value: '3'},
-  {label: 'Xét nghiệm', value: '4'},
+  // {label: 'Xét nghiệm', value: '4'},
 ];
 
 const optionDateItems = [

@@ -68,7 +68,7 @@ function MainScreen({navigation}) {
     user_info._id && socket.emit('status_user', user_info._id);
     user_info._id && socket.emit('add_user', user_info._id);
 
-    if (Object.keys(user_info.metrics).length > 0) {
+    if (user_info && Object.keys(user_info.metrics).length > 0) {
       //alter remind give bmi
       const now = new Date();
       if (now.getHours() > 9 && user_info.metrics?.last_bmi) {

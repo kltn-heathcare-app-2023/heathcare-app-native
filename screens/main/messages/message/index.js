@@ -139,7 +139,7 @@ function ConversationDetail({route, navigation}) {
           message ? (
             <TextInput.Icon
               icon={'send-circle-outline'}
-              size={32}
+              size={24}
               style={{
                 marginLeft: 16,
               }}
@@ -148,7 +148,7 @@ function ConversationDetail({route, navigation}) {
           ) : (
             <TextInput.Icon
               icon={'camera-outline'}
-              size={32}
+              size={24}
               style={{
                 marginLeft: 16,
               }}

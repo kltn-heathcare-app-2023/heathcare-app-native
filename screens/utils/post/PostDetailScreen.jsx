@@ -23,7 +23,7 @@ import {
 import PostItem from '../../../components/PostItem';
 import {Button} from 'react-native-paper';
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -210;
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -180;
 function PostDetailScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
 
@@ -161,7 +161,18 @@ function PostDetailScreen({navigation, route}) {
             );
           })}
 
-          <Button onPress={handleLoadMore}>Tải thêm</Button>
+          {size < comments.length ? (
+            <Button onPress={handleLoadMore}>Tải thêm</Button>
+          ) : (
+            comments.length > 2 && (
+              <Button
+                onPress={() => {
+                  setSize(2);
+                }}>
+                Thu gọn
+              </Button>
+            )
+          )}
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -178,6 +189,7 @@ const styles = StyleSheet.create({
     borderColor: '#2a9d8f',
     borderRadius: 8,
     padding: 8,
+    backgroundColor: '#fff',
   },
 
   header: {
