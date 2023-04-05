@@ -34,6 +34,7 @@ const RouterKey = {
   UTILS_CHAT_GPT_SCREEN: 'ChatGPTScreen',
   UTILS_POST_LIST_SCREEN: 'PostListScreen',
   UTILS_POST_DETAIL_SCREEN: 'PostDetailScreen',
+  PATIENT_INFO_DOCTOR_SCREEN: 'PatientViewInfoDoctorScreen',
 };
 
 export default RouterKey;

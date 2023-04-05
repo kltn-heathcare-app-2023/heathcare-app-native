@@ -3,22 +3,17 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
-import {doctorInfoSlice} from '../../../redux/slices/doctor/doctorInfoSlice';
-import RouterKey from '../../../utils/Routerkey';
-import storage from '../../../utils/storage';
 import {Button, List} from 'react-native-paper';
-import {useSelector} from 'react-redux';
-import {doctorProfileSelector} from '../../../redux/selectors/doctor/infoSelector';
 import moment from 'moment';
 import {getProfileDoctorById} from '../../../services/doctor/profile';
 import {useEffect, useState} from 'react';
+import Header from '../../../components/Header';
 
-function DoctorInfoScreen({navigation}) {
-  const {doctor} = useSelector(doctorProfileSelector);
+function PatientViewInfoDoctorScreen({navigation, route}) {
+  const {schedule} = route.params;
+  const {doctor} = schedule;
   const [profile, setProfile] = useState();
 
   useEffect(() => {
@@ -26,7 +21,8 @@ function DoctorInfoScreen({navigation}) {
   }, []);
 
   return (
-    doctor && (
+    <>
+      <Header handle={() => navigation.goBack()} title={'Thông tin bác sĩ'} />
       <KeyboardAvoidingView behavior="position">
         <ScrollView style={styles.container}>
           <View style={styles.info}>
@@ -145,9 +141,10 @@ function DoctorInfoScreen({navigation}) {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    )
+    </>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -177,4 +174,4 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-export default DoctorInfoScreen;
+export default PatientViewInfoDoctorScreen;
