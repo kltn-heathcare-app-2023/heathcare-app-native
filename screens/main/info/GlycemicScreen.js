@@ -35,7 +35,7 @@ const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
   {label: 'Trước khi ngủ', value: '3'},
-  {label: 'Xét nghiệm', value: '4'},
+  // {label: 'Xét nghiệm', value: '4'},
 ];
 
 const optionDateItems = [
@@ -198,7 +198,9 @@ function GlycemicScreen({navigation}) {
           <View style={styles.bmi_text}>
             <Text style={styles.bmi_text_title}>
               {`Chỉ số đường huyết mới nhất: \n${moment(
-                glycemic_last ? glycemic_last[0].createdAt : new Date(),
+                glycemic_last.length > 0
+                  ? glycemic_last[0].createdAt
+                  : new Date(),
               ).fromNow()}`}
             </Text>
             <Text style={styles.bmi_text_notification}>

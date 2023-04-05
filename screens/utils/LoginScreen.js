@@ -36,34 +36,36 @@ function LoginScreen({navigation}) {
         },
       });
     } else {
-      try {
-        const resp = await login({phone_number: phone, password});
-        const {data} = resp;
-        if (data) {
-          await storage.set('accessToken', data.accessToken);
-          const decode = jwtDecode(data.accessToken);
-          if (decode['rule'] === 'patient')
-            navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
-          else navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
-          setPhone('');
-          setPassword('');
+      if (!errorInputPhone) {
+        try {
+          const resp = await login({phone_number: phone, password});
+          const {data} = resp;
+          if (data) {
+            await storage.set('accessToken', data.accessToken);
+            const decode = jwtDecode(data.accessToken);
+            if (decode['rule'] === 'patient')
+              navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
+            else navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
+            setPhone('');
+            setPassword('');
+          }
+        } catch (error) {
+          const {message} = error;
+          Popup.show({
+            type: 'Danger',
+            title: 'Thông báo',
+            button: true,
+            textBody: `${message ?? error}`,
+            buttontext: 'OK',
+            timing: 3000,
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
+          });
         }
-      } catch (error) {
-        const {message} = error;
-        Popup.show({
-          type: 'Danger',
-          title: 'Thông báo',
-          button: true,
-          textBody: `${message ?? error}`,
-          buttontext: 'OK',
-          timing: 3000,
-          callback: () => {
-            // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-            //   screen: RouterKey.INFO_SCREEN,
-            // });
-            Popup.hide();
-          },
-        });
       }
     }
   };

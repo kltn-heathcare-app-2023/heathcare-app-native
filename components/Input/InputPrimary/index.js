@@ -70,7 +70,7 @@ function TextInputPrimary({
           <Icon name={'calendar'} color="#000" size={20} onPress={openPicker} />
         )}
       </View>
-      {error && <Text style={styles.text_error}>{error}</Text>}
+      {/* {error && <Text style={styles.text_error}>{error}</Text>} */}
     </>
   );
 }

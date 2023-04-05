@@ -29,7 +29,7 @@ function DoctorNotificationScreen({navigation}) {
 
   return (
     <ScrollView>
-      {notification_list_unread.length > 0 && (
+      {notification_list_unread > 0 && (
         <Button
           onPress={handleSeenNotification}
           style={{marginBottom: 8}}

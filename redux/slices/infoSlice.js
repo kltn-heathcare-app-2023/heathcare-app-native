@@ -31,6 +31,8 @@ export const infoSlice = createSlice({
     },
     addGlycemic: (state, action) => {
       state.glycemic_list.push(action.payload);
+      console.log(state.glycemic_last);
+      state.glycemic_last.push(action.payload);
     },
     addBlood: (state, action) => {
       state.blood_pressures.push(action.payload);
@@ -62,7 +64,7 @@ export const infoSlice = createSlice({
         state.bmi_avg = action.payload.bmis.avgBMI ?? 0;
         state.bmi_list = action.payload.bmis.bmis;
         state.glycemic_list = action.payload.glycemic;
-        state.glycemic_last = action.payload.last_glycemic;
+        state.glycemic_last = action.payload.last_glycemic ?? [];
         state.blood_pressures = action.payload.blood_pressures;
         state.rule = action.payload.bmis.rule.notification ?? null;
         state.status = action.payload.status;

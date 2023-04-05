@@ -54,7 +54,15 @@ function RegisterScreen({navigation}) {
   };
 
   const handleRegister = () => {
-    if (phone && password && confirmPass && name && !errorInputPhone) {
+    if (
+      phone &&
+      password &&
+      confirmPass &&
+      name &&
+      !errorInputPhone &&
+      !errorInputPass &&
+      !errorConfirmPass
+    ) {
       // signInWithPhoneNumber();
       // .then(confirm => {
       //   navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
@@ -96,7 +104,9 @@ function RegisterScreen({navigation}) {
         type: 'Warning',
         title: 'Thông báo',
         button: true,
-        textBody: `${('Thông báo', 'Bạn phải điền đầy đủ thông tin!')}`,
+        textBody: `${
+          ('Thông báo', 'Bạn phải điền chính xác các trường thông tin!')
+        }`,
         buttontext: 'OK',
         timing: 3000,
         callback: () => {

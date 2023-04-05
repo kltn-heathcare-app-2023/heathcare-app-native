@@ -22,14 +22,16 @@ export const notificationSlice = createSlice({
         state.notification_list = action.payload;
       })
       .addCase(updateStatusSeenNotification.fulfilled, (state, action) => {
-        state.notification_list = state.notification_list.filter(
-          notification => !action.payload.includes(notification._id),
-        );
+        state.notification_list = state.notification_list.map(item => {
+          return {...item, hasSeen: true};
+        });
       })
       .addCase(
         updateStatusSeenNotificationByDoctor.fulfilled,
         (state, action) => {
-          state.notification_list = action.payload;
+          state.notification_list = state.notification_list.map(item => {
+            return {...item, hasSeen: true};
+          });
         },
       );
   },
@@ -106,7 +108,11 @@ export const notification_list_unread_filter = createSelector(
   notification_list_selector,
   notifications => {
     if (notifications) {
-      return notifications.filter(notification => !notification.hasSeen).length;
+      const notification_unread_size = notifications.filter(
+        notification => !notification.hasSeen,
+      ).length;
+      console.log(notification_unread_size);
+      return notification_unread_size;
     }
 
     return 0;

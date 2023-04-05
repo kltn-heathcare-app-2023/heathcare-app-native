@@ -19,3 +19,7 @@ export const dislikePost = async (id, user_id) => {
 export const getCommentByPost = async id => {
   return fetch.get(`/comments/${id}`);
 };
+
+export const createCommentForPost = async (id, data) => {
+  return fetch.postFormWithAuth(`/comments/${id}`, data);
+};

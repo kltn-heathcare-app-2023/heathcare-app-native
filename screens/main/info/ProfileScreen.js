@@ -47,10 +47,9 @@ function ProfilePatientScreen({navigation}) {
 
   const handleViewDoctorInfo = () => {
     console.log('click ', doctor_glycemic_id);
-    // navigation.navigate(RouterKey.SCHEDULE_ROUTER_SCREEN, {
-    //   screen: RouterKey.SCHEDULE_DETAIL_SCREEN,
-    //   params: {schedule: {doctor: doctor_glycemic_id}},
-    // });
+    navigation.navigate(RouterKey.PATIENT_INFO_DOCTOR_SCREEN, {
+      schedule: {doctor: doctor_glycemic_id},
+    });
   };
 
   const onCancel = () => {
@@ -134,12 +133,14 @@ function ProfilePatientScreen({navigation}) {
         <List.Section>
           <List.Subheader>Thông tin cá nhân:</List.Subheader>
           <List.Item title={`Tên: ${person.username}`} />
-          <List.Item title={`Ngày sinh: ${moment(new Date(person.dob))}`} />
+          <List.Item
+            title={`Ngày sinh: ${moment(new Date(person.dob)).format('L')}`}
+          />
           <List.Item title={`Địa chỉ: ${person.address}`} />
           <List.Item title={`Giới Tính: ${person.gender ? 'Nam' : 'Nữ'} `} />
           <List.Item title={`Nhóm máu: ${blood}`} />
           <List.Item
-            title={`Tiền sử bệnh: ${
+            title={`Tình trạng hiện tại: ${
               anamnesis === 1
                 ? 'Bình Thường'
                 : anamnesis === 2
@@ -306,9 +307,10 @@ const styles = StyleSheet.create({
   modal_container: {
     backgroundColor: '#fff',
     width: '95%',
-    height: '80%',
+    height: 600,
     display: 'flex',
     alignItems: 'center',
+    borderRadius: 16,
   },
   modal_title: {
     fontSize: 16,

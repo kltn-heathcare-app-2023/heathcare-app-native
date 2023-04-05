@@ -28,7 +28,6 @@ const put = async (url, data) => {
       },
       body: JSON.stringify(data),
     });
-
     const res = await resp.json();
     if (res?.data) return res.data;
     return Promise.reject(res);
