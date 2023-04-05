@@ -62,6 +62,11 @@ function MainScreen({navigation}) {
       .catch(err => {
         console.log('error get permission ->', err);
       });
+  }, []);
+
+  useEffect(() => {
+    user_info._id && socket.emit('status_user', user_info._id);
+    user_info._id && socket.emit('add_user', user_info._id);
 
     if (Object.keys(user_info.metrics).length > 0) {
       //alter remind give bmi
@@ -256,11 +261,6 @@ function MainScreen({navigation}) {
         },
       });
     }
-  }, []);
-
-  useEffect(() => {
-    user_info._id && socket.emit('status_user', user_info._id);
-    user_info._id && socket.emit('add_user', user_info._id);
   }, [user_info]);
 
   useEffect(() => {

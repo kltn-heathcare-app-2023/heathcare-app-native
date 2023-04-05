@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
   },
 
   actions: {
+    paddingVertical: 8,
     borderTopWidth: 1,
     borderTopColor: '#2a9d8f',
     display: 'flex',

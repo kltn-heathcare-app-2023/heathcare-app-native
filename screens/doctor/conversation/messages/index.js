@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {
   KeyboardAvoidingView,
-  KeyboardAvoidingViewBase,
   ScrollView,
   StyleSheet,
   Text,

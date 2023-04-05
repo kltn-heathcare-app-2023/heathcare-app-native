@@ -1,5 +1,6 @@
 import {
   Image,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,18 +15,22 @@ import HTML from 'react-native-render-html';
 import {infoSelector} from '../../../redux/selectors/infoSelector';
 import {useEffect, useState} from 'react';
 import {
+  createCommentForPost,
   dislikePost,
   getCommentByPost,
   likePost,
 } from '../../../services/patient/post';
 import PostItem from '../../../components/PostItem';
+import {Button} from 'react-native-paper';
 
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -210;
 function PostDetailScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
 
   const {post} = route.params;
   const [postItem, setPost] = useState(post);
   const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState();
   const [size, setSize] = useState(2);
 
   useEffect(() => {
@@ -46,75 +51,120 @@ function PostDetailScreen({navigation, route}) {
       .catch(err => console.log(err));
   };
 
-  const handleSendComment = () => {};
+  const handleSendComment = () => {
+    if (comment) {
+      const formData = new FormData();
+      formData.append('patient_id', user_info._id);
+      formData.append('content', comment);
+
+      createCommentForPost(post._id, formData)
+        .then(value => {
+          const data = value.data;
+          setComments([data, ...comments]);
+          setComment('');
+        })
+        .catch(err => console.error(`err ->`, err));
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (size < comments.length) {
+      setSize(size + 2);
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={{uri: postItem.author.person.avatar}}
-          style={styles.header_avatar}
-        />
-        <Text style={styles.header_username}>
-          {postItem.author.person.username}
-        </Text>
-      </View>
-      <View style={styles.body}>
-        <Text>{postItem.title}</Text>
-
-        <View style={styles.content_html}>
-          <HTML
-            source={{html: postItem.content}}
-            contentWidth={useWindowDimensions().width}
-          />
-        </View>
-
-        {postItem.images.map(image => (
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      keyboardVerticalOffset={keyboardVerticalOffset}
+      behavior={'position'}>
+      <View style={styles.container}>
+        <View style={styles.header}>
           <Image
-            source={{uri: image}}
-            style={styles.content_image}
-            key={image}
+            source={{uri: postItem.author.person.avatar}}
+            style={styles.header_avatar}
           />
-        ))}
-      </View>
+          <Text style={styles.header_username}>
+            {postItem.author.person.username}
+          </Text>
+        </View>
+        <View style={styles.body}>
+          <Text>{postItem.title}</Text>
 
-      <View style={styles.actions}>
-        <View style={styles.action_status}>
-          {postItem.likes.includes(user_info._id) ? (
-            <TouchableOpacity onPress={handleDislikePost}>
-              <ICon name={'heart'} size={24} color={'#ff595e'} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={handleLikePost}>
-              <ICon name={'ios-heart-outline'} size={24} color={'#ff595e'} />
-            </TouchableOpacity>
-          )}
-          <Text>{postItem.likes.length}</Text>
+          <View style={styles.content_html}>
+            <HTML
+              source={{html: postItem.content}}
+              contentWidth={useWindowDimensions().width}
+            />
+          </View>
+
+          {postItem.images.map(image => (
+            <Image
+              source={{uri: image}}
+              style={styles.content_image}
+              key={image}
+            />
+          ))}
         </View>
 
-        <View style={styles.action_comment}>
-          <ICon name={'ios-chatbubble-ellipses'} size={24} color={'#0a9396'} />
-          <Text>{postItem.comments.length}</Text>
+        <View style={styles.actions}>
+          <View style={styles.action_status}>
+            {postItem.likes.includes(user_info._id) ? (
+              <TouchableOpacity onPress={handleDislikePost}>
+                <ICon name={'heart'} size={24} color={'#ff595e'} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleLikePost}>
+                <ICon name={'ios-heart-outline'} size={24} color={'#ff595e'} />
+              </TouchableOpacity>
+            )}
+            <Text>{postItem.likes.length}</Text>
+          </View>
+
+          <View style={styles.action_comment}>
+            <ICon
+              name={'ios-chatbubble-ellipses'}
+              size={24}
+              color={'#0a9396'}
+            />
+            <Text>{postItem.comments.length}</Text>
+          </View>
         </View>
+
+        <View style={styles.input_view}>
+          <TextInput
+            style={styles.input_text}
+            value={comment}
+            onChangeText={v => setComment(v)}
+          />
+          <TouchableOpacity onPress={handleSendComment}>
+            <ICon
+              name={'ios-paper-plane-outline'}
+              size={24}
+              color={'#0a9396'}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView style={{height: '75%'}}>
+          {comments.slice(0, size).map((comment, index) => {
+            comment.patient_id
+              ? (comment['author'] = comment.patient_id)
+              : (comment['author'] = comment.doctor_id);
+
+            return (
+              <PostItem
+                post={comment}
+                is_comment={true}
+                key={comment._id + index}
+              />
+            );
+          })}
+
+          <Button onPress={handleLoadMore}>Tải thêm</Button>
+        </ScrollView>
       </View>
-
-      <View style={styles.input_view}>
-        <TextInput style={styles.input_text} />
-        <TouchableOpacity onPress={handleSendComment}>
-          <ICon name={'ios-paper-plane-outline'} size={24} color={'#0a9396'} />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView style={{height: '83%'}}>
-        {comments.slice(0, 2).map((comment, index) => {
-          comment.patient_id
-            ? (comment['author'] = comment.patient_id)
-            : (comment['author'] = comment.doctor_id);
-
-          return <PostItem post={comment} is_comment={true} key={index} />;
-        })}
-      </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
