@@ -38,16 +38,31 @@ function HomeScreen({navigation}) {
     glycemic_case_3 = glycemic_last.find(item => item.case === 3)?.metric ?? 0;
   }
 
+  let systolic = 0;
+  let diastole = 0;
+  if (user_info.metrics?.last_blood_pressures) {
+    systolic = user_info.metrics?.last_blood_pressures.systolic;
+    diastole = user_info.metrics?.last_blood_pressures.diastole;
+  }
+
   const dispatch = useDispatch();
   const schedules = useSelector(scheduleDetailListAfterNow);
 
   const data = {
     // labels: ["", "", "BMI"], // optional
-    data: [0, 0, bmi_avg / 30],
+    data: [
+      (systolic > 120 ? 120 : systolic) / 120,
+      (diastole > 180 ? 180 : diastole) / 180,
+      bmi_avg > 30 ? 30 : bmi_avg / 30,
+    ],
   };
 
   const dataGlycemic = {
-    data: [glycemic_case_1 / 600, glycemic_case_2 / 600, glycemic_case_3 / 600],
+    data: [
+      (glycemic_case_1 > 132 ? 132 : glycemic_case_1) / 132,
+      (glycemic_case_2 > 180 ? 180 : glycemic_case_2) / 180,
+      (glycemic_case_3 > 120 ? 120 : glycemic_case_3) / 120,
+    ],
   };
 
   const chartBMIConfig = {
@@ -95,8 +110,8 @@ function HomeScreen({navigation}) {
         <View style={styles.chart}>
           <ProgressChart
             data={data}
-            width={146}
-            height={146}
+            width={160}
+            height={160}
             strokeWidth={12}
             radius={32}
             chartConfig={chartBMIConfig}
@@ -104,13 +119,19 @@ function HomeScreen({navigation}) {
             style={{borderRadius: 16}}
           />
           <Text style={styles.chart_text}>{`Chỉ số BMI: ${bmi_avg}/ 30`}</Text>
+          <Text
+            style={styles.chart_text}>{`HA - Tâm thu: ${systolic}/ 120`}</Text>
+          <Text
+            style={
+              styles.chart_text
+            }>{`HA - Tâm trương: ${diastole}/ 180`}</Text>
         </View>
 
         <View style={styles.chart}>
           <ProgressChart
             data={dataGlycemic}
-            width={146}
-            height={146}
+            width={160}
+            height={160}
             strokeWidth={12}
             radius={32}
             chartConfig={chartGlycemicConfig}
@@ -120,7 +141,7 @@ function HomeScreen({navigation}) {
           <Text
             style={
               styles.chart_text
-            }>{`Chỉ số TH1: ${glycemic_case_1}/ 600\nChỉ số TH2: ${glycemic_case_2}/ 600\nChỉ số TH3: ${glycemic_case_3}/ 600`}</Text>
+            }>{`Chỉ số TH1: ${glycemic_case_1}/ 126\nChỉ số TH2: ${glycemic_case_2}/ 180\nChỉ số TH3: ${glycemic_case_3}/ 120`}</Text>
         </View>
       </View>
 
@@ -138,6 +159,7 @@ function HomeScreen({navigation}) {
                   ? '#f95738'
                   : '#cbdfbd',
             },
+            {marginTop: 8},
           ]}>
           <Text style={styles.box_status_title}>Đánh giá:</Text>
           <Text style={styles.box_status_content}>

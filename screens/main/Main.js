@@ -68,7 +68,11 @@ function MainScreen({navigation}) {
     user_info._id && socket.emit('status_user', user_info._id);
     user_info._id && socket.emit('add_user', user_info._id);
 
-    if (user_info && Object.keys(user_info.metrics).length > 0) {
+    if (
+      user_info &&
+      Object.keys(user_info).length > 0 &&
+      Object.keys(user_info.metrics).length > 0
+    ) {
       //alter remind give bmi
       const now = new Date();
       if (now.getHours() > 9 && user_info.metrics?.last_bmi) {
@@ -246,20 +250,26 @@ function MainScreen({navigation}) {
         });
       }
     } else {
-      Popup.show({
-        type: 'Success',
-        title: 'Xin chào',
-        button: true,
-        textBody:
-          'Chào bạn, để các bác sĩ có thể hiểu rõ hơn tình trạng của bạn. Vui lòng nhập các chỉ số',
-        buttontext: 'Nhập ngay',
-        callback: () => {
-          navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-            screen: RouterKey.INFO_SCREEN,
-          });
-          Popup.hide();
-        },
-      });
+      if (
+        user_info &&
+        user_info?.metrics &&
+        Object.keys(user_info.metrics).length === 0
+      ) {
+        Popup.show({
+          type: 'Success',
+          title: 'Xin chào',
+          button: true,
+          textBody:
+            'Chào bạn, để các bác sĩ có thể hiểu rõ hơn tình trạng của bạn. Vui lòng nhập các chỉ số',
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              screen: RouterKey.INFO_SCREEN,
+            });
+            Popup.hide();
+          },
+        });
+      }
     }
   }, [user_info]);
 

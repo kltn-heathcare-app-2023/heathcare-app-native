@@ -36,9 +36,12 @@ function DoctorHomeListPatientExamScreen({navigation}) {
   const notification_list = useSelector(notification_list_selector);
 
   const last_notification = notification_list[notification_list.length - 1];
-  console.log(doctor_profile);
   useEffect(() => {
-    if (last_notification && Object.keys(doctor_profile).length > 0) {
+    if (
+      last_notification &&
+      doctor_profile &&
+      Object.keys(doctor_profile).length > 0
+    ) {
       notification.showNotification({
         title: 'Thông báo',
         message: last_notification.content,
