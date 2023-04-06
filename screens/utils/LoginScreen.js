@@ -13,11 +13,13 @@ import jwtDecode from 'jwt-decode';
 import regex from '../../common/regex';
 
 import {Popup} from 'popup-ui';
+import {ActivityIndicator, Button} from 'react-native-paper';
 
 function LoginScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errorInputPhone, setErrorInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!(phone.trim() && password.trim())) {
@@ -38,19 +40,25 @@ function LoginScreen({navigation}) {
     } else {
       if (!errorInputPhone) {
         try {
+          setLoading(true);
           const resp = await login({phone_number: phone, password});
           const {data} = resp;
           if (data) {
             await storage.set('accessToken', data.accessToken);
             const decode = jwtDecode(data.accessToken);
-            if (decode['rule'] === 'patient')
+            if (decode['rule'] === 'patient') {
               navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
-            else navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
+              setLoading(false);
+            } else {
+              navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
+              setLoading(false);
+            }
             setPhone('');
             setPassword('');
           }
         } catch (error) {
           const {message} = error;
+          setLoading(false);
           Popup.show({
             type: 'Danger',
             title: 'Thông báo',
@@ -123,7 +131,18 @@ function LoginScreen({navigation}) {
           onChangeText={handleChangePassInput}
         />
 
-        <ButtonPrimary title="Đăng nhập" handle={handleLogin} />
+        <ButtonPrimary
+          title="Đăng nhập"
+          handle={handleLogin}
+          disabled={loading}
+        />
+        {loading && (
+          <ActivityIndicator
+            animating={true}
+            color={'#2ec4b6'}
+            style={{marginTop: 16}}
+          />
+        )}
         <ActionView title="Đăng ký ngay" isLogin handle={handleClickRegister} />
       </ImageBackground>
     </>

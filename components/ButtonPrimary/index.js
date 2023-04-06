@@ -6,11 +6,10 @@ function ButtonPrimary({title, handle, disabled}) {
     <TouchableOpacity
       style={[
         styles.container,
-        {backgroundColor: !disabled ? '#007BFF' : '#f4a261'},
+        {backgroundColor: !disabled ? '#007BFF' : '#353535'},
       ]}
       onPress={handle}
-      //   disabled={!disabled}
-    >
+      disabled={disabled}>
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
