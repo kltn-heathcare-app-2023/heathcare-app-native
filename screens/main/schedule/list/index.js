@@ -25,7 +25,9 @@ function ScheduleListScreen({navigation}) {
   const schedule_list = useSelector(filterScheduleByDayOfWeek);
 
   useEffect(() => {
-    dispatch(fetchAllScheduleDoctor());
+    if (schedule_list.length === 0) {
+      dispatch(fetchAllScheduleDoctor());
+    }
   }, [selectedDate]);
 
   return (
@@ -43,14 +45,12 @@ function ScheduleListScreen({navigation}) {
               'Vui lòng chọn ngày lớn hơn hoặc bằng ngày hôm nay',
             );
           } else {
-            dispatch(
-              scheduleSlice.actions.chooseDayOfWeek(new Date(date).getDay()),
-            );
+            dispatch(scheduleSlice.actions.chooseDayOfWeek(date));
             setSelectedDate(date);
           }
         }}
         onPressGoToday={today => {
-          dispatch(scheduleSlice.actions.chooseDayOfWeek(today.getDay()));
+          dispatch(scheduleSlice.actions.chooseDayOfWeek(today));
           setSelectedDate(today);
         }}
         onSwipeDown={() => {

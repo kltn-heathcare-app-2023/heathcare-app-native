@@ -74,7 +74,7 @@ function DetailScheduleRegister({navigation, route}) {
         }
       } catch (error) {
         Popup.show({
-          type: 'Success',
+          type: 'Danger',
           title: 'Thông báo',
           button: true,
           textBody: error.message,
