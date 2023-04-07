@@ -78,7 +78,7 @@ function PostDetailScreen({navigation, route}) {
       style={{flex: 1}}
       keyboardVerticalOffset={keyboardVerticalOffset}
       behavior={'position'}>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Image
             source={{uri: postItem.author.person.avatar}}
@@ -174,7 +174,7 @@ function PostDetailScreen({navigation, route}) {
             )
           )}
         </ScrollView>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
