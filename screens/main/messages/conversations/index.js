@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ConversationItem from '../../../../components/ConversationItem';
@@ -10,7 +10,6 @@ import RouterKey from '../../../../utils/Routerkey';
 function ConversationScreen({navigation}) {
   const user_info = useSelector(infoSelector);
   const conversations = useSelector(cleanConversationListSelector);
-
   const dispatch = useDispatch();
 
   useEffect(() => {

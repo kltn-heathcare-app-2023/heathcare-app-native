@@ -16,6 +16,7 @@ import {doctorProfileSelector} from '../../../redux/selectors/doctor/infoSelecto
 import moment from 'moment';
 import {getProfileDoctorById} from '../../../services/doctor/profile';
 import {useEffect, useState} from 'react';
+import Header from '../../../components/Header';
 
 function DoctorInfoScreen({navigation}) {
   const {doctor} = useSelector(doctorProfileSelector);
@@ -28,6 +29,10 @@ function DoctorInfoScreen({navigation}) {
   return (
     doctor && (
       <KeyboardAvoidingView behavior="position">
+        <Header
+          title={'Thông tin cá nhân'}
+          handle={() => navigation.goBack()}
+        />
         <ScrollView style={styles.container}>
           <View style={styles.info}>
             <Image

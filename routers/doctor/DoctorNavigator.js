@@ -32,6 +32,7 @@ const screenOptions = ({route}) => ({
   tabBarInactiveTintColor: '#ccc',
   tabBarActiveTintColor: '#219ebc',
   headerTitleAlign: 'center',
+  header: () => {},
 });
 
 const Stack = createNativeStackNavigator();

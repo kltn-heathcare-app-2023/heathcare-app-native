@@ -42,12 +42,14 @@ function DoctorHomeListPatientExamScreen({navigation}) {
       doctor_profile &&
       Object.keys(doctor_profile).length > 0
     ) {
-      notification.showNotification({
-        title: 'Thông báo',
-        message: last_notification.content,
-        icon: <Icon name={'ios-notifications-outline'} size={24} />,
-        color: '#fff',
-      });
+      if (!last_notification.hasSeen) {
+        notification.showNotification({
+          title: 'Thông báo',
+          message: last_notification.content,
+          icon: <Icon name={'ios-notifications-outline'} size={24} />,
+          color: '#fff',
+        });
+      }
     }
 
     setLoading(true);

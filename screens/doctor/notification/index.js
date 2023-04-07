@@ -16,6 +16,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {type} from '../../../common/constant';
 import moment from 'moment';
 import {doctorInfoSlice} from '../../../redux/slices/doctor/doctorInfoSlice';
+import Header from '../../../components/Header';
 
 function DoctorNotificationScreen({navigation}) {
   const dispatch = useDispatch();
@@ -28,56 +29,59 @@ function DoctorNotificationScreen({navigation}) {
   };
 
   return (
-    <ScrollView>
-      {notification_list_unread > 0 && (
-        <Button
-          onPress={handleSeenNotification}
-          style={{marginBottom: 8}}
-          mode="elevated">
-          Đánh dấu đã xem
-        </Button>
-      )}
-      {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
-        return (
-          <TouchableOpacity
-            style={[
-              styles.container_notification,
-              {
-                backgroundColor: rule.includes(
-                  type.RULE_NOTIFICATION_REGISTER_SCHEDULE,
-                )
-                  ? '#a8dadc'
-                  : rule === type.RULE_NOTIFICATION_CANCEL_SCHEDULE
-                  ? '#fec89a'
-                  : rule === type.RULE_SYSTEM
-                  ? '#ccc'
+    <>
+      <Header title={'Thông báo'} handle={() => navigation.goBack()} />
+      <ScrollView>
+        {notification_list_unread > 0 && (
+          <Button
+            onPress={handleSeenNotification}
+            style={{marginBottom: 8}}
+            mode="elevated">
+            Đánh dấu đã xem
+          </Button>
+        )}
+        {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
+          return (
+            <TouchableOpacity
+              style={[
+                styles.container_notification,
+                {
+                  backgroundColor: rule.includes(
+                    type.RULE_NOTIFICATION_REGISTER_SCHEDULE,
+                  )
+                    ? '#a8dadc'
+                    : rule === type.RULE_NOTIFICATION_CANCEL_SCHEDULE
+                    ? '#fec89a'
+                    : rule === type.RULE_SYSTEM
+                    ? '#ccc'
+                    : rule === type.RULE_WARNING
+                    ? '#fca311'
+                    : rule === type.RULE_SOS
+                    ? '#e63946'
+                    : '#f6bd60',
+                },
+              ]}
+              key={_id}>
+              <Text style={styles.header_notification}>
+                {rule.includes('SCHEDULE')
+                  ? 'Lịch khám'
+                  : rule.includes('REMIND')
+                  ? 'Nhắc nhở'
                   : rule === type.RULE_WARNING
-                  ? '#fca311'
+                  ? 'Cảnh báo'
                   : rule === type.RULE_SOS
-                  ? '#e63946'
-                  : '#f6bd60',
-              },
-            ]}
-            key={_id}>
-            <Text style={styles.header_notification}>
-              {rule.includes('SCHEDULE')
-                ? 'Lịch khám'
-                : rule.includes('REMIND')
-                ? 'Nhắc nhở'
-                : rule === type.RULE_WARNING
-                ? 'Cảnh báo'
-                : rule === type.RULE_SOS
-                ? 'SOS'
-                : 'Hệ thống'}
-            </Text>
-            <Text style={styles.content_notification}>{content}</Text>
-            <Text style={styles.time_notification}>
-              {moment(createdAt).fromNow()} - {hasSeen ? 'Đã xem' : null}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+                  ? 'SOS'
+                  : 'Hệ thống'}
+              </Text>
+              <Text style={styles.content_notification}>{content}</Text>
+              <Text style={styles.time_notification}>
+                {moment(createdAt).fromNow()} - {hasSeen ? 'Đã xem' : null}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </>
   );
 }
 
