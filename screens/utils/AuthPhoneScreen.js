@@ -16,6 +16,7 @@ import {register} from '../../services/auth/index.js';
 import {Alert} from 'react-native';
 import {TITLE_ERROR, TITLE_NOTIFICATION} from '../../common/title.js';
 import RouterKey from '../../utils/Routerkey.js';
+import storage from '../../utils/storage.js';
 
 function AuthPhoneScreen({navigation, route}) {
   const {phone, password, name, confirm} = route.params;
@@ -41,10 +42,10 @@ function AuthPhoneScreen({navigation, route}) {
         };
         console.log('data send -> ', data);
         register(data)
-          .then(data => {
-            console.log('data receiver -> ', data);
-            // storage.set('accessToken', data.accessToken);
-            // navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
+          .then(resp => {
+            console.log('resp receiver -> ', resp);
+            storage.set('accessToken', resp.data.accessToken);
+            navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
           })
           .catch(err => {
             Alert.alert(TITLE_NOTIFICATION, `Đăng ký thất bại -> ${err}`);

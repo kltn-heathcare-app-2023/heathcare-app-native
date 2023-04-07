@@ -17,6 +17,7 @@ import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSele
 import {createRemindToPatient} from '../../../../services/doctor/patient';
 import {Root, Popup} from 'popup-ui';
 import RouterKey from '../../../../utils/Routerkey';
+import Header from '../../../../components/Header';
 
 function PatientInfo({navigation, route}) {
   const {patient, bmis, glycemics, blood_pressures} = route.params;
@@ -55,6 +56,10 @@ function PatientInfo({navigation, route}) {
 
   return (
     <>
+      <Header
+        title={`Bệnh nhân: ${person.username}`}
+        handle={() => navigation.goBack()}
+      />
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Image

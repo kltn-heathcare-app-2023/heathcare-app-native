@@ -16,7 +16,7 @@ import styles from '../../styles/global.js';
 
 import auth from '@react-native-firebase/auth';
 import storage from '../../utils/storage';
-import {register} from '../../services/auth';
+import {findAccount, register} from '../../services/auth';
 import {Alert} from 'react-native';
 import {TITLE_NOTIFICATION} from '../../common/title';
 import regex from '../../common/regex';
@@ -28,6 +28,7 @@ function RegisterScreen({navigation}) {
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [errorInputPhone, setErrorInputPhone] = useState('');
+  const [errorInputName, setErrorInputName] = useState('');
   const [errorInputPass, setErrorInputPass] = useState('');
   const [errorConfirmPass, setErrorConfirmPass] = useState('');
 
@@ -61,44 +62,80 @@ function RegisterScreen({navigation}) {
       name &&
       !errorInputPhone &&
       !errorInputPass &&
-      !errorConfirmPass
+      !errorConfirmPass &&
+      !errorInputName
     ) {
-      // signInWithPhoneNumber();
-      // .then(confirm => {
-      //   navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
-      //     phone,
-      //     password,
-      //     name,
-      //     confirm,
-      //   });
-      // })
-      // .catch(err => console.error('bug send otp', err));
-
-      register({
-        phone_number: phone,
-        password: password,
-        rule: 'patient',
-      })
+      findAccount(phone)
         .then(({data}) => {
-          storage.set('accessToken', data.accessToken);
-          navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
+          const {is_exist} = data;
+          if (is_exist) {
+            Popup.show({
+              type: 'Warning',
+              title: 'Thông báo',
+              button: true,
+              textBody: `Tài khoản đã tồn tại vui lòng đăng nhập`,
+              buttontext: 'OK',
+              timing: 3000,
+              callback: () => {
+                navigation.navigate(RouterKey.LOGIN_SCREEN);
+                Popup.hide();
+              },
+            });
+          } else {
+            signInWithPhoneNumber()
+              .then(confirm => {
+                navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
+                  phone,
+                  password,
+                  name,
+                  confirm,
+                });
+              })
+              .catch(err => {
+                Popup.show({
+                  type: 'Warning',
+                  title: 'Thông báo',
+                  button: true,
+                  textBody: `${err}`,
+                  buttontext: 'OK',
+                  timing: 3000,
+                  callback: () => {
+                    // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+                    //   screen: RouterKey.INFO_SCREEN,
+                    // });
+                    Popup.hide();
+                  },
+                });
+              });
+          }
         })
-        .catch(err => {
-          Popup.show({
-            type: 'Warning',
-            title: 'Thông báo',
-            button: true,
-            textBody: `${('Thông báo', err?.message)}`,
-            buttontext: 'OK',
-            timing: 3000,
-            callback: () => {
-              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-              //   screen: RouterKey.INFO_SCREEN,
-              // });
-              Popup.hide();
-            },
-          });
-        });
+        .catch(err => console.error(err));
+
+      // register({
+      //   phone_number: phone,
+      //   password: password,
+      //   rule: 'patient',
+      // })
+      //   .then(({data}) => {
+      //     storage.set('accessToken', data.accessToken);
+      //     navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
+      //   })
+      //   .catch(err => {
+      //     Popup.show({
+      //       type: 'Warning',
+      //       title: 'Thông báo',
+      //       button: true,
+      //       textBody: `${('Thông báo', err?.message)}`,
+      //       buttontext: 'OK',
+      //       timing: 3000,
+      //       callback: () => {
+      //         // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+      //         //   screen: RouterKey.INFO_SCREEN,
+      //         // });
+      //         Popup.hide();
+      //       },
+      //     });
+      //   });
     } else {
       Popup.show({
         type: 'Warning',
@@ -139,7 +176,17 @@ function RegisterScreen({navigation}) {
 
   const handleChangeNameInput = useCallback(
     val => {
-      setName(val);
+      if (val) {
+        if (!regex.isValidVNName(val)) {
+          setErrorInputName('Số điện thoại không hợp lệ');
+        } else {
+          setErrorInputName('');
+        }
+        setName(val);
+      } else {
+        setName(val);
+        setErrorInputName('');
+      }
     },
     [name],
   );
@@ -210,6 +257,7 @@ function RegisterScreen({navigation}) {
           placeholder="Họ và tên"
           value={name}
           onChangeText={handleChangeNameInput}
+          error={errorInputName}
         />
 
         <TextInputPrimary
