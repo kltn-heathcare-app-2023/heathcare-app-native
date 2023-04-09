@@ -6,7 +6,11 @@ export const doctorConversationSlice = createSlice({
   initialState: {
     conversations: [],
   },
-  reducers: {},
+  reducers: {
+    pushConversationAfterAcceptSchedule: (state, action) => {
+      state.conversations.push(action.payload);
+    },
+  },
   extraReducers: builder => {
     builder.addCase(fetchConversationByDoctorId.fulfilled, (state, action) => {
       state.conversations = action.payload;
@@ -25,5 +29,7 @@ export const fetchConversationByDoctorId = createAsyncThunk(
     }
   },
 );
+
+const {pushConversationAfterAcceptSchedule} = doctorConversationSlice.actions;
 
 export default doctorConversationSlice.reducer;

@@ -5,7 +5,7 @@ export const getPatientExamByDoctorId = id => {
 };
 
 export const getAllScheduleDetailUnAccepted = id => {
-  return fetch.get(`/schedule-details/doctor/schedule-list/${id}`);
+  return fetch.get(`/schedule-details/doctor/schedule-list-waiting/${id}`);
 };
 
 export const getAllWorkingDay = id => {
@@ -18,4 +18,8 @@ export const createRemindToPatient = (patientId, data) => {
 
 export const getAllConversation = id => {
   return fetch.get(`/conversations/doctor/${id}`);
+};
+
+export const acceptScheduleDetailByScheduleId = id => {
+  return fetch.put(`/schedule-details/doctor/accept/${id}`);
 };

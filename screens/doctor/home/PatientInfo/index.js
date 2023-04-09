@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Button, List, Modal, Portal} from 'react-native-paper';
 import {useSelector} from 'react-redux';
-import {AVATAR_DEFAULT} from '../../../../common/constant';
+import {ANAMNESIS, AVATAR_DEFAULT} from '../../../../common/constant';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import {createRemindToPatient} from '../../../../services/doctor/patient';
 import {Root, Popup} from 'popup-ui';
@@ -94,15 +94,7 @@ function PatientInfo({navigation, route}) {
           <List.Item title={`Địa chỉ: ${person.address}`} />
           <List.Item title={`Giới Tính: ${person.gender ? 'Nam' : 'Nữ'} `} />
           <List.Item title={`Nhóm máu: ${blood}`} />
-          <List.Item
-            title={`Tiền sử bệnh: ${
-              anamnesis === 1
-                ? 'Bình Thường'
-                : anamnesis === 2
-                ? 'Tiểu đường típ 1'
-                : 'Tiểu đường típ 2'
-            }`}
-          />
+          <List.Item title={`Tiền sử bệnh: ${ANAMNESIS[anamnesis]}`} />
         </List.Section>
 
         <List.Section>

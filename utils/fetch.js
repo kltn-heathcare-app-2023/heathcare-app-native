@@ -20,11 +20,13 @@ const post = async (url, data) => {
 };
 
 const put = async (url, data) => {
+  const token = await storage.get('accessToken');
   try {
     const resp = await fetch(`${env.API_URL}${url}`, {
       method: 'PUT',
       headers: {
         'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });

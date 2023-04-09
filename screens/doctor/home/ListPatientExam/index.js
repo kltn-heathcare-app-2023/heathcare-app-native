@@ -6,15 +6,20 @@ import {
   ActivityIndicator,
   Button,
   Divider,
+  List,
   MD2Colors,
   MD3Colors,
+  Modal,
+  Portal,
   ProgressBar,
+  TextInput,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
-import {AVATAR_DEFAULT} from '../../../../common/constant';
+import {ANAMNESIS, AVATAR_DEFAULT} from '../../../../common/constant';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import {notification_list_selector} from '../../../../redux/slices/notificationSlice';
 import {
+  acceptScheduleDetailByScheduleId,
   getAllScheduleDetailUnAccepted,
   getAllWorkingDay,
   getPatientExamByDoctorId,
@@ -24,18 +29,33 @@ import RouterKey from '../../../../utils/Routerkey';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {doctorInfoSlice} from '../../../../redux/slices/doctor/doctorInfoSlice';
 import storage from '../../../../utils/storage';
-
+import PatientPreview from '../../../../components/PatientPreview';
+import moment from 'moment';
+import {cancelScheduleDetail} from '../../../../services/patient/schedule_detail';
+import {socket} from '../../../../utils/config';
+import {Root, Popup} from 'popup-ui';
+import {doctorConversationSlice} from '../../../../redux/slices/doctor/doctorConversationSlice';
 function DoctorHomeListPatientExamScreen({navigation}) {
   const dispatch = useDispatch();
-  const notification = useNotification();
+  const notification_list = useSelector(notification_list_selector);
   const doctor_profile = useSelector(doctorProfileSelector);
-  const [patientList, setPatientList] = useState([]);
+
+  const notification = useNotification();
+
   const [loading, setLoading] = useState(false);
   const [scheduleWaiting, setScheduleWaiting] = useState(0);
   const [numberWorkingDay, setNumberWorkingDay] = useState(0);
-  const notification_list = useSelector(notification_list_selector);
+  const [option, setOption] = useState(0);
+  const [patientList, setPatientList] = useState([]);
+  const [scheduleWaitingList, setScheduleWaitingList] = useState([]);
+
+  const [visible, setVisible] = useState(false);
+  const [schedule, setSchedule] = useState(null);
+  const [isOpenInput, setIsOpenInput] = useState(false);
+  const [reason, setReason] = useState('');
 
   const last_notification = notification_list[notification_list.length - 1];
+
   useEffect(() => {
     if (
       last_notification &&
@@ -63,10 +83,9 @@ function DoctorHomeListPatientExamScreen({navigation}) {
 
       getAllScheduleDetailUnAccepted(doctor_profile.doctor._id)
         .then(value => {
-          const scheduleUnAccepted = value.data.filter(
-            sche => sche.status === false,
-          );
-          setScheduleWaiting(scheduleUnAccepted.length);
+          const count_waiting_schedule = value.data.length;
+          setScheduleWaitingList(value.data);
+          setScheduleWaiting(count_waiting_schedule);
         })
         .catch();
 
@@ -84,10 +103,125 @@ function DoctorHomeListPatientExamScreen({navigation}) {
     dispatch(doctorInfoSlice.actions.resetDoctorProfile());
   };
 
+  const showModal = () => setVisible(true);
+  const hideModal = () => {
+    setVisible(false);
+    setIsOpenInput(false);
+  };
+
+  const handleClickPreviewSchedule = schedule => {
+    setSchedule(schedule);
+    showModal();
+  };
+
+  const handleCancelScheduleDetail = async schedule_id => {
+    if (reason) {
+      try {
+        const {schedule_detail_id, notification} = await cancelScheduleDetail(
+          schedule_id,
+          {
+            reason,
+            from: doctor_profile.doctor._id,
+          },
+        );
+
+        if (notification) {
+          socket.emit('notification_register_schedule_from_patient', {
+            data: notification,
+          });
+        }
+        if (schedule_detail_id) {
+          setReason('');
+          hideModal();
+          setScheduleWaitingList(
+            scheduleWaitingList.filter(
+              schedule => schedule._id !== schedule_detail_id,
+            ),
+          );
+          setScheduleWaiting(scheduleWaiting - 1);
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: `Hủy lịch thành công!`,
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              Popup.hide();
+            },
+          });
+        }
+      } catch (error) {
+        setReason('');
+        hideModal();
+        Popup.show({
+          type: 'Danger',
+          title: 'Lỗi',
+          button: true,
+          textBody: `${error.res.message}`,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+            //   screen: RouterKey.INFO_SCREEN,
+            // });
+            Popup.hide();
+          },
+        });
+      }
+    }
+  };
+
+  const handleAcceptScheduleDetail = async schedule_id => {
+    acceptScheduleDetailByScheduleId(schedule_id)
+      .then(({schedule_detail, notification, conversation}) => {
+        hideModal();
+        if (conversation) {
+          console.log(conversation);
+          dispatch(
+            doctorConversationSlice.actions.pushConversationAfterAcceptSchedule(
+              conversation,
+            ),
+          );
+        }
+        setScheduleWaitingList(
+          scheduleWaitingList.filter(
+            schedule => schedule._id !== schedule_detail._id,
+          ),
+        );
+        setScheduleWaiting(scheduleWaiting - 1);
+
+        Popup.show({
+          type: 'Success',
+          title: 'Thông báo',
+          button: true,
+          textBody: `Xác nhận lịch thành công!`,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            Popup.hide();
+          },
+        });
+      })
+      .catch(() => {
+        hideModal();
+        Popup.show({
+          type: 'Danger',
+          title: 'Lỗi',
+          button: true,
+          textBody: `Có lỗi xảy ra khi xác nhận lịch`,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+            //   screen: RouterKey.INFO_SCREEN,
+            // });
+            Popup.hide();
+          },
+        });
+      });
+  };
+
   return (
     <>
       {!loading && (
-        <View>
+        <View style={{backgroundColor: '#fff'}}>
           <View
             style={{
               marginTop: 24,
@@ -96,12 +230,13 @@ function DoctorHomeListPatientExamScreen({navigation}) {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <View
+            <TouchableOpacity
+              onPress={() => setOption(0)}
               style={{
                 height: 80,
                 width: 80,
                 borderWidth: 1,
-                borderColor: '#ccc',
+                borderColor: option === 0 ? '#000' : '#ccc',
                 borderRadius: 16,
                 display: 'flex',
                 flexDirection: 'row',
@@ -129,14 +264,15 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 }}>
                 {patientList.length}
               </Text>
-            </View>
+            </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
+              onPress={() => setOption(1)}
               style={{
                 height: 80,
                 width: 80,
                 borderWidth: 1,
-                borderColor: '#ccc',
+                borderColor: option === 1 ? '#000' : '#ccc',
                 borderRadius: 16,
                 display: 'flex',
                 flexDirection: 'row',
@@ -164,7 +300,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
                 }}>
                 {scheduleWaiting}
               </Text>
-            </View>
+            </TouchableOpacity>
 
             <View
               style={{
@@ -231,61 +367,65 @@ function DoctorHomeListPatientExamScreen({navigation}) {
               borderBottomWidth: 2,
               marginHorizontal: 8,
             }}>
-            Danh sách bệnh nhân đang đảm nhận:
+            {option === 0
+              ? 'Danh sách bệnh nhân đang đảm nhận:'
+              : 'Danh sách lịch khám đợi duyệt:'}
           </Text>
 
-          <ScrollView>
+          <ScrollView style={{height: '78%'}}>
+            {/* show list patient exam */}
             {patientList.length > 0 &&
+              option === 0 &&
               patientList.map(
                 ({patient, status, bmis, glycemics, blood_pressures}) => {
                   return (
-                    <TouchableOpacity
+                    <PatientPreview
+                      patient={patient}
+                      status={status}
+                      bmis={bmis}
+                      glycemics={glycemics}
+                      blood_pressures={blood_pressures}
+                      navigation={navigation}
                       key={patient._id}
-                      style={styles.patient_container}
-                      onPress={() => {
-                        navigation.navigate(
-                          RouterKey.DOCTOR_HOME_PATIENT_INFO_SCREEN,
-                          {
-                            patient: patient,
-                            bmis: bmis,
-                            glycemics: glycemics,
-                            blood_pressures: blood_pressures,
-                          },
-                        );
-                      }}>
-                      <Image
-                        source={{
-                          uri:
-                            patient.person?.avatar !== ''
-                              ? patient.person?.avatar
-                              : AVATAR_DEFAULT,
-                        }}
-                        style={styles.patient_container_image}
-                      />
-                      <View style={styles.patient_container_right}>
-                        <Text>{patient.person.username}</Text>
-                        <Text>Nhóm máu: {patient.blood}</Text>
-                        <Text
-                          style={{
-                            width: '100%',
-                            height: 'auto',
-                            color:
-                              status.message.code === 2
-                                ? '#f08080'
-                                : status.message.code === 1
-                                ? '#fb8500'
-                                : status.message.code === 0
-                                ? '#38a3a5'
-                                : '#0077b6',
-                            fontWeight: '600',
-                          }}>
-                          {status.message.status}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
+                    />
                   );
                 },
               )}
+
+            {/* Show list schedule waiting */}
+            {scheduleWaitingList.length > 0 &&
+              option === 1 &&
+              scheduleWaitingList.map(schedule => {
+                return (
+                  <TouchableOpacity
+                    style={styles.patient_container}
+                    onPress={() => handleClickPreviewSchedule(schedule)}
+                    key={schedule._id}>
+                    <Image
+                      source={{
+                        uri:
+                          schedule.patient.person?.avatar !== ''
+                            ? schedule.patient.person?.avatar
+                            : AVATAR_DEFAULT,
+                      }}
+                      style={styles.patient_container_image}
+                    />
+                    <View style={styles.patient_container_right}>
+                      <Text>{schedule.patient.person.username}</Text>
+                      <Text>Nhóm máu: {schedule.patient.blood}</Text>
+                      <Text>
+                        Tiền sử: {ANAMNESIS[schedule.patient.anamnesis]}
+                      </Text>
+                      <Text>
+                        Ngày khám:
+                        {moment(new Date(schedule.day_exam)).format(
+                          'DD/MM/YYYY - HH:mm',
+                        )}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
           </ScrollView>
         </View>
       )}
@@ -299,6 +439,111 @@ function DoctorHomeListPatientExamScreen({navigation}) {
           />
         </View>
       )}
+
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={styles.modal}>
+          <Text style={styles.modal_title}>{'Thông tin chi tiết ca khám'}</Text>
+          {schedule && (
+            <Image
+              source={{uri: schedule.patient.person.avatar}}
+              style={styles.modal_image}
+            />
+          )}
+          {schedule && (
+            <>
+              <List.Section style={{width: '100%'}}>
+                <List.Subheader>Thông tin bệnh nhân:</List.Subheader>
+                <List.Item
+                  style={styles.modal_profile_specialist}
+                  title={`${schedule.patient.person.username}`}
+                  left={() => <List.Icon icon="doctor" />}
+                />
+                <List.Item
+                  style={styles.modal_profile_specialist}
+                  title={`${schedule.patient.person.gender ? 'Nam' : 'Nu'}`}
+                  left={() => <List.Icon icon="gender-male-female" />}
+                />
+              </List.Section>
+              <List.Section style={{width: '100%'}}>
+                <List.Subheader>Thông tin ca khám:</List.Subheader>
+                <List.Item
+                  style={[styles.modal_profile_specialist, {height: 'auto'}]}
+                  title={`${schedule.content_exam}`}
+                  left={() => <List.Icon icon="clipboard-search-outline" />}
+                />
+                <List.Item
+                  style={styles.modal_profile_specialist}
+                  title={`${moment(new Date(schedule.day_exam)).format(
+                    'llll',
+                  )}`}
+                  left={() => <List.Icon icon="calendar-check" />}
+                />
+              </List.Section>
+            </>
+          )}
+
+          {!schedule?.status && (
+            <>
+              {isOpenInput && (
+                <TextInput
+                  style={{
+                    width: '100%',
+                    marginBottom: 16,
+                  }}
+                  mode={'outlined'}
+                  placeholder={'Nhập lý do hủy khám'}
+                  value={reason}
+                  onChangeText={val => setReason(val)}
+                />
+              )}
+              <View style={styles.modal_buttons}>
+                {isOpenInput ? (
+                  <>
+                    <Button
+                      mode="elevated"
+                      onPress={() => handleCancelScheduleDetail(schedule._id)}
+                      style={{width: '45%'}}
+                      labelStyle={{width: '100%'}}>
+                      Xác nhận
+                    </Button>
+                    <Button
+                      mode="elevated"
+                      onPress={() => setIsOpenInput(false)}
+                      buttonColor={'#f4a259'}
+                      textColor={'#000'}
+                      style={{width: '45%'}}
+                      labelStyle={{width: '100%'}}>
+                      Thoát
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      mode="elevated"
+                      onPress={() => setIsOpenInput(true)}
+                      style={{width: '45%'}}
+                      labelStyle={{width: '100%'}}>
+                      Hủy
+                    </Button>
+                    <Button
+                      mode="elevated"
+                      onPress={() => handleAcceptScheduleDetail(schedule._id)}
+                      buttonColor={'#06d6a0'}
+                      textColor={'#000'}
+                      style={{width: '45%'}}
+                      labelStyle={{width: '100%'}}>
+                      Xác nhận
+                    </Button>
+                  </>
+                )}
+              </View>
+            </>
+          )}
+        </Modal>
+      </Portal>
     </>
   );
 }
@@ -324,6 +569,35 @@ const styles = StyleSheet.create({
   patient_container_right: {
     width: '70%',
     marginLeft: 8,
+  },
+  modal: {
+    backgroundColor: '#fff',
+    height: 652,
+    marginHorizontal: 8,
+    borderRadius: 16,
+    padding: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  modal_title: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  modal_image: {
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+    marginTop: 16,
+  },
+  modal_profile_specialist: {
+    paddingLeft: 16,
+  },
+  modal_buttons: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 200,
   },
 });
 
