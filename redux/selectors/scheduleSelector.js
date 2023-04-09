@@ -30,7 +30,12 @@ export const filterScheduleByDayOfWeek = createSelector(
 
       // Lấy mảng ngày ra để so sánh
       const schedule_details_day_exams =
-        schedule_details_equal_day_selected.map(schedule => schedule.day_exam);
+        schedule_details_equal_day_selected.map(schedule => {
+          return {
+            day_exam: schedule.day_exam,
+            doctor_id: schedule.doctor,
+          };
+        });
 
       // Tạo thêm date_compare để so sánh
       const __schedules = _schedules.map(schedule => {
@@ -51,6 +56,7 @@ export const filterScheduleByDayOfWeek = createSelector(
         return {
           ...schedule,
           date_compare: date,
+          doctor_id: schedule.doctor._id,
         };
       });
 
@@ -60,11 +66,13 @@ export const filterScheduleByDayOfWeek = createSelector(
         //   schedule.date_compare,
         //   schedule_details_day_exams,
         //   schedule_details_day_exams.some(_schedule =>
-        //     moment(_schedule).isSame(schedule.date_compare),
+        //     moment(_schedule.day_exam).isSame(schedule.date_compare),
         //   ),
         // );
-        return !schedule_details_day_exams.some(_schedule =>
-          moment(_schedule).isSame(schedule.date_compare),
+        return !schedule_details_day_exams.some(
+          _schedule =>
+            moment(_schedule.day_exam).isSame(schedule.date_compare) &&
+            _schedule.doctor_id === schedule.doctor_id,
         );
       });
 

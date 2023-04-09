@@ -4,4 +4,9 @@ const isValidVNPhoneNumber = phoneNumber => {
   return regex.test(phoneNumber);
 };
 
-export default {isValidVNPhoneNumber};
+const isValidVNName = name => {
+  const regex = /^([\p{L}]+\s)*[\p{L}]+$/u;
+  return regex.test(name);
+};
+
+export default {isValidVNPhoneNumber, isValidVNName};
