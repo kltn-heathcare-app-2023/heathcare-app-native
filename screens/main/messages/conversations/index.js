@@ -22,21 +22,26 @@ function ConversationScreen({navigation}) {
     });
   };
 
-  return conversations.length > 0 ? (
-    <ScrollView>
-      {conversations.length > 0 &&
-        conversations.map(conversation => (
-          <ConversationItem
-            conversation={conversation}
-            key={conversation._id}
-            onPress={() => onPressConversation(conversation)}
-          />
-        ))}
-    </ScrollView>
-  ) : (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Bạn chưa có tin nhắn nào</Text>
-    </View>
+  return (
+    <>
+      <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} />
+      {conversations.length > 0 ? (
+        <ScrollView>
+          {conversations.length > 0 &&
+            conversations.map(conversation => (
+              <ConversationItem
+                conversation={conversation}
+                key={conversation._id}
+                onPress={() => onPressConversation(conversation)}
+              />
+            ))}
+        </ScrollView>
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text>Bạn chưa có tin nhắn nào</Text>
+        </View>
+      )}
+    </>
   );
 }
 

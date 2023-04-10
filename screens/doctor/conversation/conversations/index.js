@@ -7,6 +7,7 @@ import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSele
 import {fetchConversationByDoctorId} from '../../../../redux/slices/doctor/doctorConversationSlice';
 import {getAllConversation} from '../../../../services/doctor/patient';
 import RouterKey from '../../../../utils/Routerkey';
+import Header from '../../../../components/Header';
 
 function DoctorConversationList({navigation}) {
   const doctor_conversations = useSelector(cleanDoctorConversationListSelector);
@@ -18,16 +19,19 @@ function DoctorConversationList({navigation}) {
   };
 
   return (
-    <ScrollView>
-      {doctor_conversations.length > 0 &&
-        doctor_conversations.map(conversation => (
-          <ConversationItem
-            conversation={conversation}
-            key={conversation._id}
-            onPress={() => onPressConversation(conversation)}
-          />
-        ))}
-    </ScrollView>
+    <>
+      <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} />
+      <ScrollView>
+        {doctor_conversations.length > 0 &&
+          doctor_conversations.map(conversation => (
+            <ConversationItem
+              conversation={conversation}
+              key={conversation._id}
+              onPress={() => onPressConversation(conversation)}
+            />
+          ))}
+      </ScrollView>
+    </>
   );
 }
 
