@@ -33,6 +33,7 @@
     "react-native": "0.71.3",
     "react-native-chart-kit": "^6.12.0",
     "react-native-dropdown-picker": "^5.4.4",
+    "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-internal-notification": "^1.0.7",
     "react-native-neat-date-picker": "^1.4.9",

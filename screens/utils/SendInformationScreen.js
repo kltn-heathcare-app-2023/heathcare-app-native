@@ -51,6 +51,7 @@ function SendInformationScreen({navigation, route}) {
   const [address, setAddress] = useState('');
   const [image, setImage] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChooseImage = async () => {
     try {
@@ -67,6 +68,7 @@ function SendInformationScreen({navigation, route}) {
 
   const handleUpdateIn4 = async () => {
     if (address && image) {
+      setLoading(true);
       const formData = new FormData();
       formData.append('username', name);
       formData.append('dob', `${date}`);
@@ -79,6 +81,7 @@ function SendInformationScreen({navigation, route}) {
         .postFormWithAuth(`/patients`, formData)
         .then(val => {
           if (val?.error) {
+            setLoading(false);
             Popup.show({
               type: 'Warning',
               title: 'Thông báo',
@@ -94,6 +97,7 @@ function SendInformationScreen({navigation, route}) {
               },
             });
           }
+          setLoading(false);
           Popup.show({
             type: 'Success',
             title: 'Thông báo',
@@ -125,6 +129,7 @@ function SendInformationScreen({navigation, route}) {
               Popup.hide();
             },
           });
+          setLoading(false);
         });
     } else {
       Popup.show({
@@ -141,6 +146,7 @@ function SendInformationScreen({navigation, route}) {
           Popup.hide();
         },
       });
+      setLoading(false);
     }
   };
 
@@ -254,8 +260,19 @@ function SendInformationScreen({navigation, route}) {
             resizeMode="center"
           />
         )}
-        <ButtonPrimary title="Cập nhật thông tin" handle={handleUpdateIn4} />
-
+        <ButtonPrimary
+          title="Cập nhật thông tin"
+          handle={handleUpdateIn4}
+          disabled={loading}
+        />
+        {loading && (
+          <ActivityIndicator
+            animating={true}
+            color={'#fb8500'}
+            style={{marginTop: 16}}
+            size={'large'}
+          />
+        )}
         <ActionView
           title="Quay lại"
           handle={() => navigation.navigate(RouterKey.REGISTER_SCREEN)}

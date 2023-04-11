@@ -15,6 +15,7 @@ import RouterKey from '../../../utils/Routerkey';
 import storage from '../../../utils/storage';
 import Lottie from 'lottie-react-native';
 import moment from 'moment';
+import Header from '../../../components/Header';
 
 // const getAnimationByGenderAndBMI = (avg_bmi, gender) => {
 //   switch (gender) {
@@ -87,99 +88,108 @@ function InfoScreen({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.header_info}
-        onPress={handleGoToMyProfile}>
-        {person && (
-          <Image style={styles.header_info_img} source={{uri: person.avatar}} />
-        )}
+    <>
+      <Header
+        title={'Thông tin cá nhân'}
+        handle={() => navigation.navigate(RouterKey.HOME_SCREEN)}
+      />
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.header_info}
+          onPress={handleGoToMyProfile}>
+          {person && (
+            <Image
+              style={styles.header_info_img}
+              source={{uri: person.avatar}}
+            />
+          )}
 
-        {person && (
-          <View style={styles.header_info_text}>
-            <Text>{`Họ & tên: ${person.username}`}</Text>
-            <Text>{`Năm sinh : ${moment(new Date(person.dob)).format(
-              'L',
-            )}`}</Text>
-            <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
-            <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
-            <Text>{`Nhóm máu : ${blood}`}</Text>
+          {person && (
+            <View style={styles.header_info_text}>
+              <Text>{`Họ & tên: ${person.username}`}</Text>
+              <Text>{`Năm sinh : ${moment(new Date(person.dob)).format(
+                'L',
+              )}`}</Text>
+              <Text>{`Địa chỉ : ${person.address.slice(0, 22)} ...`}</Text>
+              <Text>{`Giới tính : ${person.gender ? 'Nam' : 'Nữ'}`}</Text>
+              <Text>{`Nhóm máu : ${blood}`}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.bmi_container]}
+          onPress={handleClickBoxBMI}>
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số BMI Trung Bình: ${bmi_avg}`}
+            </Text>
+            <Text style={styles.bmi_text_notification}>
+              {notification ?? `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
+            </Text>
           </View>
-        )}
-      </TouchableOpacity>
+          <Image
+            style={styles.header_info_img}
+            source={require('../../../assets/images/bmi.png')}
+          />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.bmi_container]}
-        onPress={handleClickBoxBMI}>
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số BMI Trung Bình: ${bmi_avg}`}
-          </Text>
-          <Text style={styles.bmi_text_notification}>
-            {notification ?? `Bạn cần ăn uống điều độ hơn và chú ý sức khỏe`}
-          </Text>
-        </View>
-        <Image
-          style={styles.header_info_img}
-          source={require('../../../assets/images/bmi.png')}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bmi_container}
+          onPress={handleClickBoxGlycemic}>
+          <Lottie
+            source={require('../../../assets/images/blood.json')}
+            autoPlay
+            loop
+            style={{
+              marginLeft: 135,
+            }}
+          />
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số Đường Huyết mới nhất:`}
+            </Text>
+            <Text style={styles.bmi_text_notification}>
+              {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
+              {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
+              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+            </Text>
+          </View>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.bmi_container}
-        onPress={handleClickBoxGlycemic}>
-        <Lottie
-          source={require('../../../assets/images/blood.json')}
-          autoPlay
-          loop
-          style={{
-            marginLeft: 135,
-          }}
-        />
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số Đường Huyết mới nhất:`}
-          </Text>
-          <Text style={styles.bmi_text_notification}>
-            {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-            {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-            {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bmi_container}
+          onPress={handleClickBoxBlood}>
+          <View style={styles.bmi_text}>
+            <Text style={styles.bmi_text_title}>
+              {`Chỉ số Huyết áp mới nhất:`}
+            </Text>
+            <Text style={styles.bmi_text_notification}>
+              {`Tâm thu: ${systolic}\n`}
+              {`Tâm trương: ${diastole}\n`}
+            </Text>
+          </View>
 
-      <TouchableOpacity
-        style={styles.bmi_container}
-        onPress={handleClickBoxBlood}>
-        <View style={styles.bmi_text}>
-          <Text style={styles.bmi_text_title}>
-            {`Chỉ số Huyết áp mới nhất:`}
-          </Text>
-          <Text style={styles.bmi_text_notification}>
-            {`Tâm thu: ${systolic}\n`}
-            {`Tâm trương: ${diastole}\n`}
-          </Text>
-        </View>
+          <Lottie
+            source={require('../../../assets/images/heart.json')}
+            autoPlay
+            loop
+            style={{
+              marginLeft: 135,
+            }}
+          />
+        </TouchableOpacity>
 
-        <Lottie
-          source={require('../../../assets/images/heart.json')}
-          autoPlay
-          loop
-          style={{
-            marginLeft: 135,
-          }}
-        />
-      </TouchableOpacity>
-
-      <Button
-        mode="contained"
-        icon={'logout'}
-        contentStyle={{backgroundColor: '#dc2f02'}}
-        style={{marginTop: 16}}
-        onPress={handleLogout}>
-        Đăng xuất
-      </Button>
-    </View>
+        <Button
+          mode="contained"
+          icon={'logout'}
+          contentStyle={{backgroundColor: '#dc2f02'}}
+          style={{marginTop: 16}}
+          onPress={handleLogout}>
+          Đăng xuất
+        </Button>
+      </View>
+    </>
   );
 }
 

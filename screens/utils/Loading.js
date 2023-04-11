@@ -20,6 +20,7 @@ function LoadingScreen({navigation, route}) {
   const dispatch = useDispatch();
 
   const init = async () => {
+    // await storage.remove('accessToken');
     const token = await storage.get('accessToken');
     if (token) {
       const decode = jwtDecode(token);

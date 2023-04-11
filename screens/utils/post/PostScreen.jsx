@@ -32,14 +32,14 @@ function PostListScreen({navigation}) {
   return (
     <>
       <Header
-        title={'Heathcare Comumity'}
+        title={'Cộng đồng'}
         handle={() => navigation.navigate(RouterKey.HOME_SCREEN)}
       />
 
       {!loading && postList.length > 0 ? (
         <ScrollView>
           {postList.slice(0, size).map((post, index) => (
-            <PostItem key={index} post={post} navigation={navigation} />
+            <PostItem key={post._id} post={post} navigation={navigation} />
           ))}
 
           {size < postList.length ? (
@@ -49,7 +49,19 @@ function PostListScreen({navigation}) {
           )}
         </ScrollView>
       ) : (
-        <ActivityIndicator animating={true} color={'#00bbf9'} size={'large'} />
+        <View
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <ActivityIndicator
+            animating={true}
+            color={'#00bbf9'}
+            size={'large'}
+          />
+        </View>
       )}
     </>
   );

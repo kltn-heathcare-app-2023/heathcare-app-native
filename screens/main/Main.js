@@ -1,31 +1,31 @@
 import {useEffect, useState} from 'react';
 import {
   Alert,
+  Image,
   PermissionsAndroid,
   Platform,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {Modal, Portal} from 'react-native-paper';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchUserInfo} from '../../redux/slices/infoSlice';
+import {useSelector} from 'react-redux';
 import MainNavigator from '../../routers/MainNavigator';
 
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RouterKey from '../../utils/Routerkey';
 import {socket} from '../../utils/config';
 import {infoSelector} from '../../redux/selectors/infoSelector';
-import storage from '../../utils/storage';
-import {Root, Popup} from 'popup-ui';
-import moment from 'moment';
+import {Popup} from 'popup-ui';
 import {useNotification} from 'react-native-internal-notification';
 import IIcon from 'react-native-vector-icons/Ionicons';
+import {AVATAR_DEFAULT} from '../../common/constant';
+import AnimatedLottieView from 'lottie-react-native';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
-  const [room, setRoom] = useState('');
-  const [username, setUsername] = useState('');
+  const [callData, setCallData] = useState(null);
   const user_info = useSelector(infoSelector);
   const notificationFromSocket = useNotification();
   const showModal = () => setVisible(true);
@@ -65,6 +65,7 @@ function MainScreen({navigation}) {
   }, []);
 
   useEffect(() => {
+    console.log('user ->', user_info);
     user_info._id && socket.emit('status_user', user_info._id);
     user_info._id && socket.emit('add_user', user_info._id);
 
@@ -274,10 +275,9 @@ function MainScreen({navigation}) {
   }, [user_info]);
 
   useEffect(() => {
+    // showModal();
     socket.on('call_id_room_to_user_success', resp => {
-      const {room_id, doctor_username} = resp;
-      setRoom(room_id);
-      setUsername(doctor_username);
+      setCallData(resp);
       showModal();
     });
     socket.on(
@@ -300,27 +300,17 @@ function MainScreen({navigation}) {
         <Modal visible={visible} onDismiss={hideModal}>
           <View style={styles.modal_container}>
             <View>
-              <Text>Bác sĩ: {username}</Text>
+              <Text style={{marginTop: 24, fontSize: 18, fontWeight: '700'}}>
+                Bác sĩ: {callData?.info_doctor?.person?.username ?? ''}
+              </Text>
             </View>
-
+            <Image
+              source={{
+                uri: callData?.info_doctor?.person?.avatar ?? AVATAR_DEFAULT,
+              }}
+              style={styles.modal_avatar}
+            />
             <View style={styles.action_view}>
-              <ICon
-                name={'camera'}
-                size={24}
-                color={'#ffff'}
-                style={{
-                  backgroundColor: '#2ec4b6',
-                  padding: 8,
-                  borderRadius: 50,
-                }}
-                onPress={() => {
-                  console.log('call');
-                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-                    room_id: room,
-                  });
-                  setVisible(false);
-                }}
-              />
               <ICon
                 name={'phone-cancel-outline'}
                 size={24}
@@ -334,6 +324,28 @@ function MainScreen({navigation}) {
                   setVisible(false);
                 }}
               />
+
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('call');
+                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+                    room_id: callData?.room_id ?? '',
+                    schedule_detail_id: callData?.schedule_details_id ?? '',
+                    doctor_id: callData?.info_doctor?._id ?? '',
+                  });
+                  setVisible(false);
+                }}>
+                <AnimatedLottieView
+                  source={require('../../assets/images/call.json')}
+                  autoPlay
+                  loop
+                  style={{
+                    width: 64,
+                    height: 64,
+                    // marginRight: 24,
+                  }}
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -345,18 +357,25 @@ function MainScreen({navigation}) {
 
 const styles = StyleSheet.create({
   modal_container: {
-    height: 80,
+    height: 360,
     backgroundColor: '#ffff',
     borderRadius: 16,
     padding: 8,
     margin: 8,
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    // justifyContent: 'space-between',
     alignItems: 'center',
   },
+  modal_avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 50,
+    marginTop: 24,
+  },
   action_view: {
-    width: 100,
+    marginTop: 24,
+    width: 124,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

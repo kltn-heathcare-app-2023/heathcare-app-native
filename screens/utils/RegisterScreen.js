@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {
   ActivityIndicator,
   ImageBackground,
@@ -15,10 +15,7 @@ import RouterKey from '../../utils/Routerkey';
 import styles from '../../styles/global.js';
 
 import auth from '@react-native-firebase/auth';
-import storage from '../../utils/storage';
-import {findAccount, register} from '../../services/auth';
-import {Alert} from 'react-native';
-import {TITLE_NOTIFICATION} from '../../common/title';
+import {findAccount} from '../../services/auth';
 import regex from '../../common/regex';
 import {Popup} from 'popup-ui';
 
@@ -26,28 +23,12 @@ function RegisterScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [confirmPass, setConfirmPass] = useState('');
   const [errorInputPhone, setErrorInputPhone] = useState('');
   const [errorInputName, setErrorInputName] = useState('');
   const [errorInputPass, setErrorInputPass] = useState('');
   const [errorConfirmPass, setErrorConfirmPass] = useState('');
-
-  //function get OTP with phone number
-  // const sendOTP = async () => {
-  //   let phoneNumber = '+84' + phone.slice(1);
-  //   try {
-  //     const phoneProvider = new firebase.auth.PhoneAuthProvider();
-  //     const verificationId = await phoneProvider.verifyPhoneNumber(
-  //       phoneNumber,
-  //       recaptchaVerifier.current,
-  //     );
-  //     if (verificationId) {
-  //       return verificationId;
-  //     }
-  //   } catch (err) {
-  //     throw new Error(err);
-  //   }
-  // };
 
   const signInWithPhoneNumber = () => {
     let phoneNumber = '+84' + phone.slice(1);
@@ -65,6 +46,7 @@ function RegisterScreen({navigation}) {
       !errorConfirmPass &&
       !errorInputName
     ) {
+      setLoading(true);
       findAccount(phone)
         .then(({data}) => {
           const {is_exist} = data;
@@ -81,9 +63,11 @@ function RegisterScreen({navigation}) {
                 Popup.hide();
               },
             });
+            setLoading(false);
           } else {
             signInWithPhoneNumber()
               .then(confirm => {
+                setLoading(false);
                 navigation.navigate(RouterKey.AUTH_PHONE_SCREEN, {
                   phone,
                   password,
@@ -106,10 +90,14 @@ function RegisterScreen({navigation}) {
                     Popup.hide();
                   },
                 });
+                setLoading(false);
               });
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          setLoading(false);
+          console.error(err);
+        });
 
       // register({
       //   phone_number: phone,
@@ -147,9 +135,6 @@ function RegisterScreen({navigation}) {
         buttontext: 'OK',
         timing: 3000,
         callback: () => {
-          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-          //   screen: RouterKey.INFO_SCREEN,
-          // });
           Popup.hide();
         },
       });
@@ -231,12 +216,6 @@ function RegisterScreen({navigation}) {
 
   return (
     <>
-      {/* <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-        title="Xác thực"
-        cancelLabel="Hủy"
-      /> */}
       <View style={_styles.titleView}>
         <Text style={styles.title}>T&T HEALTHCARE</Text>
       </View>
@@ -279,10 +258,16 @@ function RegisterScreen({navigation}) {
         <ButtonPrimary
           title="Đăng ký"
           handle={handleRegister}
-          // disabled={
-          //   !!!errorInputPhone && !!!errorInputPass && !!!errorConfirmPass
-          // }
+          disabled={loading}
         />
+        {loading && (
+          <ActivityIndicator
+            animating={true}
+            color={'#fb8500'}
+            style={{marginTop: 16}}
+            size={'large'}
+          />
+        )}
         <ActionView title="Quay lại" handle={handleBackLogin} />
       </ImageBackground>
     </>
