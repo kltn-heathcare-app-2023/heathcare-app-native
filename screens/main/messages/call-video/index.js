@@ -9,19 +9,13 @@ import env from '../../../../utils/env';
 import {useSelector} from 'react-redux';
 import {infoSelector} from '../../../../redux/selectors/infoSelector';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
-import {Modal, Portal} from 'react-native-paper';
-import {useState} from 'react';
-import {Text} from 'react-native';
 
 function CallVideoScreen({navigation, route}) {
-  const {room_id, schedule_detail_id} = route.params;
-  console.log({room_id, schedule_detail_id});
+  const {room_id, schedule_detail_id, doctor_id} = route.params;
+  console.log({room_id, schedule_detail_id, doctor_id});
   const user_info = useSelector(infoSelector);
   const doctor_profile = useSelector(doctorProfileSelector);
-  const [visible, setVisible] = useState(false);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
   return (
     <>
       <View style={{flex: 1}}>
@@ -39,23 +33,21 @@ function CallVideoScreen({navigation, route}) {
           config={{
             ...ONE_ON_ONE_VIDEO_CALL_CONFIG,
             onOnlySelfInRoom: () => {
-              showModal();
               navigation.goBack();
               navigation.navigate(
                 Object.keys(user_info).length > 0
                   ? RouterKey.HOME_SCREEN
                   : RouterKey.DOCTOR_HOME_SCREEN,
-                {rating: true},
+                {rating: true, room_id, schedule_detail_id, doctor_id},
               );
             },
             onHangUp: () => {
-              showModal();
               navigation.goBack();
               navigation.navigate(
                 Object.keys(user_info).length > 0
                   ? RouterKey.HOME_SCREEN
                   : RouterKey.DOCTOR_HOME_SCREEN,
-                {rating: true},
+                {rating: true, room_id, schedule_detail_id, doctor_id},
               );
             },
 
@@ -77,12 +69,6 @@ function CallVideoScreen({navigation, route}) {
           }}
         />
       </View>
-
-      <Portal>
-        <Modal visible={visible} onDismiss={hideModal}>
-          <Text>Example Modal. Click outside this area to dismiss.</Text>
-        </Modal>
-      </Portal>
     </>
   );
 }

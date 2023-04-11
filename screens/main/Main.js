@@ -275,7 +275,7 @@ function MainScreen({navigation}) {
   }, [user_info]);
 
   useEffect(() => {
-    showModal();
+    // showModal();
     socket.on('call_id_room_to_user_success', resp => {
       setCallData(resp);
       showModal();
@@ -331,6 +331,7 @@ function MainScreen({navigation}) {
                   navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
                     room_id: callData?.room_id ?? '',
                     schedule_detail_id: callData?.schedule_details_id ?? '',
+                    doctor_id: callData?.info_doctor?._id ?? '',
                   });
                   setVisible(false);
                 }}>

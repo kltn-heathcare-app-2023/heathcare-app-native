@@ -18,14 +18,21 @@ import {ProgressChart} from 'react-native-chart-kit';
 import {fetchAllScheduleDetailListById} from '../../../redux/slices/scheduleDetailSlice';
 import {scheduleDetailListAfterNow} from '../../../redux/selectors/scheduleDetailSelector';
 import {socket} from '../../../utils/config';
-import {Button, Modal, Portal} from 'react-native-paper';
+import {Modal, Portal} from 'react-native-paper';
 import RouterKey from '../../../utils/Routerkey';
 import AnimatedLottieView from 'lottie-react-native';
+import {Rating, AirbnbRating, Input, Button} from 'react-native-elements';
+import {ratingAfterExam} from '../../../services/patient/schedule_detail';
 
 function HomeScreen({navigation, route}) {
   const status = useSelector(infoStatusSelector);
-  const {rating = false} = route.params ?? {rating: false};
-  const [visible, setVisible] = useState(true);
+  const {rating, room_id, schedule_detail_id, doctor_id} = route.params ?? {
+    rating: false,
+  };
+  console.log(route);
+  const [visible, setVisible] = useState(rating);
+  const [countRating, setCountRating] = useState(5);
+  const [contentRating, setContentRating] = useState('');
 
   const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
@@ -105,8 +112,33 @@ function HomeScreen({navigation, route}) {
     });
   }, []);
 
-  const showModal = () => setVisible(true);
+  useEffect(() => {
+    setVisible(rating);
+  }, [rating, route.params]);
+
   const hideModal = () => setVisible(false);
+
+  const handleSendRating = () => {
+    if (user_info) {
+      console.log(user_info);
+      const data = {
+        rating: countRating,
+        patient_id: user_info._id,
+        content: contentRating,
+        schedule_id: schedule_detail_id,
+      };
+      console.log(data);
+
+      ratingAfterExam(doctor_id, data)
+        .then(value => console.log(value))
+        .catch(err => console.error(err))
+        .finally(() => {
+          setCountRating(5);
+          setContentRating('');
+          setVisible(false);
+        });
+    }
+  };
 
   return (
     <>
@@ -243,7 +275,36 @@ function HomeScreen({navigation, route}) {
 
       <Portal>
         <Modal visible={visible} onDismiss={hideModal}>
-          <View style></View>
+          <View style={styles.modal_container}>
+            <Rating
+              showRating
+              onFinishRating={rating => {
+                console.log('rating ->', rating);
+                setCountRating(rating);
+              }}
+              style={{paddingVertical: 10}}
+              imageSize={30}
+              startingValue={countRating}
+            />
+            <Input
+              placeholder="Nhập đánh giá bác sĩ"
+              value={contentRating}
+              onChangeText={v => setContentRating(v)}
+            />
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Button
+                title={'Gửi'}
+                type="solid"
+                buttonStyle={{width: 164, borderRadius: 16}}
+                onPress={handleSendRating}
+              />
+            </View>
+          </View>
         </Modal>
       </Portal>
     </>
@@ -298,6 +359,13 @@ const styles = StyleSheet.create({
   box_status_content: {
     fontSize: 16,
     fontWeight: '700',
+  },
+  modal_container: {
+    width: '90%',
+    height: 264,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginHorizontal: 16,
   },
 });
 
