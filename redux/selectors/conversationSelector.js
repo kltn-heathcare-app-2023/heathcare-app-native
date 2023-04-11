@@ -13,20 +13,22 @@ export const cleanConversationListSelector = createSelector(
   infoSelector,
   conversationListSelector,
   (user, conversations) => {
-    if(user) {
+    if (user && conversations) {
       const conversationList = conversations.map(conversation => {
         const member =
           conversation.members[0]._id === user._id
             ? conversation.members[1]
             : conversation.members[0];
-  
+
         return {
           _id: conversation._id,
           member: {
             _id: member._id,
             username: member.person.username,
             avatar:
-              member.person.avatar !== '' ? member.person.avatar : AVATAR_DEFAULT,
+              member.person.avatar !== ''
+                ? member.person.avatar
+                : AVATAR_DEFAULT,
           },
           last_message: {
             content: conversation.last_message?.content ?? '',
@@ -34,7 +36,7 @@ export const cleanConversationListSelector = createSelector(
           },
         };
       });
-  
+
       // console.log(conversationList);
       return conversationList;
     }

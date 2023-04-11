@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
@@ -21,7 +22,7 @@ import auth from '@react-native-firebase/auth';
 function AuthPhoneScreen({navigation, route}) {
   const {phone, password, name, confirm} = route.params;
   const [verificationCode, setVerificationCode] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const goBack = () => {
     navigation.goBack();
   };
@@ -62,7 +63,8 @@ function AuthPhoneScreen({navigation, route}) {
     //       console.log('Account linking error', error);
     //     }
     //   });
-    if (auth().currentUser) auth().currentUser.delete();
+    // if (auth().currentUser) auth().currentUser.delete();
+    setLoading(true);
     confirm
       .confirm(verificationCode)
       .then(value => {
@@ -80,9 +82,13 @@ function AuthPhoneScreen({navigation, route}) {
           })
           .catch(err => {
             Alert.alert(TITLE_NOTIFICATION, `Đăng ký thất bại -> ${err}`);
+          })
+          .finally(() => {
+            setLoading(false);
           });
       })
       .catch(err => {
+        setLoading(false);
         Alert.alert(TITLE_ERROR, `Xác thực thất bại -> ${err}`);
       });
   };
@@ -114,6 +120,14 @@ function AuthPhoneScreen({navigation, route}) {
           title="Xác thực"
           handle={handleAuthenticationAndRegisterAccount}
         />
+        {loading && (
+          <ActivityIndicator
+            animating={true}
+            color={'#fb8500'}
+            style={{marginTop: 16}}
+            size={'large'}
+          />
+        )}
         <ActionView title="Quay lại" handle={goBack} />
       </ImageBackground>
     </>

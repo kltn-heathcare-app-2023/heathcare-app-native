@@ -7,6 +7,7 @@ import {infoSelector} from '../../../../redux/selectors/infoSelector';
 import {fetchConversationByPatientId} from '../../../../redux/slices/conversationSlice';
 
 import RouterKey from '../../../../utils/Routerkey';
+import Header from '../../../../components/Header';
 function ConversationScreen({navigation}) {
   const user_info = useSelector(infoSelector);
   const conversations = useSelector(cleanConversationListSelector);

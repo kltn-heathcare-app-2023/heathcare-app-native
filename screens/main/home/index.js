@@ -18,17 +18,21 @@ import {ProgressChart} from 'react-native-chart-kit';
 import {fetchAllScheduleDetailListById} from '../../../redux/slices/scheduleDetailSlice';
 import {scheduleDetailListAfterNow} from '../../../redux/selectors/scheduleDetailSelector';
 import {socket} from '../../../utils/config';
-import {Button} from 'react-native-paper';
+import {Button, Modal, Portal} from 'react-native-paper';
 import RouterKey from '../../../utils/Routerkey';
 import AnimatedLottieView from 'lottie-react-native';
 
-function HomeScreen({navigation}) {
+function HomeScreen({navigation, route}) {
+  const status = useSelector(infoStatusSelector);
+  const {rating = false} = route.params ?? {rating: false};
+  const [visible, setVisible] = useState(true);
+
+  const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
-  const status = useSelector(infoStatusSelector);
+  const schedules = useSelector(scheduleDetailListAfterNow);
 
-  // console.log({user_info, bmi_avg, glycemic_last, status});
   let glycemic_case_1 = 0;
   let glycemic_case_2 = 0;
   let glycemic_case_3 = 0;
@@ -44,9 +48,6 @@ function HomeScreen({navigation}) {
     systolic = user_info.metrics?.last_blood_pressures.systolic;
     diastole = user_info.metrics?.last_blood_pressures.diastole;
   }
-
-  const dispatch = useDispatch();
-  const schedules = useSelector(scheduleDetailListAfterNow);
 
   const data = {
     // labels: ["", "", "BMI"], // optional
@@ -104,134 +105,148 @@ function HomeScreen({navigation}) {
     });
   }, []);
 
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.box_chart}>
-        <View style={styles.chart}>
-          <ProgressChart
-            data={data}
-            width={160}
-            height={160}
-            strokeWidth={12}
-            radius={32}
-            chartConfig={chartBMIConfig}
-            hideLegend={true}
-            style={{borderRadius: 16}}
-          />
-          <Text style={styles.chart_text}>{`Chỉ số BMI: ${bmi_avg}/ 30`}</Text>
-          <Text
-            style={styles.chart_text}>{`HA - Tâm thu: ${systolic}/ 120`}</Text>
-          <Text
-            style={
-              styles.chart_text
-            }>{`HA - Tâm trương: ${diastole}/ 180`}</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.box_chart}>
+          <View style={styles.chart}>
+            <ProgressChart
+              data={data}
+              width={160}
+              height={160}
+              strokeWidth={12}
+              radius={32}
+              chartConfig={chartBMIConfig}
+              hideLegend={true}
+              style={{borderRadius: 16}}
+            />
+            <Text
+              style={styles.chart_text}>{`Chỉ số BMI: ${bmi_avg}/ 30`}</Text>
+            <Text
+              style={
+                styles.chart_text
+              }>{`HA - Tâm thu: ${systolic}/ 120`}</Text>
+            <Text
+              style={
+                styles.chart_text
+              }>{`HA - Tâm trương: ${diastole}/ 180`}</Text>
+          </View>
+
+          <View style={styles.chart}>
+            <ProgressChart
+              data={dataGlycemic}
+              width={160}
+              height={160}
+              strokeWidth={12}
+              radius={32}
+              chartConfig={chartGlycemicConfig}
+              hideLegend={true}
+              style={{borderRadius: 16}}
+            />
+            <Text
+              style={
+                styles.chart_text
+              }>{`Chỉ số TH1: ${glycemic_case_1}/ 126\nChỉ số TH2: ${glycemic_case_2}/ 180\nChỉ số TH3: ${glycemic_case_3}/ 120`}</Text>
+          </View>
         </View>
 
-        <View style={styles.chart}>
-          <ProgressChart
-            data={dataGlycemic}
-            width={160}
-            height={160}
-            strokeWidth={12}
-            radius={32}
-            chartConfig={chartGlycemicConfig}
-            hideLegend={true}
-            style={{borderRadius: 16}}
-          />
-          <Text
-            style={
-              styles.chart_text
-            }>{`Chỉ số TH1: ${glycemic_case_1}/ 126\nChỉ số TH2: ${glycemic_case_2}/ 180\nChỉ số TH3: ${glycemic_case_3}/ 120`}</Text>
+        {status && status.message && (
+          <View
+            style={[
+              styles.box_status,
+              {
+                borderColor:
+                  status && status.message.code === 0
+                    ? '#0ead69'
+                    : status.message.code === 1
+                    ? '#fb8b240'
+                    : status.message.code === 2
+                    ? '#f95738'
+                    : '#cbdfbd',
+              },
+              {marginTop: 8},
+            ]}>
+            <Text style={styles.box_status_title}>Đánh giá:</Text>
+            <Text style={styles.box_status_content}>
+              {status ? status?.message?.status : 'Đang tải ...'}
+            </Text>
+          </View>
+        )}
+
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(RouterKey.UTILS_CHAT_GPT_SCREEN);
+            }}
+            style={{
+              marginTop: 4,
+              padding: 4,
+              borderWidth: 2,
+              width: 72,
+              height: 'auto',
+              borderRadius: 16,
+              borderColor: '#06d6a0',
+            }}>
+            <AnimatedLottieView
+              source={require('../../../assets/images/bot.json')}
+              autoPlay
+              loop
+              style={{
+                width: 64,
+                height: 64,
+              }}
+            />
+            {/* <Text style={{textAlign: 'center'}}>Chat Bot</Text> */}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(RouterKey.UTILS_POST_LIST_SCREEN);
+            }}
+            style={{
+              marginTop: 4,
+              marginLeft: 8,
+              padding: 4,
+              borderWidth: 2,
+              width: 72,
+              height: 'auto',
+              borderRadius: 16,
+              borderColor: '#4cc9f0',
+            }}>
+            <AnimatedLottieView
+              source={require('../../../assets/images/post.json')}
+              autoPlay
+              loop
+              style={{
+                width: 64,
+                height: 64,
+              }}
+            />
+            {/* <Text style={{textAlign: 'center'}}>Cộng đồng</Text> */}
+          </TouchableOpacity>
         </View>
+        <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
+        <ScrollView style={styles.box_schedule}>
+          {schedules.map(schedule => (
+            <ScheduleItem
+              schedule={schedule}
+              isHome
+              key={schedule._id}
+              userId={user_info?._id}
+            />
+          ))}
+        </ScrollView>
       </View>
 
-      {status && status.message && (
-        <View
-          style={[
-            styles.box_status,
-            {
-              borderColor:
-                status && status.message.code === 0
-                  ? '#0ead69'
-                  : status.message.code === 1
-                  ? '#fb8b240'
-                  : status.message.code === 2
-                  ? '#f95738'
-                  : '#cbdfbd',
-            },
-            {marginTop: 8},
-          ]}>
-          <Text style={styles.box_status_title}>Đánh giá:</Text>
-          <Text style={styles.box_status_content}>
-            {status ? status?.message?.status : 'Đang tải ...'}
-          </Text>
-        </View>
-      )}
-
-      <View style={{display: 'flex', flexDirection: 'row'}}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(RouterKey.UTILS_CHAT_GPT_SCREEN);
-          }}
-          style={{
-            marginTop: 4,
-            padding: 4,
-            borderWidth: 2,
-            width: 72,
-            height: 'auto',
-            borderRadius: 16,
-            borderColor: '#06d6a0',
-          }}>
-          <AnimatedLottieView
-            source={require('../../../assets/images/bot.json')}
-            autoPlay
-            loop
-            style={{
-              width: 64,
-              height: 64,
-            }}
-          />
-          {/* <Text style={{textAlign: 'center'}}>Chat Bot</Text> */}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(RouterKey.UTILS_POST_LIST_SCREEN);
-          }}
-          style={{
-            marginTop: 4,
-            marginLeft: 8,
-            padding: 4,
-            borderWidth: 2,
-            width: 72,
-            height: 'auto',
-            borderRadius: 16,
-            borderColor: '#4cc9f0',
-          }}>
-          <AnimatedLottieView
-            source={require('../../../assets/images/post.json')}
-            autoPlay
-            loop
-            style={{
-              width: 64,
-              height: 64,
-            }}
-          />
-          {/* <Text style={{textAlign: 'center'}}>Cộng đồng</Text> */}
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
-      <ScrollView style={styles.box_schedule}>
-        {schedules.map(schedule => (
-          <ScheduleItem
-            schedule={schedule}
-            isHome
-            key={schedule._id}
-            userId={user_info?._id}
-          />
-        ))}
-      </ScrollView>
-    </View>
+      <Portal>
+        <Modal visible={visible} onDismiss={hideModal}>
+          <View style></View>
+        </Modal>
+      </Portal>
+    </>
   );
 }
 
