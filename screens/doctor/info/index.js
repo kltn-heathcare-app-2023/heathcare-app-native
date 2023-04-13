@@ -3,20 +3,16 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
-import {doctorInfoSlice} from '../../../redux/slices/doctor/doctorInfoSlice';
-import RouterKey from '../../../utils/Routerkey';
-import storage from '../../../utils/storage';
-import {Button, List} from 'react-native-paper';
+import {List} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import {doctorProfileSelector} from '../../../redux/selectors/doctor/infoSelector';
 import moment from 'moment';
 import {getProfileDoctorById} from '../../../services/doctor/profile';
 import {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
+import {Rating} from 'react-native-elements';
 
 function DoctorInfoScreen({navigation}) {
   const {doctor} = useSelector(doctorProfileSelector);
@@ -71,7 +67,13 @@ function DoctorInfoScreen({navigation}) {
 
             <List.Item
               style={styles.profile_specialist}
-              title={`${doctor.rating} sao`}
+              title={
+                <Rating
+                  style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                  imageSize={18}
+                  startingValue={doctor.rating}
+                />
+              }
               left={() => <List.Icon icon="notebook-check-outline" />}
               titleStyle={{fontWeight: '700'}}
             />

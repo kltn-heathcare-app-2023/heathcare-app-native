@@ -263,16 +263,28 @@ function HomeScreen({navigation, route}) {
           </TouchableOpacity>
         </View>
         <Text style={styles.schedule_text}>Lịch khám của bạn</Text>
-        <ScrollView style={styles.box_schedule}>
-          {schedules.map(schedule => (
-            <ScheduleItem
-              schedule={schedule}
-              isHome
-              key={schedule._id}
-              userId={user_info?._id}
-            />
-          ))}
-        </ScrollView>
+        {schedules.length > 0 ? (
+          <ScrollView style={styles.box_schedule}>
+            {schedules.map(schedule => (
+              <ScheduleItem
+                schedule={schedule}
+                isHome
+                key={schedule._id}
+                userId={user_info?._id}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View
+            style={{
+              flex: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text>{'Bạn chưa có lịch khám nào'}</Text>
+          </View>
+        )}
       </View>
 
       <Portal>
@@ -349,6 +361,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     position: 'relative',
+    marginBottom: 8,
   },
   box_status_title: {
     position: 'absolute',

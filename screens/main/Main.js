@@ -23,6 +23,7 @@ import IIcon from 'react-native-vector-icons/Ionicons';
 import {AVATAR_DEFAULT} from '../../common/constant';
 import AnimatedLottieView from 'lottie-react-native';
 import {notificationSlice} from '../../redux/slices/notificationSlice';
+import {scheduleDetailSlice} from '../../redux/slices/scheduleDetailSlice';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
@@ -286,7 +287,39 @@ function MainScreen({navigation}) {
       'notification_confirm_register_schedule_success',
       notification => {
         if (notification) {
-          console.log(notification);
+          if (
+            notification.rule === 'RULE_NOTIFICATION_REGISTER_SCHEDULE' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.updateStatusForScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
+          if (
+            notification.rule === 'RULE_DOCTOR_REMIND' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.removeScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
+          if (
+            notification.rule === 'RULE_NOTIFICATION_CANCEL_SCHEDULE' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.removeScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
           dispatch(notificationSlice.actions.pushNotification(notification));
           notificationFromSocket.showNotification({
             title: 'Thông báo',
@@ -294,6 +327,7 @@ function MainScreen({navigation}) {
             icon: <IIcon name={'notifications-outline'} size={24} />,
             color: '#fff',
             onPress: () => navigation.navigate(RouterKey.NOTIFICATION_SCREEN),
+            showingTime: 5000,
           });
         }
       },

@@ -61,7 +61,7 @@ function ScheduleListScreen({navigation}) {
       />
 
       <ScrollView style={styles.schedule_list}>
-        {schedule_list &&
+        {schedule_list && schedule_list.length > 0 ? (
           schedule_list.map(schedule => {
             return (
               <ScheduleItem
@@ -71,7 +71,19 @@ function ScheduleListScreen({navigation}) {
                 dateSelected={selectedDate}
               />
             );
-          })}
+          })
+        ) : (
+          <View
+            style={{
+              flex: 2,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 300,
+            }}>
+            <Text>Hôm nay đã hết lịch trống vui lòng chọn ngày khác!</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

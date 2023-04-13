@@ -15,6 +15,7 @@ import {getProfileDoctorById} from '../../../../services/doctor/profile';
 
 import moment from 'moment';
 import 'moment/locale/vi'; // without this line it didn't work
+import {Rating} from 'react-native-elements';
 
 moment.locale('vi');
 
@@ -86,7 +87,13 @@ function ScheduleDetail({navigation, route}) {
 
           <List.Item
             style={styles.profile_specialist}
-            title={`${doctor.rating} sao`}
+            title={
+              <Rating
+                style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                imageSize={18}
+                startingValue={doctor.rating}
+              />
+            }
             left={() => <List.Icon icon="notebook-check-outline" />}
             titleStyle={{fontWeight: '700'}}
           />

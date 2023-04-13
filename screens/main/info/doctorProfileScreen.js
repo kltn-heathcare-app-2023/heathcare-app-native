@@ -10,6 +10,7 @@ import moment from 'moment';
 import {getProfileDoctorById} from '../../../services/doctor/profile';
 import {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
+import {Rating} from 'react-native-elements';
 
 function PatientViewInfoDoctorScreen({navigation, route}) {
   const {schedule} = route.params;
@@ -62,7 +63,13 @@ function PatientViewInfoDoctorScreen({navigation, route}) {
 
             <List.Item
               style={styles.profile_specialist}
-              title={`${doctor.rating} sao`}
+              title={
+                <Rating
+                  style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                  imageSize={18}
+                  startingValue={doctor.rating}
+                />
+              }
               left={() => <List.Icon icon="notebook-check-outline" />}
               titleStyle={{fontWeight: '700'}}
             />
