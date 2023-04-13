@@ -50,8 +50,8 @@ function ScheduleListScreen({navigation}) {
           }
         }}
         onPressGoToday={today => {
-          dispatch(scheduleSlice.actions.chooseDayOfWeek(today));
           setSelectedDate(today);
+          dispatch(scheduleSlice.actions.chooseDayOfWeek(today));
         }}
         onSwipeDown={() => {
           alert('onSwipeDown');

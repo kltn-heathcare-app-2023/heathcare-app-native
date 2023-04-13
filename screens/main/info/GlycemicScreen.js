@@ -130,6 +130,7 @@ function GlycemicScreen({navigation}) {
         patient: user_info._id,
       })
         .then(({data}) => {
+          console.log(data);
           Popup.show({
             type: 'Success',
             title: 'Thông báo',
