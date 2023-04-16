@@ -31,7 +31,7 @@ export const infoSlice = createSlice({
     },
     addGlycemic: (state, action) => {
       state.glycemic_list.push(action.payload);
-      console.log(state.glycemic_last);
+      // console.log(state.glycemic_last);
       state.glycemic_last.push(action.payload);
     },
     addBlood: (state, action) => {

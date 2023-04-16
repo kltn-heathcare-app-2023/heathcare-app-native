@@ -24,7 +24,7 @@ export const fetchConversationByDoctorId = createAsyncThunk(
     const resp = await getAllConversation(id);
     if (resp?.data) {
       const conversations = resp.data;
-      console.log(conversations);
+      // console.log(conversations);
       return conversations;
     }
   },

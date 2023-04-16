@@ -15,6 +15,9 @@ export const notificationSlice = createSlice({
     updateNotificationType: (state, action) => {
       state.notification_type = action.payload;
     },
+    pushNotification: (state, action) => {
+      state.notification_list.unshift(action.payload);
+    },
   },
   extraReducers: builder => {
     builder
@@ -77,7 +80,8 @@ export const updateStatusSeenNotificationByDoctor = createAsyncThunk(
   },
 );
 
-export const {updateNotificationType} = notificationSlice.actions;
+export const {updateNotificationType, pushNotification} =
+  notificationSlice.actions;
 
 export const notification_list_selector = state =>
   state.notifications.notification_list;
@@ -111,7 +115,7 @@ export const notification_list_unread_filter = createSelector(
       const notification_unread_size = notifications.filter(
         notification => !notification.hasSeen,
       ).length;
-      console.log(notification_unread_size);
+      // console.log(notification_unread_size);
       return notification_unread_size;
     }
 

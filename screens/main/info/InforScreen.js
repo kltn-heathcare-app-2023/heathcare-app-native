@@ -150,9 +150,9 @@ function InfoScreen({navigation}) {
               {`Chỉ số Đường Huyết mới nhất:`}
             </Text>
             <Text style={styles.bmi_text_notification}>
-              {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-              {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+              {`Đường huyết trước khi ăn: ${glycemic_case_1}/126\n`}
+              {`Đường huyết trước sau ăn: ${glycemic_case_2}/180\n`}
+              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/120\n`}
             </Text>
           </View>
         </TouchableOpacity>

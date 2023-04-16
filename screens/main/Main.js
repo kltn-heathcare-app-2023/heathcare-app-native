@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import {Modal, Portal} from 'react-native-paper';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MainNavigator from '../../routers/MainNavigator';
 
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,11 +22,14 @@ import {useNotification} from 'react-native-internal-notification';
 import IIcon from 'react-native-vector-icons/Ionicons';
 import {AVATAR_DEFAULT} from '../../common/constant';
 import AnimatedLottieView from 'lottie-react-native';
+import {notificationSlice} from '../../redux/slices/notificationSlice';
+import {scheduleDetailSlice} from '../../redux/slices/scheduleDetailSlice';
 
 function MainScreen({navigation}) {
   const [visible, setVisible] = useState(false);
   const [callData, setCallData] = useState(null);
   const user_info = useSelector(infoSelector);
+  const dispatch = useDispatch();
   const notificationFromSocket = useNotification();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -275,21 +278,58 @@ function MainScreen({navigation}) {
   }, [user_info]);
 
   useEffect(() => {
-    // showModal();
     socket.on('call_id_room_to_user_success', resp => {
       setCallData(resp);
       showModal();
     });
+
     socket.on(
       'notification_confirm_register_schedule_success',
       notification => {
-        notificationFromSocket.showNotification({
-          title: 'Thông báo',
-          message: notification.content,
-          icon: <IIcon name={'notifications-outline'} size={24} />,
-          color: '#fff',
-          onPress: () => navigation.navigate(RouterKey.NOTIFICATION_SCREEN),
-        });
+        if (notification) {
+          if (
+            notification.rule === 'RULE_NOTIFICATION_REGISTER_SCHEDULE' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.updateStatusForScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
+          if (
+            notification.rule === 'RULE_DOCTOR_REMIND' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.removeScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
+          if (
+            notification.rule === 'RULE_NOTIFICATION_CANCEL_SCHEDULE' &&
+            notification?.schedule_detail_id
+          ) {
+            dispatch(
+              scheduleDetailSlice.actions.removeScheduleDetail(
+                notification.schedule_detail_id,
+              ),
+            );
+          }
+
+          dispatch(notificationSlice.actions.pushNotification(notification));
+          notificationFromSocket.showNotification({
+            title: 'Thông báo',
+            message: notification.content,
+            icon: <IIcon name={'notifications-outline'} size={24} />,
+            color: '#fff',
+            onPress: () => navigation.navigate(RouterKey.NOTIFICATION_SCREEN),
+            showingTime: 5000,
+          });
+        }
       },
     );
   }, []);
