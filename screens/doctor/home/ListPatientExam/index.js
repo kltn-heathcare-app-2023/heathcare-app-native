@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNotification} from 'react-native-internal-notification';
@@ -35,6 +35,7 @@ import {cancelScheduleDetail} from '../../../../services/patient/schedule_detail
 import {socket} from '../../../../utils/config';
 import {Root, Popup} from 'popup-ui';
 import {doctorConversationSlice} from '../../../../redux/slices/doctor/doctorConversationSlice';
+import ScheduleWaitingItem from '../../../../components/ScheduleWating';
 function DoctorHomeListPatientExamScreen({navigation}) {
   const dispatch = useDispatch();
   const notification_list = useSelector(notification_list_selector);
@@ -95,7 +96,23 @@ function DoctorHomeListPatientExamScreen({navigation}) {
         })
         .catch();
     }
+
+    doctor_profile.doctor && socket.emit('add_user', doctor_profile.doctor._id);
   }, [doctor_profile]);
+
+  useEffect(() => {
+    socket.on('notification_register_schedule_from_patient_success', resp => {
+      const {notification, schedule_detail} = resp;
+      setScheduleWaitingList(prev => {
+        const index = scheduleWaitingList.findIndex(
+          schedule => schedule._id === schedule_detail._id,
+        );
+        if (index > -1) return prev;
+        return [schedule_detail, ...prev];
+      });
+      setScheduleWaiting(prev => prev + 1);
+    });
+  }, []);
 
   const handleLogoutByDoctor = async () => {
     navigation.navigate(RouterKey.LOGIN_SCREEN);
@@ -126,8 +143,8 @@ function DoctorHomeListPatientExamScreen({navigation}) {
         );
 
         if (notification) {
-          socket.emit('notification_register_schedule_from_patient', {
-            data: notification,
+          socket.emit('notification_confirm_register_schedule', {
+            data: {notification},
           });
         }
         if (schedule_detail_id) {
@@ -138,7 +155,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
               schedule => schedule._id !== schedule_detail_id,
             ),
           );
-          setScheduleWaiting(scheduleWaiting - 1);
+          setScheduleWaiting(prev => prev - 1);
           Popup.show({
             type: 'Success',
             title: 'Thông báo',
@@ -174,6 +191,11 @@ function DoctorHomeListPatientExamScreen({navigation}) {
     acceptScheduleDetailByScheduleId(schedule_id)
       .then(({schedule_detail, notification, conversation}) => {
         hideModal();
+        if (notification) {
+          socket.emit('notification_confirm_register_schedule', {
+            data: {notification},
+          });
+        }
         if (conversation) {
           console.log(conversation);
           dispatch(
@@ -187,7 +209,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
             schedule => schedule._id !== schedule_detail._id,
           ),
         );
-        setScheduleWaiting(scheduleWaiting - 1);
+        setScheduleWaiting(prev => prev - 1);
 
         Popup.show({
           type: 'Success',
@@ -217,6 +239,119 @@ function DoctorHomeListPatientExamScreen({navigation}) {
         });
       });
   };
+
+  const ModalShowPreviewScheduleWaiting = useMemo(() => {
+    return (
+      <>
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={styles.modal}>
+            <Text style={styles.modal_title}>
+              {'Thông tin chi tiết ca khám'}
+            </Text>
+            {schedule && (
+              <Image
+                source={{uri: schedule.patient.person.avatar}}
+                style={styles.modal_image}
+              />
+            )}
+            {schedule && (
+              <>
+                <List.Section style={{width: '100%'}}>
+                  <List.Subheader>Thông tin bệnh nhân:</List.Subheader>
+                  <List.Item
+                    style={styles.modal_profile_specialist}
+                    title={`${schedule.patient.person.username}`}
+                    left={() => <List.Icon icon="doctor" />}
+                  />
+                  <List.Item
+                    style={styles.modal_profile_specialist}
+                    title={`${schedule.patient.person.gender ? 'Nam' : 'Nu'}`}
+                    left={() => <List.Icon icon="gender-male-female" />}
+                  />
+                </List.Section>
+                <List.Section style={{width: '100%'}}>
+                  <List.Subheader>Thông tin ca khám:</List.Subheader>
+                  <List.Item
+                    style={[styles.modal_profile_specialist, {height: 'auto'}]}
+                    title={`${schedule.content_exam}`}
+                    left={() => <List.Icon icon="clipboard-search-outline" />}
+                  />
+                  <List.Item
+                    style={styles.modal_profile_specialist}
+                    title={`${moment(new Date(schedule.day_exam)).format(
+                      'llll',
+                    )}`}
+                    left={() => <List.Icon icon="calendar-check" />}
+                  />
+                </List.Section>
+              </>
+            )}
+
+            {!schedule?.status && (
+              <>
+                {isOpenInput && (
+                  <TextInput
+                    style={{
+                      width: '100%',
+                      marginBottom: 16,
+                    }}
+                    mode={'outlined'}
+                    placeholder={'Nhập lý do hủy khám'}
+                    value={reason}
+                    onChangeText={val => setReason(val)}
+                  />
+                )}
+                <View style={styles.modal_buttons}>
+                  {isOpenInput ? (
+                    <>
+                      <Button
+                        mode="elevated"
+                        onPress={() => handleCancelScheduleDetail(schedule._id)}
+                        style={{width: '45%'}}
+                        labelStyle={{width: '100%'}}>
+                        Xác nhận
+                      </Button>
+                      <Button
+                        mode="elevated"
+                        onPress={() => setIsOpenInput(false)}
+                        buttonColor={'#f4a259'}
+                        textColor={'#000'}
+                        style={{width: '45%'}}
+                        labelStyle={{width: '100%'}}>
+                        Thoát
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        mode="elevated"
+                        onPress={() => setIsOpenInput(true)}
+                        style={{width: '45%'}}
+                        labelStyle={{width: '100%'}}>
+                        Hủy
+                      </Button>
+                      <Button
+                        mode="elevated"
+                        onPress={() => handleAcceptScheduleDetail(schedule._id)}
+                        buttonColor={'#06d6a0'}
+                        textColor={'#000'}
+                        style={{width: '45%'}}
+                        labelStyle={{width: '100%'}}>
+                        Xác nhận
+                      </Button>
+                    </>
+                  )}
+                </View>
+              </>
+            )}
+          </Modal>
+        </Portal>
+      </>
+    );
+  }, [visible, isOpenInput]);
 
   return (
     <>
@@ -397,33 +532,11 @@ function DoctorHomeListPatientExamScreen({navigation}) {
               option === 1 &&
               scheduleWaitingList.map(schedule => {
                 return (
-                  <TouchableOpacity
-                    style={styles.patient_container}
-                    onPress={() => handleClickPreviewSchedule(schedule)}
-                    key={schedule._id}>
-                    <Image
-                      source={{
-                        uri:
-                          schedule.patient.person?.avatar !== ''
-                            ? schedule.patient.person?.avatar
-                            : AVATAR_DEFAULT,
-                      }}
-                      style={styles.patient_container_image}
-                    />
-                    <View style={styles.patient_container_right}>
-                      <Text>{schedule.patient.person.username}</Text>
-                      <Text>Nhóm máu: {schedule.patient.blood}</Text>
-                      <Text>
-                        Tiền sử: {ANAMNESIS[schedule.patient.anamnesis]}
-                      </Text>
-                      <Text>
-                        Ngày khám:
-                        {moment(new Date(schedule.day_exam)).format(
-                          'DD/MM/YYYY - HH:mm',
-                        )}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                  <ScheduleWaitingItem
+                    schedule={schedule}
+                    handle={() => handleClickPreviewSchedule(schedule)}
+                    key={schedule._id}
+                  />
                 );
               })}
           </ScrollView>
@@ -440,136 +553,12 @@ function DoctorHomeListPatientExamScreen({navigation}) {
         </View>
       )}
 
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={styles.modal}>
-          <Text style={styles.modal_title}>{'Thông tin chi tiết ca khám'}</Text>
-          {schedule && (
-            <Image
-              source={{uri: schedule.patient.person.avatar}}
-              style={styles.modal_image}
-            />
-          )}
-          {schedule && (
-            <>
-              <List.Section style={{width: '100%'}}>
-                <List.Subheader>Thông tin bệnh nhân:</List.Subheader>
-                <List.Item
-                  style={styles.modal_profile_specialist}
-                  title={`${schedule.patient.person.username}`}
-                  left={() => <List.Icon icon="doctor" />}
-                />
-                <List.Item
-                  style={styles.modal_profile_specialist}
-                  title={`${schedule.patient.person.gender ? 'Nam' : 'Nu'}`}
-                  left={() => <List.Icon icon="gender-male-female" />}
-                />
-              </List.Section>
-              <List.Section style={{width: '100%'}}>
-                <List.Subheader>Thông tin ca khám:</List.Subheader>
-                <List.Item
-                  style={[styles.modal_profile_specialist, {height: 'auto'}]}
-                  title={`${schedule.content_exam}`}
-                  left={() => <List.Icon icon="clipboard-search-outline" />}
-                />
-                <List.Item
-                  style={styles.modal_profile_specialist}
-                  title={`${moment(new Date(schedule.day_exam)).format(
-                    'llll',
-                  )}`}
-                  left={() => <List.Icon icon="calendar-check" />}
-                />
-              </List.Section>
-            </>
-          )}
-
-          {!schedule?.status && (
-            <>
-              {isOpenInput && (
-                <TextInput
-                  style={{
-                    width: '100%',
-                    marginBottom: 16,
-                  }}
-                  mode={'outlined'}
-                  placeholder={'Nhập lý do hủy khám'}
-                  value={reason}
-                  onChangeText={val => setReason(val)}
-                />
-              )}
-              <View style={styles.modal_buttons}>
-                {isOpenInput ? (
-                  <>
-                    <Button
-                      mode="elevated"
-                      onPress={() => handleCancelScheduleDetail(schedule._id)}
-                      style={{width: '45%'}}
-                      labelStyle={{width: '100%'}}>
-                      Xác nhận
-                    </Button>
-                    <Button
-                      mode="elevated"
-                      onPress={() => setIsOpenInput(false)}
-                      buttonColor={'#f4a259'}
-                      textColor={'#000'}
-                      style={{width: '45%'}}
-                      labelStyle={{width: '100%'}}>
-                      Thoát
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      mode="elevated"
-                      onPress={() => setIsOpenInput(true)}
-                      style={{width: '45%'}}
-                      labelStyle={{width: '100%'}}>
-                      Hủy
-                    </Button>
-                    <Button
-                      mode="elevated"
-                      onPress={() => handleAcceptScheduleDetail(schedule._id)}
-                      buttonColor={'#06d6a0'}
-                      textColor={'#000'}
-                      style={{width: '45%'}}
-                      labelStyle={{width: '100%'}}>
-                      Xác nhận
-                    </Button>
-                  </>
-                )}
-              </View>
-            </>
-          )}
-        </Modal>
-      </Portal>
+      {ModalShowPreviewScheduleWaiting}
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  patient_container: {
-    width: '98%',
-    height: 120,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#a2d2ff',
-    marginHorizontal: 4,
-    padding: 8,
-    marginTop: 8,
-    borderRadius: 16,
-  },
-  patient_container_image: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
-  },
-  patient_container_right: {
-    width: '70%',
-    marginLeft: 8,
-  },
   modal: {
     backgroundColor: '#fff',
     height: 652,

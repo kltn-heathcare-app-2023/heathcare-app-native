@@ -18,6 +18,7 @@ import {createRemindToPatient} from '../../../../services/doctor/patient';
 import {Root, Popup} from 'popup-ui';
 import RouterKey from '../../../../utils/Routerkey';
 import Header from '../../../../components/Header';
+import {socket} from '../../../../utils/config';
 
 function PatientInfo({navigation, route}) {
   const {patient, bmis, glycemics, blood_pressures} = route.params;
@@ -35,7 +36,10 @@ function PatientInfo({navigation, route}) {
       from: doctor_profile.doctor._id,
       content: note,
     })
-      .then(value => {
+      .then(({data}) => {
+        socket.emit('notification_confirm_register_schedule', {
+          data: data,
+        });
         Popup.show({
           type: 'Success',
           title: 'Thông báo',

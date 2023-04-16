@@ -49,27 +49,32 @@ export const cleanDoctorConversationListSelector = createSelector(
   doctorProfileSelector,
   doctorConversationListSelector,
   (profile, conversations) => {
-    const conversationList = conversations.map(conversation => {
-      const member =
-        conversation.members[0]._id === profile.doctor._id
-          ? conversation.members[1]
-          : conversation.members[0];
+    if (profile && conversations.length > 0) {
+      const conversationList = conversations.map(conversation => {
+        const member =
+          conversation.members[0]?._id === profile.doctor._id
+            ? conversation.members[1]
+            : conversation.members[0];
 
-      return {
-        _id: conversation._id,
-        member: {
-          _id: member._id,
-          username: member.person.username,
-          avatar:
-            member.person.avatar !== '' ? member.person.avatar : AVATAR_DEFAULT,
-        },
-        last_message: {
-          content: conversation.last_message?.content ?? '',
-          createdAt: conversation.last_message?.createdAt ?? '',
-        },
-      };
-    });
+        return {
+          _id: conversation._id,
+          member: {
+            _id: member._id,
+            username: member.person.username,
+            avatar:
+              member.person.avatar !== ''
+                ? member.person.avatar
+                : AVATAR_DEFAULT,
+          },
+          last_message: {
+            content: conversation.last_message?.content ?? '',
+            createdAt: conversation.last_message?.createdAt ?? '',
+          },
+        };
+      });
 
-    return conversationList;
+      return conversationList;
+    }
+    return [];
   },
 );
