@@ -38,7 +38,9 @@ import {Root, Popup} from 'popup-ui';
 import {doctorConversationSlice} from '../../../../redux/slices/doctor/doctorConversationSlice';
 import ScheduleWaitingItem from '../../../../components/ScheduleWating';
 import ScheduleWaitingExamItem from '../../../../components/ScheduleWatingExam';
-function DoctorHomeListPatientExamScreen({navigation}) {
+function DoctorHomeListPatientExamScreen({navigation, route}) {
+  const {schedule_detail_id = ''} = route.params ?? {schedule_detail_id: ''};
+
   const dispatch = useDispatch();
   const notification_list = useSelector(notification_list_selector);
   const doctor_profile = useSelector(doctorProfileSelector);
@@ -51,7 +53,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
   const [patientList, setPatientList] = useState([]);
   const [scheduleWaitingList, setScheduleWaitingList] = useState([]);
   const [scheduleWaitingExam, setScheduleWaitingExam] = useState([]);
-
+  const [scheduleDetail, setScheduleDetail] = useState('');
   const [visible, setVisible] = useState(false);
   const [visibleWaitingExam, setVisibleWaitingExam] = useState(false);
   const [schedule, setSchedule] = useState(null);
@@ -59,7 +61,7 @@ function DoctorHomeListPatientExamScreen({navigation}) {
   const [reason, setReason] = useState('');
 
   const last_notification = notification_list[notification_list.length - 1];
-
+  console.log('SCHEDULE DETAIL -> ', scheduleDetail);
   useEffect(() => {
     if (
       last_notification &&
@@ -116,6 +118,10 @@ function DoctorHomeListPatientExamScreen({navigation}) {
       setScheduleWaiting(prev => prev + 1);
     });
   }, []);
+
+  useEffect(() => {
+    setScheduleDetail(schedule_detail_id);
+  }, [schedule_detail_id]);
 
   const handleLogoutByDoctor = async () => {
     navigation.navigate(RouterKey.LOGIN_SCREEN);

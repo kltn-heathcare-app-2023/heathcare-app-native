@@ -11,8 +11,8 @@ import {infoSelector} from '../../../../redux/selectors/infoSelector';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 
 function CallVideoScreen({navigation, route}) {
-  const {room_id, schedule_detail_id, doctor_id} = route.params;
-  console.log({room_id, schedule_detail_id, doctor_id});
+  const {room_id, schedule_detail_id, doctor_id, patient_id} = route.params;
+  console.log({room_id, schedule_detail_id, doctor_id, patient_id});
   const user_info = useSelector(infoSelector);
   const doctor_profile = useSelector(doctorProfileSelector);
 
@@ -37,7 +37,7 @@ function CallVideoScreen({navigation, route}) {
               navigation.navigate(
                 Object.keys(user_info).length > 0
                   ? RouterKey.HOME_SCREEN
-                  : RouterKey.DOCTOR_HOME_SCREEN,
+                  : RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN,
                 {rating: true, room_id, schedule_detail_id, doctor_id},
               );
             },
@@ -46,7 +46,7 @@ function CallVideoScreen({navigation, route}) {
               navigation.navigate(
                 Object.keys(user_info).length > 0
                   ? RouterKey.HOME_SCREEN
-                  : RouterKey.DOCTOR_HOME_SCREEN,
+                  : RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN,
                 {rating: true, room_id, schedule_detail_id, doctor_id},
               );
             },

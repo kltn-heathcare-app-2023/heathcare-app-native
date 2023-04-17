@@ -69,7 +69,7 @@ function DoctorInfoScreen({navigation}) {
               style={styles.profile_specialist}
               title={
                 <Rating
-                  style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                  style={{paddingVertical: 10}}
                   imageSize={18}
                   startingValue={doctor.rating}
                 />
@@ -158,7 +158,7 @@ function DoctorInfoScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: '#BAD7E9',
+    backgroundColor: '#fff',
     paddingBottom: 16,
   },
   info: {
@@ -171,6 +171,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   info_text: {
     fontSize: 16,
