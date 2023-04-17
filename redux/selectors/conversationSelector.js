@@ -2,6 +2,7 @@ import {createSelector} from '@reduxjs/toolkit';
 import {AVATAR_DEFAULT} from '../../common/constant';
 import {infoSelector} from '../selectors/infoSelector';
 import {doctorProfileSelector} from './doctor/infoSelector';
+import moment from 'moment';
 
 export const conversationListSelector = state =>
   state.conversations.conversations;

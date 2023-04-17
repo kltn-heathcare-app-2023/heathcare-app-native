@@ -24,6 +24,7 @@ import {socket} from '../../../../utils/config';
 import RouterKey from '../../../../utils/Routerkey';
 import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSelector';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import {doctorConversationSlice} from '../../../../redux/slices/doctor/doctorConversationSlice';
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
@@ -67,9 +68,9 @@ function DoctorConversationDetail({route, navigation}) {
       });
       try {
         const resp = await postMessage(formData);
-        console.log(resp);
         socket.emit('send_message', {message: resp.data});
         dispatch(messageSlice.actions.pushMessage(resp.data));
+        dispatch(doctorConversationSlice.actions.updateLastMessage(resp.data));
         setMessage('');
         setImages([]);
       } catch (error) {

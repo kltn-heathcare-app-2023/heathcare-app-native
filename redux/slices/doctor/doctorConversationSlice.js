@@ -10,6 +10,23 @@ export const doctorConversationSlice = createSlice({
     pushConversationAfterAcceptSchedule: (state, action) => {
       state.conversations.push(action.payload);
     },
+    updateLastMessage: (state, action) => {
+      console.log('message update -> ', action.payload);
+      const conversation = state.conversations.find(
+        conversation => conversation._id === action.payload.conversation,
+      );
+      const conversation_updated = {
+        ...conversation,
+        last_message: action.payload,
+      };
+      const index = state.conversations.findIndex(
+        conversation => conversation._id === action.payload.conversation,
+      );
+      if (index > -1) {
+        state.conversations.splice(index, 1);
+        state.conversations.unshift(conversation_updated);
+      }
+    },
   },
   extraReducers: builder => {
     builder.addCase(fetchConversationByDoctorId.fulfilled, (state, action) => {
@@ -30,6 +47,7 @@ export const fetchConversationByDoctorId = createAsyncThunk(
   },
 );
 
-const {pushConversationAfterAcceptSchedule} = doctorConversationSlice.actions;
+const {pushConversationAfterAcceptSchedule, updateLastMessage} =
+  doctorConversationSlice.actions;
 
 export default doctorConversationSlice.reducer;
