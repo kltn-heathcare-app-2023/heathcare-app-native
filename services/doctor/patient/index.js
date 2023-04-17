@@ -8,6 +8,12 @@ export const getAllScheduleDetailUnAccepted = id => {
   return fetch.get(`/schedule-details/doctor/schedule-list-waiting/${id}`);
 };
 
+export const getAllScheduleWaitingExam = id => {
+  return fetch.get(
+    `/schedule-details/doctor/schedule-list/${id}?filter=view_wating_exam`,
+  );
+};
+
 export const getAllWorkingDay = id => {
   return fetch.get(`/schedules/doctor/${id}`);
 };

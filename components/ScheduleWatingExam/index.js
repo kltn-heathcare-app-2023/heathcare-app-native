@@ -5,7 +5,7 @@ import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import {ANAMNESIS} from '../../common/constant';
 
-function ScheduleWaitingItem({schedule, handle}) {
+function ScheduleWaitingExamItem({schedule, handle}) {
   return (
     <TouchableOpacity
       style={styles.patient_container}
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fcbf49',
+    backgroundColor: '#57cc99',
     marginHorizontal: 4,
     padding: 8,
     marginTop: 8,
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-export default ScheduleWaitingItem;
+export default ScheduleWaitingExamItem;
