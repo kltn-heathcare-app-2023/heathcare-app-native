@@ -5,13 +5,10 @@ import {useNotification} from 'react-native-internal-notification';
 import {
   ActivityIndicator,
   Button,
-  Divider,
   List,
   MD2Colors,
-  MD3Colors,
   Modal,
   Portal,
-  ProgressBar,
   TextInput,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
@@ -20,6 +17,7 @@ import {doctorProfileSelector} from '../../../../redux/selectors/doctor/infoSele
 import {notification_list_selector} from '../../../../redux/slices/notificationSlice';
 import {
   acceptScheduleDetailByScheduleId,
+  createResultExamAfterExam,
   getAllScheduleDetailUnAccepted,
   getAllScheduleWaitingExam,
   getAllWorkingDay,
@@ -38,6 +36,9 @@ import {Root, Popup} from 'popup-ui';
 import {doctorConversationSlice} from '../../../../redux/slices/doctor/doctorConversationSlice';
 import ScheduleWaitingItem from '../../../../components/ScheduleWating';
 import ScheduleWaitingExamItem from '../../../../components/ScheduleWatingExam';
+import DropDownPicker from '../../../../components/Input/DropdownPicker';
+import {anamnesisITems} from '../../../utils/SendInformationScreen';
+
 function DoctorHomeListPatientExamScreen({navigation, route}) {
   const {schedule_detail_id = ''} = route.params ?? {schedule_detail_id: ''};
 
@@ -53,7 +54,6 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const [patientList, setPatientList] = useState([]);
   const [scheduleWaitingList, setScheduleWaitingList] = useState([]);
   const [scheduleWaitingExam, setScheduleWaitingExam] = useState([]);
-  const [scheduleDetail, setScheduleDetail] = useState('');
   const [visible, setVisible] = useState(false);
   const [visibleWaitingExam, setVisibleWaitingExam] = useState(false);
   const [schedule, setSchedule] = useState(null);
@@ -61,7 +61,12 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const [reason, setReason] = useState('');
 
   const last_notification = notification_list[notification_list.length - 1];
-  console.log('SCHEDULE DETAIL -> ', scheduleDetail);
+
+  const [scheduleDetail, setScheduleDetail] = useState('');
+  const [note, setNote] = useState('');
+  const [anamnesis, setAnamnesis] = useState('0');
+  const [loadingSend, setLoadingSend] = useState(false);
+
   useEffect(() => {
     if (
       last_notification &&
@@ -257,6 +262,24 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
       });
   };
 
+  const handleSendResultExamToPatient = () => {
+    setLoadingSend(true);
+    createResultExamAfterExam(scheduleDetail, {result_exam: note, anamnesis})
+      .then(value => {
+        setScheduleWaitingExam(prev =>
+          prev.filter(schedule => schedule._id !== scheduleDetail),
+        );
+      })
+      .catch(err => console.error(err))
+      .finally(() => {
+        navigation.setParams({schedule_detail_id: ''});
+        setScheduleDetail('');
+        setNote('');
+        setAnamnesis('0');
+        setLoadingSend(false);
+      });
+  };
+
   const ModalShowPreviewScheduleWaiting = useMemo(() => {
     return (
       <>
@@ -449,6 +472,47 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
     );
   }, [visibleWaitingExam]);
 
+  const ModalShowInputResultExamAfterExam = useMemo(() => {
+    return (
+      <>
+        <Portal>
+          <Modal
+            visible={scheduleDetail}
+            onDismiss={() => setVisibleWaitingExam(false)}
+            contentContainerStyle={styles.modal}>
+            <Text style={styles.modal_title}>
+              {'Đánh giá bệnh nhân sau khi khám'}
+            </Text>
+            <TextInput
+              style={{width: '100%', marginTop: 8}}
+              placeholder="Nhập ghi chú"
+              placeholderTextColor="grey"
+              numberOfLines={10}
+              multiline={true}
+              textAlignVertical="top"
+              value={note}
+              onChangeText={v => setNote(v)}
+            />
+            <DropDownPicker
+              value={anamnesis}
+              _setValue={setAnamnesis}
+              items={anamnesisITems}
+              isBlood
+              style={{width: '100%'}}
+              stylePicker={{width: '92%'}}
+            />
+            <Button
+              mode="contained"
+              onPress={handleSendResultExamToPatient}
+              disabled={loadingSend}>
+              Xác nhận
+            </Button>
+          </Modal>
+        </Portal>
+      </>
+    );
+  }, [scheduleDetail, note, anamnesis]);
+
   return (
     <>
       {!loading && (
@@ -485,9 +549,9 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                   fontWeight: '800',
                   fontSize: 16,
                   position: 'absolute',
-                  top: -5,
-                  right: -5,
-                  width: 20,
+                  top: -8,
+                  right: -8,
+                  width: 24,
                   height: 24,
                   backgroundColor: '#90e0ef',
                   textAlign: 'center',
@@ -521,9 +585,9 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                   fontWeight: '800',
                   fontSize: 16,
                   position: 'absolute',
-                  top: -5,
-                  right: -5,
-                  width: 20,
+                  top: -8,
+                  right: -8,
+                  width: 24,
                   height: 24,
                   backgroundColor: '#fcbf49',
                   textAlign: 'center',
@@ -557,9 +621,9 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                   fontWeight: '800',
                   fontSize: 16,
                   position: 'absolute',
-                  top: -5,
-                  right: -5,
-                  width: 20,
+                  top: -8,
+                  right: -8,
+                  width: 24,
                   height: 24,
                   backgroundColor: '#06d6a0',
                   textAlign: 'center',
@@ -667,6 +731,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
 
       {ModalShowPreviewScheduleWaiting}
       {ModalShowPreviewScheduleWaitingExam}
+      {ModalShowInputResultExamAfterExam}
     </>
   );
 }

@@ -29,3 +29,8 @@ export const getAllConversation = id => {
 export const acceptScheduleDetailByScheduleId = id => {
   return fetch.put(`/schedule-details/doctor/accept/${id}`);
 };
+
+export const createResultExamAfterExam = (id, data) => {
+  console.log({id, data});
+  return fetch.putWithAuth(`/schedule-details/${id}`, data);
+};

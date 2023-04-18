@@ -78,6 +78,26 @@ const putFormWithAuth = async (url, data) => {
   }
 };
 
+const putWithAuth = async (url, data) => {
+  const token = await storage.get('accessToken');
+  try {
+    const resp = await fetch(`${env.API_URL}${url}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const res = await resp.json();
+    return res;
+  } catch (error) {
+    console.error('error fetch post request', error);
+  }
+};
+
 const postWithAuth = async (url, data) => {
   const token = await storage.get('accessToken');
   try {
@@ -168,4 +188,5 @@ export default {
   getWithAuth,
   _delete,
   putFormWithAuth,
+  putWithAuth,
 };
