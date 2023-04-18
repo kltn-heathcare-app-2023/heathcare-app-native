@@ -20,6 +20,7 @@ import ICon from 'react-native-vector-icons/Ionicons';
 import {socket} from '../../../../utils/config';
 import RouterKey from '../../../../utils/Routerkey';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import {conversationSlice} from '../../../../redux/slices/conversationSlice';
 
 const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
 
@@ -62,9 +63,9 @@ function ConversationDetail({route, navigation}) {
       });
       try {
         const resp = await postMessage(formData);
-        console.log(resp);
         socket.emit('send_message', {message: resp.data});
         dispatch(messageSlice.actions.pushMessage(resp.data));
+        dispatch(conversationSlice.actions.updateLastMessage(resp.data));
         setMessage('');
         setImages([]);
       } catch (error) {

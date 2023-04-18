@@ -286,6 +286,7 @@ function MainScreen({navigation}) {
     socket.on(
       'notification_confirm_register_schedule_success',
       notification => {
+        console.log({notification});
         if (notification) {
           if (
             notification.rule === 'RULE_NOTIFICATION_REGISTER_SCHEDULE' &&
