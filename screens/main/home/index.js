@@ -186,7 +186,6 @@ function HomeScreen({navigation, route}) {
               }>{`Chỉ số TH1: ${glycemic_case_1}/ 126\nChỉ số TH2: ${glycemic_case_2}/ 180\nChỉ số TH3: ${glycemic_case_3}/ 120`}</Text>
           </View>
         </View>
-
         {status && status.message && (
           <View
             style={[
