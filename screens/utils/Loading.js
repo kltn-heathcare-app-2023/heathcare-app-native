@@ -13,6 +13,8 @@ import {fetchInfoDoctor} from '../../redux/slices/doctor/doctorInfoSlice';
 import {doctorProfileSelector} from '../../redux/selectors/doctor/infoSelector';
 import {fetchNotificationListById} from '../../redux/slices/notificationSlice';
 import {fetchConversationByDoctorId} from '../../redux/slices/doctor/doctorConversationSlice';
+import {fetchConversationByPatientId} from '../../redux/slices/conversationSlice';
+import {fetchAllScheduleDetailListById} from '../../redux/slices/scheduleDetailSlice';
 
 function LoadingScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
@@ -42,6 +44,8 @@ function LoadingScreen({navigation, route}) {
     if (user_info && doctor_profile) {
       if (Object.keys(user_info).length > 0) {
         dispatch(fetchNotificationListById(user_info._id));
+        dispatch(fetchConversationByPatientId(user_info._id));
+        dispatch(fetchAllScheduleDetailListById(user_info._id));
         navigation.navigate(RouterKey.MAIN_SCREEN);
       }
       if (Object.keys(doctor_profile).length > 0) {

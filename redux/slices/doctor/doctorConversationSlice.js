@@ -7,6 +7,9 @@ export const doctorConversationSlice = createSlice({
     conversations: [],
   },
   reducers: {
+    clearConversation: state => {
+      state.conversations = [];
+    },
     pushConversationAfterAcceptSchedule: (state, action) => {
       state.conversations.push(action.payload);
     },
@@ -47,7 +50,10 @@ export const fetchConversationByDoctorId = createAsyncThunk(
   },
 );
 
-const {pushConversationAfterAcceptSchedule, updateLastMessage} =
-  doctorConversationSlice.actions;
+const {
+  pushConversationAfterAcceptSchedule,
+  updateLastMessage,
+  clearConversation,
+} = doctorConversationSlice.actions;
 
 export default doctorConversationSlice.reducer;

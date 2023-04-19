@@ -34,7 +34,6 @@ function HomeScreen({navigation, route}) {
   const [countRating, setCountRating] = useState(5);
   const [contentRating, setContentRating] = useState('');
 
-  const dispatch = useDispatch();
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
@@ -95,11 +94,11 @@ function HomeScreen({navigation, route}) {
     // useShadowColorFromDataset: false, // optional
   };
 
-  useEffect(() => {
-    if (user_info?._id) {
-      dispatch(fetchAllScheduleDetailListById(user_info._id));
-    }
-  }, [user_info]);
+  // useEffect(() => {
+  //   if (user_info?._id) {
+
+  //   }
+  // }, [user_info]);
 
   useEffect(() => {
     socket.on('call_id_room_to_user_success', resp => {

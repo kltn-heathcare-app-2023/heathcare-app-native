@@ -32,7 +32,7 @@ function AuthPhoneScreen({navigation, route}) {
   };
 
   const handleAuthenticationAndRegisterAccount = () => {
-    console.log(phone, password);
+    console.log(phone, password, verificationCode);
     // const credential = auth.PhoneAuthProvider.credential(
     //   confirm.verificationId,
     //   verificationCode,

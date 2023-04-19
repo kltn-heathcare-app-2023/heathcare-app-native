@@ -9,13 +9,7 @@ import {fetchConversationByPatientId} from '../../../../redux/slices/conversatio
 import RouterKey from '../../../../utils/Routerkey';
 import Header from '../../../../components/Header';
 function ConversationScreen({navigation}) {
-  const user_info = useSelector(infoSelector);
   const conversations = useSelector(cleanConversationListSelector);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchConversationByPatientId(user_info._id));
-  }, []);
 
   const onPressConversation = conversation => {
     navigation.navigate(RouterKey.CONVERSATION_DETAIL_SCREEN, {
