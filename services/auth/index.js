@@ -12,3 +12,7 @@ export const register = data => {
 export const findAccount = phone_number => {
   return fetch.get(`/accounts/phone/${phone_number}`);
 };
+
+export const forgotPassword = data => {
+  return fetch.put(`/accounts`, data);
+};
