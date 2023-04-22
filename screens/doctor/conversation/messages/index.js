@@ -46,6 +46,7 @@ function DoctorConversationDetail({route, navigation}) {
 
   useEffect(() => {
     socket.on('receiver_message', ({message}) => {
+      // console.log('message ->', message);
       dispatch(messageSlice.actions.pushMessage(message));
     });
   }, []);

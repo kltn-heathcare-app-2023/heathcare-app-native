@@ -163,7 +163,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
 
         if (notification) {
           socket.emit('notification_confirm_register_schedule', {
-            data: {notification},
+            data: {notification, schedule_detail_id},
           });
         }
         if (schedule_detail_id) {
@@ -345,7 +345,9 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                     mode={'outlined'}
                     placeholder={'Nhập lý do hủy khám'}
                     value={reason}
-                    onChangeText={val => setReason(val)}
+                    onChangeText={val => {
+                      setReason(val);
+                    }}
                   />
                 )}
                 <View style={styles.modal_buttons}>
@@ -395,7 +397,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
         </Portal>
       </>
     );
-  }, [visible, isOpenInput]);
+  }, [visible, isOpenInput, reason]);
 
   const ModalShowPreviewScheduleWaitingExam = useMemo(() => {
     return (
@@ -455,6 +457,12 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                     schedule_detail_id: schedule._id,
                   });
                   setVisibleWaitingExam(false);
+                  socket.emit('call_id_room_to_user', {
+                    conversation: schedule.conversation_id,
+                    infoDoctor: doctor_profile.doctor,
+                    _scheduleMedicalMeeting: schedule._id,
+                    patient_id: schedule.patient._id,
+                  });
                 }}
                 style={{width: '45%'}}
                 labelStyle={{width: '100%'}}>
