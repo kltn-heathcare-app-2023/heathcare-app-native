@@ -27,7 +27,7 @@ function NotificationScreen() {
   const dispatch = useDispatch();
   const [choose, setChoose] = useState(type.RULE_ALL);
   const [open, setOpen] = useState(false);
-  const user_info = useSelector(infoSelector);
+  const [size, setSize] = useState(10);
   const notification_list = useSelector(notification_list_filter);
 
   useEffect(() => {
@@ -37,6 +37,12 @@ function NotificationScreen() {
   const handleSeenNotification = async () => {
     const ids = notification_list.map(notification => notification._id);
     dispatch(updateStatusSeenNotification(ids));
+  };
+
+  const handleLoadMoreNotification = () => {
+    if (size < notification_list.length) {
+      setSize(prev => prev + 10);
+    }
   };
 
   return (
@@ -61,38 +67,48 @@ function NotificationScreen() {
         }}
       />
       <ScrollView style={styles.container_scroll_view}>
-        {notification_list.map(({_id, content, createdAt, rule, hasSeen}) => {
-          return (
-            <TouchableOpacity
-              style={[
-                styles.container_notification,
-                {
-                  backgroundColor: rule.includes(
-                    type.RULE_NOTIFICATION_REGISTER_SCHEDULE,
-                  )
-                    ? '#a8dadc'
-                    : rule.includes(type.RULE_NOTIFICATION_CANCEL_SCHEDULE)
-                    ? '#fec89a'
-                    : rule === type.RULE_SYSTEM
-                    ? '#ccc'
-                    : '#f6bd60',
-                },
-              ]}
-              key={_id}>
-              <Text style={styles.header_notification}>
-                {rule.includes('SCHEDULE')
-                  ? 'Lịch khám'
-                  : rule.includes('REMIND')
-                  ? 'Nhắc nhở'
-                  : 'Hệ thống'}
-              </Text>
-              <Text style={styles.content_notification}>{content}</Text>
-              <Text style={styles.time_notification}>
-                {moment(createdAt).fromNow()} - {hasSeen ? 'Đã xem' : null}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {notification_list
+          .slice(0, size)
+          .map(({_id, content, createdAt, rule, hasSeen}) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.container_notification,
+                  {
+                    backgroundColor: rule.includes(
+                      type.RULE_NOTIFICATION_REGISTER_SCHEDULE,
+                    )
+                      ? '#a8dadc'
+                      : rule.includes(type.RULE_NOTIFICATION_CANCEL_SCHEDULE)
+                      ? '#fec89a'
+                      : rule === type.RULE_SYSTEM
+                      ? '#ccc'
+                      : '#f6bd60',
+                  },
+                ]}
+                key={_id}>
+                <Text style={styles.header_notification}>
+                  {rule.includes('SCHEDULE')
+                    ? 'Lịch khám'
+                    : rule.includes('REMIND')
+                    ? 'Nhắc nhở'
+                    : 'Hệ thống'}
+                </Text>
+                <Text style={styles.content_notification}>{content}</Text>
+                <Text style={styles.time_notification}>
+                  {moment(createdAt).fromNow()} - {hasSeen ? 'Đã xem' : null}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        {size < notification_list.length ? (
+          <Button
+            onPress={handleLoadMoreNotification}
+            style={{marginBottom: 8}}
+            mode="elevated">
+            Tải thêm
+          </Button>
+        ) : null}
         {notification_list.length > 0 && choose !== type.RULE_HAS_SEEN ? (
           <Button
             onPress={handleSeenNotification}

@@ -5,7 +5,7 @@ import ButtonPrimary from '../../components/ButtonPrimary';
 import {BACKGROUND_IMAGE} from '../../utils/image';
 import ActionView from '../../components/ActionView';
 import RouterKey from '../../utils/Routerkey';
-import {login} from '../../services/auth';
+import {forgotPassword, login} from '../../services/auth';
 import storage from '../../utils/storage';
 
 import styles from '../../styles/global.js';
@@ -76,10 +76,95 @@ function ForgotPasswordScreen({navigation}) {
     [confirmPass],
   );
 
+  const handleUpdatePassword = () => {
+    if (errorInputPhone) {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${('Thông báo', 'Vui lòng nhập số điện thoại!')}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
+
+      return;
+    }
+    if (errorInputPass) {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${('Thông báo', 'Vui lòng nhập mật khẩu!')}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
+
+      return;
+    }
+
+    if (errorConfirmPass) {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody: `${
+          ('Thông báo', 'Mật khẩu nhập lại phải khớp mới mật khẩu ở trên')
+        }`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
+
+      return;
+    }
+
+    setLoading(true);
+    forgotPassword({phone_number: phone, password: password})
+      .then()
+      .catch(err => {
+        Popup.show({
+          type: err.status === 'success' ? 'Success' : 'Warning',
+          title: 'Thông báo',
+          button: true,
+          textBody: `${('Thông báo', err.message)}`,
+          buttontext: 'OK',
+          timing: 3000,
+          callback: () => {
+            if (err.status === 'success') {
+              navigation.navigate(RouterKey.LOGIN_SCREEN);
+            }
+            Popup.hide();
+          },
+        });
+
+        return;
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   return (
     <>
       <View style={styles.titleView}>
-        <Text style={styles.title}>T&T HEALTHCARE</Text>
+        {/* <Text style={styles.title}>T&T HEALTHCARE</Text> */}
       </View>
       <ImageBackground
         source={BACKGROUND_IMAGE}
@@ -97,6 +182,7 @@ function ForgotPasswordScreen({navigation}) {
           placeholder="Mật khẩu"
           value={password}
           onChangeText={handleChangePassInput}
+          error={errorInputPass}
         />
 
         <TextInputPrimary
@@ -109,7 +195,7 @@ function ForgotPasswordScreen({navigation}) {
 
         <ButtonPrimary
           title="Lấy lại mật khẩu"
-          handle={() => {}}
+          handle={handleUpdatePassword}
           disabled={loading}
         />
         {loading && (

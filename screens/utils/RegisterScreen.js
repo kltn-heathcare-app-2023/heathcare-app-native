@@ -217,7 +217,7 @@ function RegisterScreen({navigation}) {
   return (
     <>
       <View style={_styles.titleView}>
-        <Text style={styles.title}>T&T HEALTHCARE</Text>
+        {/* <Text style={styles.title}>T&T HEALTHCARE</Text> */}
       </View>
       <ImageBackground
         source={BACKGROUND_IMAGE}
