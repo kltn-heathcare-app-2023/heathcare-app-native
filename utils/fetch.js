@@ -16,6 +16,7 @@ const post = async (url, data) => {
     return Promise.reject(res);
   } catch (error) {
     console.error('error fetch post request', error);
+    return Promise.reject(error);
   }
 };
 
