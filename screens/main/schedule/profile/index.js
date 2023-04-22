@@ -89,7 +89,7 @@ function ScheduleDetail({navigation, route}) {
             style={styles.profile_specialist}
             title={
               <Rating
-                style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                style={{paddingVertical: 10}}
                 imageSize={18}
                 startingValue={doctor.rating}
               />
@@ -176,7 +176,7 @@ function ScheduleDetail({navigation, route}) {
             icon="content-save-move-outline"
             mode="contained-tonal"
             onPress={handleRegisterSchedule}
-            style={{backgroundColor: '#FFFF', margin: 16}}>
+            style={{backgroundColor: '#bad7e9', margin: 16}}>
             Xem chi tiết lịch khám
           </Button>
         ) : (
@@ -196,7 +196,7 @@ function ScheduleDetail({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: '#BAD7E9',
+    backgroundColor: '#fff',
     paddingBottom: 16,
   },
   info: {
@@ -209,6 +209,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   info_text: {
     fontSize: 16,
