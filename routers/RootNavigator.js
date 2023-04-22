@@ -16,6 +16,7 @@ import CallVideoScreen from '../screens/main/messages/call-video';
 import ChatGPTScreen from '../screens/utils/ChatGPTScreen';
 import PostListScreen from '../screens/utils/post/PostScreen';
 import PostDetailScreen from '../screens/utils/post/PostDetailScreen';
+import ForgotPasswordScreen from '../screens/utils/ForgotPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,6 +75,10 @@ function StackNavigator() {
       <Stack.Screen
         name={RouterKey.UTILS_POST_DETAIL_SCREEN}
         component={PostDetailScreen}
+      />
+      <Stack.Screen
+        name={RouterKey.UTILS_FORGOT_PASS_SCREEN}
+        component={ForgotPasswordScreen}
       />
     </Stack.Navigator>
   );

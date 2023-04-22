@@ -24,7 +24,7 @@ import PostItem from '../../../components/PostItem';
 import {Button} from 'react-native-paper';
 import Header from '../../../components/Header';
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -180;
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : 0;
 function PostDetailScreen({navigation, route}) {
   const user_info = useSelector(infoSelector);
 
@@ -80,7 +80,7 @@ function PostDetailScreen({navigation, route}) {
       <KeyboardAvoidingView
         style={{flex: 1}}
         keyboardVerticalOffset={keyboardVerticalOffset}
-        behavior={'position'}>
+        behavior={'height'}>
         <ScrollView style={styles.container}>
           <View style={styles.header}>
             <Image
@@ -154,7 +154,7 @@ function PostDetailScreen({navigation, route}) {
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={{height: '75%'}}>
+          <ScrollView>
             {comments.slice(0, size).map((comment, index) => {
               comment.patient_id
                 ? (comment['author'] = comment.patient_id)
@@ -194,7 +194,7 @@ function PostDetailScreen({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     width: 'auto',
-    height: '99%',
+    height: '90%',
     borderWidth: 1,
     marginTop: 4,
     marginHorizontal: 4,

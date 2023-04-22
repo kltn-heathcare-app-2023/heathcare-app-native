@@ -36,6 +36,7 @@ export const infoSlice = createSlice({
     },
     addBlood: (state, action) => {
       state.blood_pressures.push(action.payload);
+      state.user_info.metrics.last_blood_pressures = {...action.payload};
     },
     resetUserInfo: state => {
       state.user_info = {};

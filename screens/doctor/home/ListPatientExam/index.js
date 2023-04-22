@@ -20,7 +20,6 @@ import {
   createResultExamAfterExam,
   getAllScheduleDetailUnAccepted,
   getAllScheduleWaitingExam,
-  getAllWorkingDay,
   getPatientExamByDoctorId,
 } from '../../../../services/doctor/patient';
 import RouterKey from '../../../../utils/Routerkey';
@@ -132,6 +131,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
     navigation.navigate(RouterKey.LOGIN_SCREEN);
     await storage.remove('accessToken');
     dispatch(doctorInfoSlice.actions.resetDoctorProfile());
+    dispatch(doctorConversationSlice.actions.clearConversation());
   };
 
   const showModal = () => setVisible(true);
@@ -263,21 +263,25 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   };
 
   const handleSendResultExamToPatient = () => {
-    setLoadingSend(true);
-    createResultExamAfterExam(scheduleDetail, {result_exam: note, anamnesis})
-      .then(value => {
-        setScheduleWaitingExam(prev =>
-          prev.filter(schedule => schedule._id !== scheduleDetail),
-        );
-      })
-      .catch(err => console.error(err))
-      .finally(() => {
-        navigation.setParams({schedule_detail_id: ''});
-        setScheduleDetail('');
-        setNote('');
-        setAnamnesis('0');
-        setLoadingSend(false);
-      });
+    if (note.trim()) {
+      setLoadingSend(true);
+      createResultExamAfterExam(scheduleDetail, {result_exam: note, anamnesis})
+        .then(value => {
+          setScheduleWaitingExam(prev =>
+            prev.filter(schedule => schedule._id !== scheduleDetail),
+          );
+        })
+        .catch(err => console.error(err))
+        .finally(() => {
+          navigation.setParams({schedule_detail_id: ''});
+          setScheduleDetail('');
+          setNote('');
+          setAnamnesis('0');
+          setLoadingSend(false);
+        });
+    } else {
+      setNote('Sức khỏe của bạn bình thường, cố gắng duy trì nhé!');
+    }
   };
 
   const ModalShowPreviewScheduleWaiting = useMemo(() => {
@@ -507,11 +511,19 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
               disabled={loadingSend}>
               Xác nhận
             </Button>
+            {loadingSend && (
+              <ActivityIndicator
+                animating={true}
+                color={'#8ecae6'}
+                style={{marginTop: 16}}
+                size={'small'}
+              />
+            )}
           </Modal>
         </Portal>
       </>
     );
-  }, [scheduleDetail, note, anamnesis]);
+  }, [scheduleDetail, note, anamnesis, loadingSend]);
 
   return (
     <>

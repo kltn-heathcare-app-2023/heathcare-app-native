@@ -32,7 +32,7 @@ function RegisterScreen({navigation}) {
 
   const signInWithPhoneNumber = () => {
     let phoneNumber = '+84' + phone.slice(1);
-    return auth().signInWithPhoneNumber(phoneNumber);
+    return auth().signInWithPhoneNumber(phoneNumber, true);
   };
 
   const handleRegister = () => {

@@ -15,72 +15,14 @@ import regex from '../../common/regex';
 import {Popup} from 'popup-ui';
 import {ActivityIndicator, Button} from 'react-native-paper';
 
-function LoginScreen({navigation}) {
+function ForgotPasswordScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
   const [errorInputPhone, setErrorInput] = useState('');
+  const [errorConfirmPass, setErrorConfirmPass] = useState('');
+  const [errorInputPass, setErrorInputPass] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleLogin = async () => {
-    if (!(phone.trim() && password.trim())) {
-      Popup.show({
-        type: 'Warning',
-        title: 'Thông báo',
-        button: true,
-        textBody: `${('Thông báo', 'Bạn phải điền đầy đủ thông tin!')}`,
-        buttontext: 'OK',
-        timing: 3000,
-        callback: () => {
-          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-          //   screen: RouterKey.INFO_SCREEN,
-          // });
-          Popup.hide();
-        },
-      });
-    } else {
-      if (!errorInputPhone) {
-        try {
-          setLoading(true);
-          const resp = await login({phone_number: phone, password});
-          const {data} = resp;
-          if (data) {
-            await storage.set('accessToken', data.accessToken);
-            const decode = jwtDecode(data.accessToken);
-            if (decode['rule'] === 'patient') {
-              navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
-              setLoading(false);
-            } else {
-              navigation.navigate(RouterKey.LOADING_AFTER_LOGIN_SCREEN);
-              setLoading(false);
-            }
-            setPhone('');
-            setPassword('');
-          }
-        } catch (error) {
-          const {message} = error;
-          setLoading(false);
-          Popup.show({
-            type: 'Danger',
-            title: 'Thông báo',
-            button: true,
-            textBody: `${message ?? error}`,
-            buttontext: 'OK',
-            timing: 3000,
-            callback: () => {
-              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-              //   screen: RouterKey.INFO_SCREEN,
-              // });
-              Popup.hide();
-            },
-          });
-        }
-      }
-    }
-  };
-
-  const handleClickRegister = () => {
-    navigation.navigate(RouterKey.REGISTER_SCREEN);
-  };
 
   const handleChangePhoneInput = useCallback(
     val => {
@@ -102,10 +44,36 @@ function LoginScreen({navigation}) {
 
   const handleChangePassInput = useCallback(
     val => {
-      // console.log(`[pass] -> ${val}`);
-      setPassword(val);
+      if (val) {
+        if (val.length < 8) {
+          setErrorInputPass('Mật khẩu phải lớn hơn 8 ký tự');
+        } else {
+          setErrorInputPass('');
+        }
+        setPassword(val);
+      } else {
+        setPassword(val);
+        setErrorInputPass('');
+      }
     },
     [password],
+  );
+
+  const handleChangeConfirmPassInput = useCallback(
+    val => {
+      if (val) {
+        if (!(val === password)) {
+          setErrorConfirmPass('Mật khẩu nhập lại phải giống với mật khẩu trên');
+        } else {
+          setErrorConfirmPass('');
+        }
+        setConfirmPass(val);
+      } else {
+        setConfirmPass(val);
+        setErrorConfirmPass('');
+      }
+    },
+    [confirmPass],
   );
 
   return (
@@ -131,9 +99,17 @@ function LoginScreen({navigation}) {
           onChangeText={handleChangePassInput}
         />
 
+        <TextInputPrimary
+          isPass={true}
+          placeholder="Nhập lại mật khẩu"
+          value={confirmPass}
+          onChangeText={handleChangeConfirmPassInput}
+          error={errorConfirmPass}
+        />
+
         <ButtonPrimary
-          title="Đăng nhập"
-          handle={handleLogin}
+          title="Lấy lại mật khẩu"
+          handle={() => {}}
           disabled={loading}
         />
         {loading && (
@@ -143,17 +119,10 @@ function LoginScreen({navigation}) {
             style={{marginTop: 16}}
           />
         )}
-        <ActionView
-          title="Đăng ký ngay"
-          isLogin
-          handle={handleClickRegister}
-          handleB={() =>
-            navigation.navigate(RouterKey.UTILS_FORGOT_PASS_SCREEN)
-          }
-        />
+        <ActionView title="Quay lại" handle={() => navigation.goBack()} />
       </ImageBackground>
     </>
   );
 }
 
-export default LoginScreen;
+export default ForgotPasswordScreen;
