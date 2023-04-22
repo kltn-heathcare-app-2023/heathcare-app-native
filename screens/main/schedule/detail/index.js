@@ -85,6 +85,19 @@ function DetailScheduleRegister({navigation, route}) {
           },
         });
       }
+    } else {
+      Popup.show({
+        type: 'Warning',
+        title: 'Thông báo',
+        button: true,
+        textBody:
+          'Vui lòng nhập nội dung để bác sĩ dễ dàng chuẩn bị để chuẩn đoán',
+        buttontext: 'Nhập ngay',
+        callback: () => {
+          // navigation.navigate(RouterKey.SCHEDULE_LIST_SCREEN);
+          Popup.hide();
+        },
+      });
     }
   };
 
@@ -127,11 +140,13 @@ function DetailScheduleRegister({navigation, route}) {
         style={{
           height: 160,
           textAlignVertical: 'top',
-          backgroundColor: '#ffff',
+          // backgroundColor: '#ffff',
           marginHorizontal: 16,
           // borderRadius: 16,
           padding: 8,
           borderRadius: 16,
+          borderWidth: 1,
+          borderColor: '#BAD7E9',
         }}
         placeholder={'Lý do muốn khám hoặc một số triệu chứng'}
       />
@@ -140,7 +155,7 @@ function DetailScheduleRegister({navigation, route}) {
         icon="tray-plus"
         mode="contained-tonal"
         onPress={handleRegisterSchedule}
-        style={{backgroundColor: '#FFFF', margin: 16}}>
+        style={{backgroundColor: '#BAD7E9', margin: 16}}>
         Đăng ký khám
       </Button>
     </ScrollView>
@@ -150,7 +165,7 @@ function DetailScheduleRegister({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: '#BAD7E9',
+    backgroundColor: '#fff',
     paddingBottom: 16,
   },
   list: {

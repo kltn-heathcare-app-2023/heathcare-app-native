@@ -23,6 +23,7 @@ import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import moment from 'moment';
 import {Popup} from 'popup-ui';
 import {MESSAGE_MISS_DATA} from '../../common/message';
+import {ActivityIndicator} from 'react-native-paper';
 export const genderItems = [
   {label: 'Nam', value: 'Nam'},
   {label: 'Nữ', value: 'Nữ'},
@@ -42,7 +43,7 @@ export const anamnesisITems = [
 ];
 
 function SendInformationScreen({navigation, route}) {
-  const {name} = route.params;
+  const {name} = route.params ?? {name: ''};
   // const name = 'Le Tuan';
   const [gender, setGender] = useState('Nam');
   const [blood, setBlood] = useState('O');
@@ -184,8 +185,8 @@ function SendInformationScreen({navigation, route}) {
         <TextInputPrimary
           isName={true}
           placeholder="Họ và tên"
-          value={name}
-          editable={false}
+          value={name ?? ''}
+          editable={!name}
           selectTextOnFocus={false}
         />
 
@@ -203,6 +204,7 @@ function SendInformationScreen({navigation, route}) {
           onCancel={onCancel}
           onConfirm={onConfirm}
           startDate={new Date('2001/01/01')}
+          language={'vi'}
         />
 
         <TextInputPrimary
@@ -273,10 +275,10 @@ function SendInformationScreen({navigation, route}) {
             size={'large'}
           />
         )}
-        <ActionView
+        {/* <ActionView
           title="Quay lại"
           handle={() => navigation.navigate(RouterKey.REGISTER_SCREEN)}
-        />
+        /> */}
       </ImageBackground>
     </>
   );
