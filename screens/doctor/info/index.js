@@ -25,10 +25,10 @@ function DoctorInfoScreen({navigation}) {
   return (
     doctor && (
       <KeyboardAvoidingView behavior="position">
-        <Header
+        {/* <Header
           title={'Thông tin cá nhân'}
           handle={() => navigation.goBack()}
-        />
+        /> */}
         <ScrollView style={styles.container}>
           <View style={styles.info}>
             <Image

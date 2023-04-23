@@ -30,7 +30,7 @@ function DoctorNotificationScreen({navigation}) {
 
   return (
     <>
-      <Header title={'Thông báo'} handle={() => navigation.goBack()} />
+      {/* <Header title={'Thông báo'} handle={() => navigation.goBack()} /> */}
       <ScrollView>
         {notification_list_unread > 0 && (
           <Button

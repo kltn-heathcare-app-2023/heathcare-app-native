@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const screenOptions = ({route}) => ({
   tabBarIcon: ({color}) => {
     let iconName;
-    if (route.name === RouterKey.DOCTOR_CONVERSATION_SCREEN) {
+    if (route.name === RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN) {
       iconName = 'message-processing';
     } else if (route.name === RouterKey.DOCTOR_HOME_SCREEN) {
       iconName = 'book-account';
@@ -56,24 +56,20 @@ export function DoctorHomeStackNavigator() {
   );
 }
 
-export function DoctorConversationStackNavigator() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}>
-      <Stack.Screen
-        name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}
-        component={DoctorConversationList}
-      />
-      <Stack.Screen
-        name={RouterKey.DOCTOR_CONVERSATION_DETAIL_SCREEN}
-        component={DoctorConversationDetail}
-      />
-    </Stack.Navigator>
-  );
-}
+// export function DoctorConversationStackNavigator() {
+//   return (
+//     <Stack.Navigator
+//       screenOptions={{
+//         headerShown: false,
+//       }}
+//       initialRouteName={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}>
+//       <Stack.Screen
+//         name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}
+//         component={DoctorConversationList}
+//       />
+//     </Stack.Navigator>
+//   );
+// }
 
 function AdminNavigator() {
   const notification_unread = useSelector(notification_list_unread_filter);
@@ -83,10 +79,13 @@ function AdminNavigator() {
       <Tab.Screen
         name={RouterKey.DOCTOR_HOME_SCREEN}
         component={DoctorHomeScreen}
-        options={{tabBarLabel: 'Trang chủ', title: 'Trang chủ'}}></Tab.Screen>
+        options={{
+          tabBarLabel: 'Trang chủ',
+          title: 'Trang chủ',
+        }}></Tab.Screen>
       <Tab.Screen
-        name={RouterKey.DOCTOR_CONVERSATION_SCREEN}
-        component={DoctorConversationScreen}
+        name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}
+        component={DoctorConversationList}
         options={{tabBarLabel: 'Tin nhắn', title: 'Tin nhắn'}}
       />
       <Tab.Screen

@@ -17,6 +17,7 @@ import ChatGPTScreen from '../screens/utils/ChatGPTScreen';
 import PostListScreen from '../screens/utils/post/PostScreen';
 import PostDetailScreen from '../screens/utils/post/PostDetailScreen';
 import ForgotPasswordScreen from '../screens/utils/ForgotPasswordScreen';
+import DoctorConversationDetail from '../screens/doctor/conversation/messages';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,6 +80,10 @@ function StackNavigator() {
       <Stack.Screen
         name={RouterKey.UTILS_FORGOT_PASS_SCREEN}
         component={ForgotPasswordScreen}
+      />
+      <Stack.Screen
+        name={RouterKey.DOCTOR_CONVERSATION_DETAIL_SCREEN}
+        component={DoctorConversationDetail}
       />
     </Stack.Navigator>
   );

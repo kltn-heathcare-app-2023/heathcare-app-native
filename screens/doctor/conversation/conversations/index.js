@@ -20,7 +20,7 @@ function DoctorConversationList({navigation}) {
 
   return (
     <>
-      <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} />
+      {/* <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} /> */}
       <ScrollView>
         {doctor_conversations.length > 0 &&
           doctor_conversations.map(conversation => (
