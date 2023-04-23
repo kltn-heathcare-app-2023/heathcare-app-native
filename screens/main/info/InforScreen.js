@@ -89,10 +89,10 @@ function InfoScreen({navigation}) {
 
   return (
     <>
-      <Header
+      {/* <Header
         title={'Thông tin cá nhân'}
         handle={() => navigation.navigate(RouterKey.HOME_SCREEN)}
-      />
+      /> */}
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.header_info}

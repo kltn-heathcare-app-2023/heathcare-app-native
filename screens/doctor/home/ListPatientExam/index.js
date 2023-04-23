@@ -130,8 +130,8 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const handleLogoutByDoctor = async () => {
     navigation.navigate(RouterKey.LOGIN_SCREEN);
     await storage.remove('accessToken');
-    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
     dispatch(doctorConversationSlice.actions.clearConversation());
+    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
   };
 
   const showModal = () => setVisible(true);

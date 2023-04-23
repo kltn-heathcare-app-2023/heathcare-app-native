@@ -53,7 +53,7 @@ export const cleanDoctorConversationListSelector = createSelector(
     if (profile && conversations.length > 0) {
       const conversationList = conversations.map(conversation => {
         const member =
-          conversation.members[0]?._id === profile.doctor._id
+          conversation.members[0]?._id === profile?.doctor?._id
             ? conversation.members[1]
             : conversation.members[0];
 

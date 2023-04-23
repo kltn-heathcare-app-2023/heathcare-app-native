@@ -32,7 +32,7 @@ const screenOptions = ({route}) => ({
   tabBarInactiveTintColor: '#ccc',
   tabBarActiveTintColor: '#219ebc',
   headerTitleAlign: 'center',
-  header: () => {},
+  // header: () => {},
 });
 
 const Stack = createNativeStackNavigator();
@@ -82,6 +82,7 @@ function AdminNavigator() {
         options={{
           tabBarLabel: 'Trang chủ',
           title: 'Trang chủ',
+          header: () => null,
         }}></Tab.Screen>
       <Tab.Screen
         name={RouterKey.DOCTOR_CONVERSATION_LIST_SCREEN}

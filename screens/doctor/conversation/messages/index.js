@@ -143,11 +143,15 @@ function DoctorConversationDetail({route, navigation}) {
             name={'videocam-outline'}
             color="black"
             size={20}
-            onPress={() =>
+            onPress={() => {
+              socket.emit('call_id_room_to_user', {
+                conversation,
+                infoDoctor: doctor_profile.doctor,
+              });
               navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
                 room_id: conversation._id,
-              })
-            }
+              });
+            }}
           />
         </View>
         {/* <KeyboardAvoidingView
