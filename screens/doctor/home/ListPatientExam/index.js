@@ -45,7 +45,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const notification_list = useSelector(notification_list_selector);
   const doctor_profile = useSelector(doctorProfileSelector);
 
-  const notification = useNotification();
+  const notificationSocket = useNotification();
 
   const [loading, setLoading] = useState(false);
   const [scheduleWaiting, setScheduleWaiting] = useState(0);
@@ -73,7 +73,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
       Object.keys(doctor_profile).length > 0
     ) {
       if (!last_notification.hasSeen) {
-        notification.showNotification({
+        notificationSocket.showNotification({
           title: 'Thông báo',
           message: last_notification.content,
           icon: <Icon name={'ios-notifications-outline'} size={24} />,
@@ -209,6 +209,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const handleAcceptScheduleDetail = async schedule_id => {
     acceptScheduleDetailByScheduleId(schedule_id)
       .then(({schedule_detail, notification, conversation}) => {
+        console.log(schedule_detail);
         hideModal();
         if (notification) {
           socket.emit('notification_confirm_register_schedule', {
@@ -229,6 +230,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
             schedule => schedule._id !== schedule_detail._id,
           ),
         );
+
         setScheduleWaitingExam(prev => [...prev, schedule_detail]);
         setScheduleWaiting(prev => prev - 1);
         setVisible(false);
@@ -724,7 +726,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
               })}
 
             {/* Show list schedule waiting */}
-            {scheduleWaitingList.length > 0 &&
+            {scheduleWaitingList.length >= 0 &&
               option === 2 &&
               scheduleWaitingExam.map(schedule => {
                 return (
