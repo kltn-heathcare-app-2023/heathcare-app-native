@@ -19,7 +19,7 @@ function ConversationScreen({navigation}) {
 
   return (
     <>
-      <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} />
+      {/* <Header title={'Cuộc trò chuyện'} handle={() => navigation.goBack()} /> */}
       {conversations.length > 0 ? (
         <ScrollView>
           {conversations.length > 0 &&

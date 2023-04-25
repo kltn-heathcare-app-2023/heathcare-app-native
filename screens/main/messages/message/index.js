@@ -1,12 +1,13 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useCallback} from 'react';
 import {
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  RefreshControl,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {ActivityIndicator, TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import MessageItem from '../../../../components/MessageItem';
 import {infoSelector} from '../../../../redux/selectors/infoSelector';
@@ -22,7 +23,7 @@ import RouterKey from '../../../../utils/Routerkey';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {conversationSlice} from '../../../../redux/slices/conversationSlice';
 
-const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -250;
+const keyboardVerticalOffset = Platform.OS === 'ios' ? 85 : -300;
 
 function ConversationDetail({route, navigation}) {
   const {conversation} = route.params;
@@ -32,12 +33,20 @@ function ConversationDetail({route, navigation}) {
   const [images, setImages] = useState([]);
   const [message, setMessage] = useState('');
 
+  const [size, setSize] = useState(10);
   const scrollViewRef = useRef();
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     socket.emit('join_room', conversation);
     dispatch(fetchMessagesByIdConversation(conversation._id));
-  }, []);
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, [conversation._id]);
 
   useEffect(() => {
     socket.on('receiver_message', ({message}) => {
@@ -45,6 +54,18 @@ function ConversationDetail({route, navigation}) {
     });
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      if (size < messages.length && messages.length - size > 10) {
+        setSize(prev => prev + 10);
+      } else {
+        const last_size = messages.length - size;
+        setSize(prev => prev + last_size);
+      }
+    }, 200);
+  }, [size]);
   // socket when send message
   const handleSendMessage = async () => {
     if (message) {
@@ -124,17 +145,48 @@ function ConversationDetail({route, navigation}) {
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
         keyboardVerticalOffset={keyboardVerticalOffset}></KeyboardAvoidingView> */}
-      <ScrollView
-        style={styles.content}
-        ref={scrollViewRef}
-        onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({animated: true})
-        }>
-        {messages.map(message => {
-          // console.log(message);
-          return <MessageItem message={message} key={message._id} />;
-        })}
-      </ScrollView>
+      {loading ? (
+        <View
+          style={[
+            styles.content,
+            {
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
+          ]}>
+          <ActivityIndicator
+            animating={true}
+            color={'#8ecae6'}
+            style={{marginTop: 16}}
+            size={'large'}
+          />
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.content}
+          ref={scrollViewRef}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          onContentSizeChange={() => {
+            if (size === 10) {
+              scrollViewRef.current.scrollToEnd({animated: true});
+            }
+          }}>
+          {messages
+            // .reverse()
+            .slice(
+              messages.length < 10 ? -messages.length : messages.length - size,
+              messages.length,
+            )
+            .map(message => {
+              // console.log(message);
+              return <MessageItem message={message} key={message._id} />;
+            })}
+        </ScrollView>
+      )}
       <TextInput
         right={
           message ? (

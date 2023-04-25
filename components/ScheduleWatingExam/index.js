@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native';
 import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import {ANAMNESIS} from '../../common/constant';
+import {ANAMNESIS, AVATAR_DEFAULT} from '../../common/constant';
 
 function ScheduleWaitingExamItem({schedule, handle}) {
   return (
@@ -14,14 +14,14 @@ function ScheduleWaitingExamItem({schedule, handle}) {
       <Image
         source={{
           uri:
-            schedule.patient.person?.avatar !== ''
-              ? schedule.patient.person?.avatar
+            schedule?.patient?.person?.avatar !== ''
+              ? schedule?.patient?.person?.avatar
               : AVATAR_DEFAULT,
         }}
         style={styles.patient_container_image}
       />
       <View style={styles.patient_container_right}>
-        <Text>{schedule.patient.person.username}</Text>
+        <Text>{schedule?.patient?.person?.username ?? ''}</Text>
         <Text>Nhóm máu: {schedule.patient.blood}</Text>
         <Text>Tiền sử: {ANAMNESIS[schedule.patient.anamnesis]}</Text>
         <Text>

@@ -32,15 +32,15 @@ function CallVideoScreen({navigation, route}) {
           isIOSSandboxEnvironment={false} // Ignore this if you are not building an iOS app.
           config={{
             ...ONE_ON_ONE_VIDEO_CALL_CONFIG,
-            onOnlySelfInRoom: () => {
-              navigation.goBack();
-              navigation.navigate(
-                Object.keys(user_info).length > 0
-                  ? RouterKey.HOME_SCREEN
-                  : RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN,
-                {rating: true, room_id, schedule_detail_id, doctor_id},
-              );
-            },
+            // onOnlySelfInRoom: () => {
+            //   navigation.goBack();
+            //   navigation.navigate(
+            //     Object.keys(user_info).length > 0
+            //       ? RouterKey.HOME_SCREEN
+            //       : RouterKey.DOCTOR_HOME_LIST_EXAM_SCREEN,
+            //     {rating: true, room_id, schedule_detail_id, doctor_id},
+            //   );
+            // },
             onHangUp: () => {
               navigation.goBack();
               navigation.navigate(

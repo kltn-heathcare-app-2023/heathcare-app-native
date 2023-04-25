@@ -8,13 +8,14 @@ import NotificationScreen from '../screens/main/notification';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {notification_list_unread_filter} from '../redux/slices/notificationSlice';
 import {useSelector} from 'react-redux';
+import ConversationScreen from '../screens/main/messages/conversations';
 
 const Tab = createBottomTabNavigator();
 
 const screenOptions = ({route}) => ({
   tabBarIcon: ({color}) => {
     let iconName;
-    if (route.name === RouterKey.MESSAGE_SCREEN) {
+    if (route.name === RouterKey.CONVERSATION_SCREEN) {
       iconName = 'message-processing';
     } else if (route.name === RouterKey.HOME_SCREEN) {
       iconName = 'book-account';
@@ -30,6 +31,7 @@ const screenOptions = ({route}) => ({
   tabBarInactiveTintColor: '#ccc',
   tabBarActiveTintColor: '#219ebc',
   headerTitleAlign: 'center',
+  header: () => {},
 });
 
 function MainNavigator() {
@@ -52,12 +54,12 @@ function MainNavigator() {
         options={{tabBarLabel: 'Lịch khám', title: 'Lịch khám'}}
       />
       <Tab.Screen
-        name={RouterKey.MESSAGE_SCREEN}
-        component={MessageScreen}
+        name={RouterKey.CONVERSATION_SCREEN}
+        component={ConversationScreen}
         options={{
           tabBarLabel: 'Tin nhắn',
           title: 'Tin nhắn',
-          header: () => null,
+          // header: () => null,
         }}
       />
       <Tab.Screen
@@ -75,7 +77,7 @@ function MainNavigator() {
         options={{
           tabBarLabel: 'Cá nhân',
           title: 'Cá nhân',
-          header: () => null,
+          // header: () => null,
         }}
       />
     </Tab.Navigator>

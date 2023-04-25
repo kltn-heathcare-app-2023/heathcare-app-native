@@ -39,7 +39,12 @@ function PostListScreen({navigation}) {
       {!loading && postList.length > 0 ? (
         <ScrollView>
           {postList.slice(0, size).map((post, index) => (
-            <PostItem key={post._id} post={post} navigation={navigation} />
+            <PostItem
+              key={post._id}
+              post={post}
+              navigation={navigation}
+              is_post
+            />
           ))}
 
           {size < postList.length ? (

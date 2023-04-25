@@ -25,10 +25,10 @@ function DoctorInfoScreen({navigation}) {
   return (
     doctor && (
       <KeyboardAvoidingView behavior="position">
-        <Header
+        {/* <Header
           title={'Thông tin cá nhân'}
           handle={() => navigation.goBack()}
-        />
+        /> */}
         <ScrollView style={styles.container}>
           <View style={styles.info}>
             <Image
@@ -130,7 +130,8 @@ function DoctorInfoScreen({navigation}) {
                 <List.Subheader>Chuyên điều trị</List.Subheader>
                 <List.Item
                   style={styles.profile_specialist}
-                  title={profile.education}
+                  // title={profile.education}
+                  description={profile.education}
                   left={() => <List.Icon icon="clipboard-text-outline" />}
                 />
 
@@ -140,8 +141,9 @@ function DoctorInfoScreen({navigation}) {
                     <List.Item
                       style={styles.profile_specialist}
                       key={experience}
-                      title={`${experience}`}
+                      // title={`${experience}`}
                       left={() => <List.Icon icon="check" />}
+                      description={experience}
                     />
                   );
                 })}

@@ -45,7 +45,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const notification_list = useSelector(notification_list_selector);
   const doctor_profile = useSelector(doctorProfileSelector);
 
-  const notification = useNotification();
+  const notificationSocket = useNotification();
 
   const [loading, setLoading] = useState(false);
   const [scheduleWaiting, setScheduleWaiting] = useState(0);
@@ -73,7 +73,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
       Object.keys(doctor_profile).length > 0
     ) {
       if (!last_notification.hasSeen) {
-        notification.showNotification({
+        notificationSocket.showNotification({
           title: 'Thông báo',
           message: last_notification.content,
           icon: <Icon name={'ios-notifications-outline'} size={24} />,
@@ -130,8 +130,8 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const handleLogoutByDoctor = async () => {
     navigation.navigate(RouterKey.LOGIN_SCREEN);
     await storage.remove('accessToken');
-    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
     dispatch(doctorConversationSlice.actions.clearConversation());
+    dispatch(doctorInfoSlice.actions.resetDoctorProfile());
   };
 
   const showModal = () => setVisible(true);
@@ -163,7 +163,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
 
         if (notification) {
           socket.emit('notification_confirm_register_schedule', {
-            data: {notification},
+            data: {notification, schedule_detail_id},
           });
         }
         if (schedule_detail_id) {
@@ -209,6 +209,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
   const handleAcceptScheduleDetail = async schedule_id => {
     acceptScheduleDetailByScheduleId(schedule_id)
       .then(({schedule_detail, notification, conversation}) => {
+        console.log(schedule_detail);
         hideModal();
         if (notification) {
           socket.emit('notification_confirm_register_schedule', {
@@ -229,6 +230,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
             schedule => schedule._id !== schedule_detail._id,
           ),
         );
+
         setScheduleWaitingExam(prev => [...prev, schedule_detail]);
         setScheduleWaiting(prev => prev - 1);
         setVisible(false);
@@ -345,7 +347,9 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                     mode={'outlined'}
                     placeholder={'Nhập lý do hủy khám'}
                     value={reason}
-                    onChangeText={val => setReason(val)}
+                    onChangeText={val => {
+                      setReason(val);
+                    }}
                   />
                 )}
                 <View style={styles.modal_buttons}>
@@ -395,7 +399,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
         </Portal>
       </>
     );
-  }, [visible, isOpenInput]);
+  }, [visible, isOpenInput, reason]);
 
   const ModalShowPreviewScheduleWaitingExam = useMemo(() => {
     return (
@@ -455,6 +459,12 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
                     schedule_detail_id: schedule._id,
                   });
                   setVisibleWaitingExam(false);
+                  socket.emit('call_id_room_to_user', {
+                    conversation: schedule.conversation_id,
+                    infoDoctor: doctor_profile.doctor,
+                    _scheduleMedicalMeeting: schedule._id,
+                    patient_id: schedule.patient._id,
+                  });
                 }}
                 style={{width: '45%'}}
                 labelStyle={{width: '100%'}}>
@@ -716,7 +726,7 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
               })}
 
             {/* Show list schedule waiting */}
-            {scheduleWaitingList.length > 0 &&
+            {scheduleWaitingList.length >= 0 &&
               option === 2 &&
               scheduleWaitingExam.map(schedule => {
                 return (

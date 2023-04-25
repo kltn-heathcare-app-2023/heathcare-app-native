@@ -14,7 +14,7 @@ import HTML from 'react-native-render-html';
 import RouterKey from '../../utils/Routerkey';
 import moment from 'moment';
 
-function PostItem({post, navigation, is_comment}) {
+function PostItem({post, navigation, is_comment, is_post}) {
   const user_info = useSelector(infoSelector);
 
   return (
@@ -42,7 +42,9 @@ function PostItem({post, navigation, is_comment}) {
       <View style={styles.body}>
         {is_comment ? null : <Text>{post.title}</Text>}
         <HTML
-          source={{html: post.content}}
+          source={{
+            html: is_post ? post.content.slice(0, 200) + ' ...' : post.content,
+          }}
           contentWidth={useWindowDimensions().width}
         />
 

@@ -12,14 +12,14 @@ function ConversationNavigator() {
         headerShown: false,
       }}
       initialRouteName={RouterKey.CONVERSATION_SCREEN}>
-      <Stack.Screen
+      {/* <Stack.Screen
         name={RouterKey.CONVERSATION_SCREEN}
         component={ConversationScreen}
-      />
-      <Stack.Screen
+      /> */}
+      {/* <Stack.Screen
         name={RouterKey.CONVERSATION_DETAIL_SCREEN}
         component={ConversationDetail}
-      />
+      /> */}
       {/* <Stack.Screen
                 name={RouterKey.CALL_VIDEO_SCREEN}
                 component={CallVideoScreen}
