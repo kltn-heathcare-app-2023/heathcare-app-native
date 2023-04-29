@@ -35,7 +35,7 @@ const put = async (url, data) => {
     if (res?.data) return res.data;
     return Promise.reject(res);
   } catch (error) {
-    console.error('error fetch post request', error);
+    console.error('error fetch put request', error);
   }
 };
 

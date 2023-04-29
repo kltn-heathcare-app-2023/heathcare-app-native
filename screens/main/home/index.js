@@ -15,7 +15,10 @@ import {
 } from '../../../redux/selectors/infoSelector';
 import ScheduleItem from '../../../components/ScheduleItem';
 import {ProgressChart} from 'react-native-chart-kit';
-import {fetchAllScheduleDetailListById} from '../../../redux/slices/scheduleDetailSlice';
+import {
+  fetchAllScheduleDetailListById,
+  removeScheduleDetail,
+} from '../../../redux/slices/scheduleDetailSlice';
 import {scheduleDetailListAfterNow} from '../../../redux/selectors/scheduleDetailSelector';
 import {socket} from '../../../utils/config';
 import {Modal, Portal} from 'react-native-paper';
@@ -26,6 +29,7 @@ import {ratingAfterExam} from '../../../services/patient/schedule_detail';
 
 function HomeScreen({navigation, route}) {
   const status = useSelector(infoStatusSelector);
+  const dispatch = useDispatch();
   const {rating, room_id, schedule_detail_id, doctor_id} = route.params ?? {
     rating: false,
   };
@@ -121,17 +125,17 @@ function HomeScreen({navigation, route}) {
 
   const handleSendRating = () => {
     if (user_info) {
-      console.log(user_info);
       const data = {
         rating: countRating,
         patient_id: user_info._id,
         content: contentRating,
         schedule_id: schedule_detail_id,
       };
-      console.log(data);
 
       ratingAfterExam(doctor_id, data)
-        .then(value => console.log(value))
+        .then(value => {
+          dispatch(removeScheduleDetail(schedule_detail_id));
+        })
         .catch(err => console.error(err))
         .finally(() => {
           setCountRating(5);
@@ -269,6 +273,7 @@ function HomeScreen({navigation, route}) {
                 isHome
                 key={schedule._id}
                 userId={user_info?._id}
+                navigation={navigation}
               />
             ))}
           </ScrollView>

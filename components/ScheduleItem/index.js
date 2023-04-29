@@ -4,12 +4,24 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Button, Chip, List, Modal, Portal, TextInput} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {scheduleDetailSlice} from '../../redux/slices/scheduleDetailSlice';
-import {cancelScheduleDetail} from '../../services/patient/schedule_detail';
+import {
+  cancelScheduleDetail,
+  updateScheduleExamStatus,
+} from '../../services/patient/schedule_detail';
 import {socket} from '../../utils/config';
 import RouterKey from '../../utils/Routerkey';
 
 function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
-  const {_id, doctor, time, day_exam, status, content_exam} = schedule;
+  const {
+    _id,
+    doctor,
+    time,
+    day_exam,
+    status,
+    content_exam,
+    is_exam,
+    conversation_id,
+  } = schedule;
 
   const dispatch = useDispatch();
 
@@ -58,6 +70,21 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
     }
   };
 
+  const handleCallVideo = () => {
+    updateScheduleExamStatus(_id, {is_exam: true})
+      .then(value => {
+        console.log('send req ->', value);
+        navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+          room_id: conversation_id ?? '',
+          schedule_detail_id: _id ?? '',
+          doctor_id: doctor._id ?? '',
+        });
+
+        hideModal();
+      })
+      .catch();
+  };
+
   return (
     <>
       <TouchableOpacity
@@ -81,14 +108,30 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
           <Text>Bác sĩ: {doctor.person.username}</Text>
           {isHome && (
             <Chip
-              icon={status ? 'check' : 'calendar-clock-outline'}
+              icon={
+                status
+                  ? moment(day_exam).diff(new Date(), 'day') === 0
+                    ? 'archive-clock-outline'
+                    : 'check'
+                  : 'calendar-clock-outline'
+              }
               style={[
                 styles.chip,
                 {
-                  backgroundColor: status ? '#0ead69' : '#f4a259',
+                  backgroundColor: status
+                    ? moment(day_exam).diff(new Date(), 'day') === 0
+                      ? '#57c4e5'
+                      : '#0ead69'
+                    : '#f4a259',
                 },
               ]}>
-              {status ? 'Đã xác nhận' : 'Đang đợi duyệt'}
+              {status
+                ? moment(day_exam).diff(new Date(), 'day') === 0
+                  ? is_exam
+                    ? 'BS đang đợi'
+                    : 'Hôm nay khám'
+                  : 'Đã xác nhận'
+                : 'Đang đợi duyệt'}
             </Chip>
           )}
         </View>
@@ -132,15 +175,29 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
           </List.Section>
 
           {status ? (
-            <Button
-              mode="elevated"
-              onPress={hideModal}
-              buttonColor={'#f4a259'}
-              textColor={'#000'}
-              style={{width: '100%'}}
-              labelStyle={{width: '100%'}}>
-              {'Thoát'}
-            </Button>
+            <>
+              <Button
+                mode="elevated"
+                onPress={hideModal}
+                buttonColor={'#f4a259'}
+                textColor={'#000'}
+                style={{width: '100%'}}
+                labelStyle={{width: '100%'}}>
+                {'Thoát'}
+              </Button>
+
+              {moment(day_exam).diff(new Date(), 'day') === 0 && (
+                <Button
+                  mode="elevated"
+                  onPress={handleCallVideo}
+                  buttonColor={'#57c4e5'}
+                  textColor={'#000'}
+                  style={{width: '100%', marginTop: 12}}
+                  labelStyle={{width: '100%'}}>
+                  {is_exam ? 'Vào lại' : 'Tham gia'}
+                </Button>
+              )}
+            </>
           ) : (
             <>
               {isOpenInput && (

@@ -135,7 +135,9 @@ function GlycemicScreen({navigation}) {
             type: 'Success',
             title: 'Thông báo',
             button: true,
-            textBody: `Chỉ số đường huyết đã được cập nhật`,
+            textBody:
+              data?.rule?.notification ??
+              'Chỉ số đường huyết được nhập thành công!',
             buttontext: 'Nhập ngay',
             callback: () => {
               // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
@@ -156,7 +158,7 @@ function GlycemicScreen({navigation}) {
           setVisible(false);
           Popup.show({
             type: 'Danger',
-            title: 'Lỗi',
+            title: 'Thông báo',
             button: true,
             textBody: `${error.message}`,
             buttontext: 'OK',
