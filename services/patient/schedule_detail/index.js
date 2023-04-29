@@ -15,3 +15,7 @@ export const cancelScheduleDetail = (id, data) => {
 export const ratingAfterExam = (doctor_id, data) => {
   return fetch.postWithAuth(`/patients/rating/${doctor_id}`, data);
 };
+
+export const updateScheduleExamStatus = (id, data) => {
+  return fetch.put(`/schedule-details/${id}/status`, data);
+};
