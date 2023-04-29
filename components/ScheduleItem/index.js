@@ -21,6 +21,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
     content_exam,
     is_exam,
     conversation_id,
+    fee,
   } = schedule;
 
   const dispatch = useDispatch();
@@ -105,7 +106,15 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
           ) : (
             <Text style={{marginBottom: 8}}>Thời gian: {time.desc}</Text>
           )}
-          <Text>Bác sĩ: {doctor.person.username}</Text>
+          <Text style={{marginBottom: 8}}>
+            Bác sĩ: {doctor.person.username}
+          </Text>
+          {!isHome && (
+            <Text>{`Chi phí: ${fee.toLocaleString('vi', {
+              style: 'currency',
+              currency: 'VND',
+            })}`}</Text>
+          )}
           {isHome && (
             <Chip
               icon={

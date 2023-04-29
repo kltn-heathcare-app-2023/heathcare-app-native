@@ -161,9 +161,9 @@ function ScheduleDetail({navigation, route}) {
                   <List.Item
                     style={styles.profile_specialist}
                     key={experience}
-                    // title={`${experience}`}
+                    title={`${experience.split(':')[0]}`}
                     left={() => <List.Icon icon="check" />}
-                    description={experience}
+                    description={experience.split(':')[1]}
                   />
                 );
               })}

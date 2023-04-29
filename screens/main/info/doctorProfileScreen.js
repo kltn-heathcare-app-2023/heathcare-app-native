@@ -65,7 +65,7 @@ function PatientViewInfoDoctorScreen({navigation, route}) {
               style={styles.profile_specialist}
               title={
                 <Rating
-                  style={{paddingVertical: 10, backgroundColor: '#BAD7E9'}}
+                  style={{paddingVertical: 10}}
                   imageSize={18}
                   startingValue={doctor.rating}
                 />
@@ -136,12 +136,15 @@ function PatientViewInfoDoctorScreen({navigation, route}) {
                     <List.Item
                       style={styles.profile_specialist}
                       key={experience}
-                      title={`${experience}`}
+                      title={`${experience.split(':')[0]}`}
                       left={() => <List.Icon icon="check" />}
+                      description={experience.split(':')[1]}
                     />
                   );
                 })}
               </List.Section>
+
+              <View style={{height: 36}}></View>
             </View>
           ) : (
             <View style={{height: 500}}></View>
@@ -155,7 +158,7 @@ function PatientViewInfoDoctorScreen({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: '#BAD7E9',
+    backgroundColor: '#ffff',
     paddingBottom: 16,
   },
   info: {
