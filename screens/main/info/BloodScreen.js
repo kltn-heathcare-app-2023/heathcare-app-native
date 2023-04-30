@@ -139,7 +139,7 @@ function BloodScreen({navigation}) {
         .catch(error => {
           Popup.show({
             type: 'Danger',
-            title: 'Lỗi',
+            title: 'Chú ý',
             button: true,
             textBody: `${error.message}`,
             buttontext: 'OK',

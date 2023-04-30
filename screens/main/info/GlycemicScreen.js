@@ -158,7 +158,7 @@ function GlycemicScreen({navigation}) {
           setVisible(false);
           Popup.show({
             type: 'Danger',
-            title: 'Thông báo',
+            title: 'Chú ý',
             button: true,
             textBody: `${error.message}`,
             buttontext: 'OK',

@@ -121,7 +121,20 @@ function BMIScreen({navigation}) {
         hideModal();
       }
     } catch ({error, message}) {
-      Alert.alert('Thông báo', message);
+      Popup.show({
+        type: 'Danger',
+        title: 'Chú ý',
+        button: true,
+        textBody: `${message}`,
+        buttontext: 'OK',
+        timing: 3000,
+        callback: () => {
+          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+          //   screen: RouterKey.INFO_SCREEN,
+          // });
+          Popup.hide();
+        },
+      });
       hideModal();
     }
   };
