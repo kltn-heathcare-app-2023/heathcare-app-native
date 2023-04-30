@@ -285,7 +285,7 @@ function MainScreen({navigation}) {
 
     socket.on(
       'notification_confirm_register_schedule_success',
-      notification => {
+      ({notification}) => {
         console.log({notification});
         if (notification) {
           if (

@@ -53,7 +53,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
 
         if (notification) {
           socket.emit('notification_register_schedule_from_patient', {
-            data: notification,
+            data: {notification},
           });
         }
         if (schedule_detail_id) {
@@ -135,7 +135,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                 },
               ]}>
               {status
-                ? moment(day_exam).diff(new Date(), 'day') === 0
+                ? moment(new Date(day_exam)).diff(new Date(), 'day') === 0
                   ? is_exam
                     ? 'BS đang đợi'
                     : 'Hôm nay khám'

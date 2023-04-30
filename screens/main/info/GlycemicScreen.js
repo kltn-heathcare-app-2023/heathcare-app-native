@@ -147,7 +147,7 @@ function GlycemicScreen({navigation}) {
             },
           });
           socket.emit('notification_register_schedule_from_patient', {
-            data: data.notification,
+            data: {notification: data.notification},
           });
           dispatch(infoSlice.actions.addGlycemic(data.doc));
           setVisible(false);
@@ -207,9 +207,9 @@ function GlycemicScreen({navigation}) {
               ).fromNow()}`}
             </Text>
             <Text style={styles.bmi_text_notification}>
-              {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-              {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+              {`Đường huyết trước khi ăn: ${glycemic_case_1}/126\n`}
+              {`Đường huyết trước sau ăn: ${glycemic_case_2}/180\n`}
+              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/120\n`}
             </Text>
           </View>
           <AnimatedLottieView

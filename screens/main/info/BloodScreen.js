@@ -129,7 +129,7 @@ function BloodScreen({navigation}) {
             },
           });
           socket.emit('notification_register_schedule_from_patient', {
-            data: data.notification,
+            data: {notification: data.notification},
           });
           dispatch(infoSlice.actions.addBlood(data.doc));
           setVisible(false);

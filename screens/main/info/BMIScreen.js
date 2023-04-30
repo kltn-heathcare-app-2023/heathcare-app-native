@@ -97,8 +97,9 @@ function BMIScreen({navigation}) {
         notifications &&
           notifications.length > 0 &&
           notifications.forEach(notification => {
+            console.log({notification});
             socket.emit('notification_register_schedule_from_patient', {
-              data: notification,
+              data: {notification},
             });
           });
         // console.log(bmi);

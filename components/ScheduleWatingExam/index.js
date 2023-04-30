@@ -30,6 +30,12 @@ function ScheduleWaitingExamItem({schedule, handle}) {
           )}`}
         </Text>
       </View>
+
+      {schedule.is_exam && (
+        <View style={styles.patient_is_exam}>
+          <Text>Đang khám</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
@@ -55,6 +61,19 @@ const styles = StyleSheet.create({
   patient_container_right: {
     width: '70%',
     marginLeft: 8,
+  },
+  patient_is_exam: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#a2d2ff',
+    width: 100,
+    height: 36,
+    borderTopRightRadius: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default ScheduleWaitingExamItem;

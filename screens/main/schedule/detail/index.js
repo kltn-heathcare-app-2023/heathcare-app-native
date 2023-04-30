@@ -48,7 +48,7 @@ function DetailScheduleRegister({navigation, route}) {
         const {notification, conversation, schedule_detail} = resp.data;
         if (notification) {
           socket.emit('notification_register_schedule_from_patient', {
-            data: notification,
+            data: {notification},
           });
         }
         if (schedule_detail) {
