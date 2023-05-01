@@ -81,7 +81,10 @@ function AuthPhoneScreen({navigation, route}) {
             navigation.navigate(RouterKey.SEND_IN4_SCREEN, {name});
           })
           .catch(err => {
-            Alert.alert(TITLE_NOTIFICATION, `Đăng ký thất bại -> ${err}`);
+            Alert.alert(
+              TITLE_NOTIFICATION,
+              `Đăng ký thất bại -> ${JSON.stringify(err)}`,
+            );
           })
           .finally(() => {
             setLoading(false);
@@ -119,6 +122,7 @@ function AuthPhoneScreen({navigation, route}) {
         <ButtonPrimary
           title="Xác thực"
           handle={handleAuthenticationAndRegisterAccount}
+          disabled={loading}
         />
         {loading && (
           <ActivityIndicator
