@@ -1,14 +1,7 @@
 import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import PureChart from 'react-native-pure-chart';
 // import {LineChart} from 'react-native-chart-kit';
 import {Button, Modal, Portal, TextInput} from 'react-native-paper';
@@ -19,28 +12,19 @@ import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {
   infoSelector,
   userBloodPressureListSelectorFilter,
-  userGlycemicListSelectorFilter,
   userLastBloodPressureSelector,
-  userLastGlycemicSelector,
-  userListBloodPressureSelector,
-  userListGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 import {postBloodPressure, postGlycemic} from '../../../services/patient/info';
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ScrollView} from 'react-native-gesture-handler';
 
 import AnimatedLottieView from 'lottie-react-native';
 import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
 import Header from '../../../components/Header';
 import RouterKey from '../../../utils/Routerkey';
-const optionItems = [
-  {label: 'Trước bữa ăn', value: '1'},
-  {label: 'Sau bữa ăn', value: '2'},
-  {label: 'Trước khi ngủ', value: '3'},
-  {label: 'Xét nghiệm', value: '4'},
-];
+
+import {Button as ButtonRE} from 'react-native-elements';
 
 const optionDateItems = [
   {label: 'Tuần', value: 'week'},
@@ -53,6 +37,7 @@ function BloodScreen({navigation}) {
   const [diastoleMetric, setDiastoleMetric] = useState('');
   const [systolicMetric, setSystolicMetric] = useState('');
   const [optionDate, setOptionDate] = useState('week');
+  const [loading, setLoading] = useState(false);
 
   const blood_list = useSelector(userBloodPressureListSelectorFilter);
   const last_blood_pressure = useSelector(userLastBloodPressureSelector);
@@ -108,6 +93,7 @@ function BloodScreen({navigation}) {
       systolicMetric &&
       systolicMetric > 0
     ) {
+      setLoading(true);
       postBloodPressure({
         systolic: systolicMetric,
         diastole: diastoleMetric,
@@ -129,17 +115,16 @@ function BloodScreen({navigation}) {
             },
           });
           socket.emit('notification_register_schedule_from_patient', {
-            data: data.notification,
+            data: {notification: data.notification},
           });
           dispatch(infoSlice.actions.addBlood(data.doc));
-          setVisible(false);
           setDiastoleMetric('');
           setSystolicMetric('');
         })
         .catch(error => {
           Popup.show({
             type: 'Danger',
-            title: 'Lỗi',
+            title: 'Chú ý',
             button: true,
             textBody: `${error.message}`,
             buttontext: 'OK',
@@ -151,7 +136,10 @@ function BloodScreen({navigation}) {
               Popup.hide();
             },
           });
+        })
+        .finally(() => {
           setVisible(false);
+          setLoading(false);
         });
     } else {
       setVisible(false);
@@ -181,7 +169,9 @@ function BloodScreen({navigation}) {
         <View style={styles.bmi_container}>
           <View style={styles.bmi_text}>
             <Text style={styles.bmi_text_title}>
-              {`Chỉ số Huyết áp mới nhất:`}
+              {`Chỉ số Huyết áp mới nhất: \n${moment(
+                last_blood_pressure ? createdAt : new Date(),
+              ).fromNow()}`}
             </Text>
             <Text style={styles.bmi_text_notification}>
               {`Tâm thu: ${systolic}\n`}
@@ -281,12 +271,12 @@ function BloodScreen({navigation}) {
               keyboardType="decimal-pad"
             />
 
-            <Button
-              mode="elevated"
+            <ButtonRE
+              title={'Gửi'}
               onPress={handlePostBloodPressure}
-              style={styles.modal_button}>
-              Gửi
-            </Button>
+              buttonStyle={styles.modal_button}
+              loading={loading}
+            />
           </Modal>
         </Portal>
       </View>
@@ -359,6 +349,7 @@ const styles = StyleSheet.create({
   },
   modal_button: {
     marginTop: 12,
+    borderRadius: 8,
   },
   bottom_view: {
     display: 'flex',

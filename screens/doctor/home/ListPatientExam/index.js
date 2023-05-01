@@ -451,31 +451,42 @@ function DoctorHomeListPatientExamScreen({navigation, route}) {
               </>
             )}
             <View style={styles.modal_buttons}>
-              <Button
-                mode="elevated"
-                onPress={() => {
-                  navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
-                    room_id: schedule.conversation_id,
-                    schedule_detail_id: schedule._id,
-                  });
-                  setVisibleWaitingExam(false);
-                  socket.emit('call_id_room_to_user', {
-                    conversation: schedule.conversation_id,
-                    infoDoctor: doctor_profile.doctor,
-                    _scheduleMedicalMeeting: schedule._id,
-                    patient_id: schedule.patient._id,
-                  });
-                }}
-                style={{width: '45%'}}
-                labelStyle={{width: '100%'}}>
-                Tạo phòng
-              </Button>
+              {schedule &&
+                moment(schedule.day_exam).diff(new Date(), 'day') === 0 && (
+                  <Button
+                    mode="elevated"
+                    onPress={() => {
+                      navigation.navigate(RouterKey.CALL_VIDEO_SCREEN, {
+                        room_id: schedule.conversation_id,
+                        schedule_detail_id: schedule._id,
+                      });
+                      setVisibleWaitingExam(false);
+                      if (!schedule.is_exam) {
+                        socket.emit('call_id_room_to_user', {
+                          conversation: schedule.conversation_id,
+                          infoDoctor: doctor_profile.doctor,
+                          _scheduleMedicalMeeting: schedule._id,
+                          patient_id: schedule.patient._id,
+                        });
+                      }
+                    }}
+                    style={{width: '45%'}}
+                    labelStyle={{width: '100%'}}>
+                    {schedule.is_exam ? 'Vào lại' : 'Tạo phòng'}
+                  </Button>
+                )}
               <Button
                 mode="elevated"
                 onPress={() => setVisibleWaitingExam(false)}
                 buttonColor={'#f4a259'}
                 textColor={'#000'}
-                style={{width: '45%'}}
+                style={{
+                  width:
+                    schedule &&
+                    moment(schedule.day_exam).diff(new Date(), 'day') !== 0
+                      ? '100%'
+                      : '45%',
+                }}
                 labelStyle={{width: '100%'}}>
                 Thoát
               </Button>

@@ -11,6 +11,7 @@ import {
 import {socket} from '../../utils/config';
 import RouterKey from '../../utils/Routerkey';
 
+import {Root, Popup} from 'popup-ui';
 function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
   const {
     _id,
@@ -21,6 +22,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
     content_exam,
     is_exam,
     conversation_id,
+    fee,
   } = schedule;
 
   const dispatch = useDispatch();
@@ -52,7 +54,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
 
         if (notification) {
           socket.emit('notification_register_schedule_from_patient', {
-            data: notification,
+            data: {notification},
           });
         }
         if (schedule_detail_id) {
@@ -63,9 +65,30 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
               schedule_detail_id,
             ),
           );
+
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: 'Hủy lịch khám thành công',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              Popup.hide();
+            },
+          });
         }
-      } catch (error) {
-        console.error(error);
+      } catch ({message}) {
+        console.error(message);
+        Popup.show({
+          type: 'Danger',
+          title: 'Thông báo',
+          button: true,
+          textBody: message,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            Popup.hide();
+          },
+        });
       }
     }
   };
@@ -105,7 +128,15 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
           ) : (
             <Text style={{marginBottom: 8}}>Thời gian: {time.desc}</Text>
           )}
-          <Text>Bác sĩ: {doctor.person.username}</Text>
+          <Text style={{marginBottom: 8}}>
+            Bác sĩ: {doctor.person.username}
+          </Text>
+          {!isHome && (
+            <Text>{`Chi phí: ${fee.toLocaleString('vi', {
+              style: 'currency',
+              currency: 'VND',
+            })}`}</Text>
+          )}
           {isHome && (
             <Chip
               icon={
@@ -126,7 +157,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                 },
               ]}>
               {status
-                ? moment(day_exam).diff(new Date(), 'day') === 0
+                ? moment(new Date(day_exam)).diff(new Date(), 'day') === 0
                   ? is_exam
                     ? 'BS đang đợi'
                     : 'Hôm nay khám'

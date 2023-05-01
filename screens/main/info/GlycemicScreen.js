@@ -31,6 +31,8 @@ import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
 import Header from '../../../components/Header';
 import RouterKey from '../../../utils/Routerkey';
+
+import {Button as ButtonRE} from 'react-native-elements';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -49,6 +51,8 @@ function GlycemicScreen({navigation}) {
   const [glycemic, setGlycemic] = useState('');
   const [option, setOption] = useState('1');
   const [optionDate, setOptionDate] = useState('week');
+  const [loading, setLoading] = useState(false);
+
   const glycemic_list = useSelector(userGlycemicListSelectorFilter);
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const user_info = useSelector(infoSelector);
@@ -124,6 +128,7 @@ function GlycemicScreen({navigation}) {
 
   const handlePostGlycemic = () => {
     if (glycemic && glycemic > 0) {
+      setLoading(true);
       postGlycemic({
         metric: glycemic,
         case: option,
@@ -147,18 +152,17 @@ function GlycemicScreen({navigation}) {
             },
           });
           socket.emit('notification_register_schedule_from_patient', {
-            data: data.notification,
+            data: {notification: data.notification},
           });
           dispatch(infoSlice.actions.addGlycemic(data.doc));
-          setVisible(false);
+
           setGlycemic('');
           setOption('1');
         })
         .catch(error => {
-          setVisible(false);
           Popup.show({
             type: 'Danger',
-            title: 'Thông báo',
+            title: 'Chú ý',
             button: true,
             textBody: `${error.message}`,
             buttontext: 'OK',
@@ -171,6 +175,10 @@ function GlycemicScreen({navigation}) {
             },
           });
           // Alert.alert(TITLE_NOTIFICATION);
+        })
+        .finally(() => {
+          setVisible(false);
+          setLoading(false);
         });
     } else {
       setVisible(false);
@@ -207,9 +215,9 @@ function GlycemicScreen({navigation}) {
               ).fromNow()}`}
             </Text>
             <Text style={styles.bmi_text_notification}>
-              {`Đường huyết trước khi ăn: ${glycemic_case_1}/600\n`}
-              {`Đường huyết trước sau ăn: ${glycemic_case_2}/600\n`}
-              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/600\n`}
+              {`Đường huyết trước khi ăn: ${glycemic_case_1}/126\n`}
+              {`Đường huyết trước sau ăn: ${glycemic_case_2}/180\n`}
+              {`Đường huyết trước trước ngủ: ${glycemic_case_3}/120\n`}
             </Text>
           </View>
           <AnimatedLottieView
@@ -313,12 +321,12 @@ function GlycemicScreen({navigation}) {
               }}
             />
 
-            <Button
-              mode="elevated"
+            <ButtonRE
+              title={'Gửi'}
               onPress={handlePostGlycemic}
-              style={styles.modal_button}>
-              Gửi
-            </Button>
+              buttonStyle={styles.modal_button}
+              loading={loading}
+            />
           </Modal>
         </Portal>
       </View>
@@ -391,6 +399,7 @@ const styles = StyleSheet.create({
   },
   modal_button: {
     marginTop: 12,
+    borderRadius: 8,
   },
   bottom_view: {
     display: 'flex',

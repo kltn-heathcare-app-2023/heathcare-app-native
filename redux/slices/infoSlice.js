@@ -32,11 +32,11 @@ export const infoSlice = createSlice({
     addGlycemic: (state, action) => {
       state.glycemic_list.push(action.payload);
       // console.log(state.glycemic_last);
-      state.glycemic_last.push(action.payload);
+      state.glycemic_last.unshift(action.payload);
     },
     addBlood: (state, action) => {
       state.blood_pressures.push(action.payload);
-      state.user_info.metrics.last_blood_pressures = {...action.payload};
+      // state.user_info.metrics.last_blood_pressures = {...action.payload};
     },
     resetUserInfo: state => {
       state.user_info = {};
@@ -55,7 +55,7 @@ export const infoSlice = createSlice({
       state.option_blood = action.payload;
     },
     updateUserInfoAfterChange: (state, action) => {
-      state.user_info = action.payload;
+      state.user_info = {...state.user_info, ...action.payload};
     },
   },
   extraReducers: builder => {

@@ -106,6 +106,7 @@ function DoctorConversationDetail({route, navigation}) {
       const _images = await MultipleImagePicker.openPicker({
         mediaType: 'image',
       });
+      console.log(_images);
       const __images = _images.map(image => {
         return {
           uri: `file://${image.realPath}`,
@@ -117,7 +118,6 @@ function DoctorConversationDetail({route, navigation}) {
     } catch (error) {
       console.log('err chooose image -> ', error);
     }
-    Date;
   };
 
   return (
@@ -144,7 +144,7 @@ function DoctorConversationDetail({route, navigation}) {
             color="black"
             size={20}
             onPress={() => {
-              socket.emit('call_id_room_to_user', {
+              socket.emit('call_now_to_user', {
                 conversation,
                 infoDoctor: doctor_profile.doctor,
               });

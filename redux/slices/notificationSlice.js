@@ -102,7 +102,7 @@ export const notification_list_filter = createSelector(
       );
     } else {
       return notifications.filter(notification =>
-        notification.rule.includes('SCHEDULE'),
+        notification?.rule?.includes('SCHEDULE'),
       );
     }
   },
