@@ -89,8 +89,9 @@ function ProfilePatientScreen({navigation}) {
     formData.append('username', name);
     formData.append('dob', `${date}`);
     formData.append('address', address);
-    formData.append('gender', gender === 'Nam' ? true : false);
-    formData.append('blood', blood);
+    formData.append('gender', gender === 'Nam');
+    formData.append('blood', _blood);
+
     if (image) {
       formData.append('avatar', image);
     }

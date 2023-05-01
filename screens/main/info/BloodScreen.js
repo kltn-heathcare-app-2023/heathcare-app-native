@@ -1,14 +1,7 @@
 import moment from 'moment';
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import PureChart from 'react-native-pure-chart';
 // import {LineChart} from 'react-native-chart-kit';
 import {Button, Modal, Portal, TextInput} from 'react-native-paper';
@@ -19,16 +12,11 @@ import DropDownPicker from '../../../components/Input/DropdownPicker';
 import {
   infoSelector,
   userBloodPressureListSelectorFilter,
-  userGlycemicListSelectorFilter,
   userLastBloodPressureSelector,
-  userLastGlycemicSelector,
-  userListBloodPressureSelector,
-  userListGlycemicSelector,
 } from '../../../redux/selectors/infoSelector';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 import {postBloodPressure, postGlycemic} from '../../../services/patient/info';
 import ICon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ScrollView} from 'react-native-gesture-handler';
 
 import AnimatedLottieView from 'lottie-react-native';
 import {socket} from '../../../utils/config';
@@ -37,12 +25,6 @@ import Header from '../../../components/Header';
 import RouterKey from '../../../utils/Routerkey';
 
 import {Button as ButtonRE} from 'react-native-elements';
-const optionItems = [
-  {label: 'Trước bữa ăn', value: '1'},
-  {label: 'Sau bữa ăn', value: '2'},
-  {label: 'Trước khi ngủ', value: '3'},
-  {label: 'Xét nghiệm', value: '4'},
-];
 
 const optionDateItems = [
   {label: 'Tuần', value: 'week'},

@@ -6,18 +6,19 @@ import {registerSchedule} from '../../../../services/patient/schedule_detail';
 import 'moment/locale/vi'; // without this line it didn't work
 import {useState} from 'react';
 import RouterKey from '../../../../utils/Routerkey';
-import {TITLE_NOTIFICATION} from '../../../../common/title';
 import {useDispatch} from 'react-redux';
 import {scheduleDetailSlice} from '../../../../redux/slices/scheduleDetailSlice';
 import {socket} from '../../../../utils/config';
 import {Popup} from 'popup-ui';
 moment.locale('vi');
 
+import {Button as ButtonRE} from 'react-native-elements';
+
 function DetailScheduleRegister({navigation, route}) {
   const {schedule, dateSelected} = route.params;
   const {doctor, time, fee} = schedule;
   const [text, setText] = useState();
-
+  const [loading, setLoading] = useState(false);
   // console.log('schedule in detail -> ', schedule);
   // console.log('time in detail -> ', time);
   // console.log('dateSelected-> ', dateSelected);
@@ -39,6 +40,7 @@ function DetailScheduleRegister({navigation, route}) {
   const handleRegisterSchedule = async () => {
     if (text && scheduleDateStart && schedule._id) {
       try {
+        setLoading(true);
         const resp = await registerSchedule({
           content_exam: text,
           schedule: schedule._id,
@@ -53,6 +55,7 @@ function DetailScheduleRegister({navigation, route}) {
         }
         if (schedule_detail) {
           setText('');
+          setLoading(false);
           Popup.show({
             type: 'Success',
             title: 'Thông báo',
@@ -73,6 +76,7 @@ function DetailScheduleRegister({navigation, route}) {
           navigation.navigate(RouterKey.HOME_SCREEN);
         }
       } catch (error) {
+        setLoading(false);
         Popup.show({
           type: 'Danger',
           title: 'Thông báo',
@@ -151,13 +155,33 @@ function DetailScheduleRegister({navigation, route}) {
         placeholder={'Lý do muốn khám hoặc một số triệu chứng'}
       />
 
-      <Button
+      {/* <Button
         icon="tray-plus"
         mode="contained-tonal"
         onPress={handleRegisterSchedule}
         style={{backgroundColor: '#BAD7E9', margin: 16}}>
         Đăng ký khám
-      </Button>
+      </Button> */}
+
+      <View
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%',
+        }}>
+        <ButtonRE
+          title={'Đăng ký khám'}
+          onPress={handleRegisterSchedule}
+          buttonStyle={styles.modal_button}
+          loading={loading}
+          icon={{
+            name: 'calendar',
+            type: 'font-awesome',
+            size: 15,
+            color: 'white',
+          }}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -170,6 +194,12 @@ const styles = StyleSheet.create({
   },
   list: {
     marginLeft: 16,
+  },
+
+  modal_button: {
+    marginTop: 12,
+    borderRadius: 8,
+    width: 350,
   },
 });
 export default DetailScheduleRegister;
