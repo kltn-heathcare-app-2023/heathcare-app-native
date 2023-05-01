@@ -31,11 +31,17 @@ function ScheduleWaitingExamItem({schedule, handle}) {
         </Text>
       </View>
 
-      {schedule.is_exam && (
-        <View style={styles.patient_is_exam}>
-          <Text>Đang khám</Text>
-        </View>
-      )}
+      {moment(schedule.day_exam).diff(new Date(), 'day') === 0 ? (
+        schedule.is_exam ? (
+          <View style={styles.patient_is_exam}>
+            <Text>Đang khám</Text>
+          </View>
+        ) : (
+          <View style={styles.patient_is_exam}>
+            <Text>Hôm nay khám</Text>
+          </View>
+        )
+      ) : null}
     </TouchableOpacity>
   );
 }

@@ -11,6 +11,7 @@ import {
 import {socket} from '../../utils/config';
 import RouterKey from '../../utils/Routerkey';
 
+import {Root, Popup} from 'popup-ui';
 function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
   const {
     _id,
@@ -64,9 +65,30 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
               schedule_detail_id,
             ),
           );
+
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: 'Hủy lịch khám thành công',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              Popup.hide();
+            },
+          });
         }
-      } catch (error) {
-        console.error(error);
+      } catch ({message}) {
+        console.error(message);
+        Popup.show({
+          type: 'Danger',
+          title: 'Thông báo',
+          button: true,
+          textBody: message,
+          buttontext: 'Nhập ngay',
+          callback: () => {
+            Popup.hide();
+          },
+        });
       }
     }
   };

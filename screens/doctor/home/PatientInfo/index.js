@@ -20,6 +20,7 @@ import RouterKey from '../../../../utils/Routerkey';
 import Header from '../../../../components/Header';
 import {socket} from '../../../../utils/config';
 
+import {Button as ButtonRE} from 'react-native-elements';
 function PatientInfo({navigation, route}) {
   const {patient, bmis, glycemics, blood_pressures} = route.params;
   const {person, blood, anamnesis} = patient;
@@ -27,35 +28,55 @@ function PatientInfo({navigation, route}) {
 
   const [visible, setVisible] = useState(false);
   const [note, setNote] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   const handleSendNoteToPatient = async () => {
-    createRemindToPatient(patient._id, {
-      from: doctor_profile.doctor._id,
-      content: note,
-    })
-      .then(({data}) => {
-        socket.emit('notification_confirm_register_schedule', {
-          data: data,
-        });
-        Popup.show({
-          type: 'Success',
-          title: 'Thông báo',
-          button: true,
-          textBody: 'Gửi nhắc nhở cho bệnh nhân thành công',
-          buttontext: 'Nhập ngay',
-          callback: () => {
-            Popup.hide();
-          },
-        });
-        hideModal();
-        setNote('');
+    if (note) {
+      setLoading(true);
+      createRemindToPatient(patient._id, {
+        from: doctor_profile.doctor._id,
+        content: note,
       })
-      .catch(error => {
-        console.log(error);
-      });
+        .then(({data}) => {
+          socket.emit('notification_confirm_register_schedule', {
+            data: data,
+          });
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo',
+            button: true,
+            textBody: 'Gửi nhắc nhở cho bệnh nhân thành công',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              Popup.hide();
+            },
+          });
+        })
+        .catch(({message}) => {
+          Popup.show({
+            type: 'Warning',
+            title: 'Thông báo',
+            button: true,
+            textBody: message,
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              Popup.hide();
+            },
+          });
+        })
+        .finally(() => {
+          hideModal();
+          setNote('');
+          setLoading(false);
+          setError(false);
+        });
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -166,7 +187,7 @@ function PatientInfo({navigation, route}) {
           <Text style={styles.modal_title}>Gửi nhắc nhở cho bệnh nhân</Text>
           <View style={styles.textAreaContainer}>
             <TextInput
-              style={styles.textArea}
+              style={[styles.textArea]}
               underlineColorAndroid="transparent"
               placeholder="Nhập ghi chú cho bệnh nhân"
               placeholderTextColor="grey"
@@ -177,12 +198,21 @@ function PatientInfo({navigation, route}) {
               onChangeText={v => setNote(v)}
             />
           </View>
-          <Button
+          <Text style={{color: 'red'}}>
+            {error && !note && 'Vui lòng nhập ghi chú'}
+          </Text>
+          <ButtonRE
+            title={'Gửi ghi chú'}
+            onPress={handleSendNoteToPatient}
+            buttonStyle={{width: 164, borderRadius: 8, marginTop: 8}}
+            loading={loading}
+          />
+          {/* <Button
             mode="contained"
             style={{width: '90%', marginTop: 16}}
             onPress={handleSendNoteToPatient}>
-            Gửi ghi chú
-          </Button>
+            
+          </Button> */}
         </Modal>
       </Portal>
     </>
