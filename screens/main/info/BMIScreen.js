@@ -28,6 +28,7 @@ import {Popup} from 'popup-ui';
 import Header from '../../../components/Header';
 import RouterKey from '../../../utils/Routerkey';
 
+import {Button as ButtonRE} from 'react-native-elements';
 const screenWidth = Dimensions.get('window').width;
 
 let data = {
@@ -58,6 +59,7 @@ function BMIScreen({navigation}) {
   const [height, setHeight] = useState('0');
   const [weight, setWeight] = useState('0');
   const [option, setOption] = useState('week');
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const bmi_avg_selector = useSelector(userAVGBMISelector);
@@ -82,33 +84,54 @@ function BMIScreen({navigation}) {
   useEffect(() => {
     dispatch(infoSlice.actions.updateOptionBMI(option));
   }, [option]);
+
   const handleSendBMI = async () => {
-    try {
-      const data = {
-        patient: user_info._id,
-        height: parseFloat(height),
-        weight: parseFloat(weight),
-        gender: user_info.person.gender,
-      };
-      const bmi = await postBMI(data);
-      if (bmi?.data) {
-        const {avgBMI, doc, notifications, rule} = bmi.data;
-        console.log(bmi.data);
-        notifications &&
-          notifications.length > 0 &&
-          notifications.forEach(notification => {
-            console.log({notification});
-            socket.emit('notification_register_schedule_from_patient', {
-              data: {notification},
+    setLoading(true);
+    const data = {
+      patient: user_info._id,
+      height: parseFloat(height),
+      weight: parseFloat(weight),
+      gender: user_info.person.gender,
+    };
+    postBMI(data)
+      .then(({data}) => {
+        {
+          const {avgBMI, doc, notifications, rule} = data;
+          console.log(data);
+          notifications &&
+            notifications.length > 0 &&
+            notifications.forEach(notification => {
+              console.log({notification});
+              socket.emit('notification_register_schedule_from_patient', {
+                data: {notification},
+              });
             });
+          // console.log(bmi);
+          Popup.show({
+            type: 'Success',
+            title: 'Thông báo sức khỏe',
+            button: true,
+            textBody: rule?.notification ?? '',
+            buttontext: 'Nhập ngay',
+            callback: () => {
+              // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
+              //   screen: RouterKey.INFO_SCREEN,
+              // });
+              Popup.hide();
+            },
           });
-        // console.log(bmi);
+          dispatch(infoSlice.actions.updateAVGBMI(avgBMI));
+          dispatch(infoSlice.actions.addBMI(doc));
+        }
+      })
+      .catch(({error, message}) => {
         Popup.show({
-          type: 'Success',
-          title: 'Thông báo sức khỏe',
+          type: 'Danger',
+          title: 'Chú ý',
           button: true,
-          textBody: rule?.notification ?? '',
-          buttontext: 'Nhập ngay',
+          textBody: `${message}`,
+          buttontext: 'OK',
+          timing: 3000,
           callback: () => {
             // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
             //   screen: RouterKey.INFO_SCREEN,
@@ -116,27 +139,11 @@ function BMIScreen({navigation}) {
             Popup.hide();
           },
         });
-        dispatch(infoSlice.actions.updateAVGBMI(avgBMI));
-        dispatch(infoSlice.actions.addBMI(doc));
+      })
+      .finally(() => {
         hideModal();
-      }
-    } catch ({error, message}) {
-      Popup.show({
-        type: 'Danger',
-        title: 'Chú ý',
-        button: true,
-        textBody: `${message}`,
-        buttontext: 'OK',
-        timing: 3000,
-        callback: () => {
-          // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
-          //   screen: RouterKey.INFO_SCREEN,
-          // });
-          Popup.hide();
-        },
+        setLoading(false);
       });
-      hideModal();
-    }
   };
 
   return (
@@ -217,12 +224,12 @@ function BMIScreen({navigation}) {
               keyboardType="decimal-pad"
             />
 
-            <Button
-              mode="elevated"
+            <ButtonRE
+              title={'Gửi'}
               onPress={handleSendBMI}
-              style={styles.modal_button}>
-              Gửi
-            </Button>
+              buttonStyle={styles.modal_button}
+              loading={loading}
+            />
           </Modal>
         </Portal>
 
@@ -299,6 +306,7 @@ const styles = StyleSheet.create({
   },
   modal_button: {
     marginTop: 12,
+    borderRadius: 8,
   },
 });
 export default BMIScreen;

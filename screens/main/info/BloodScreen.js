@@ -35,6 +35,8 @@ import {socket} from '../../../utils/config';
 import {Popup} from 'popup-ui';
 import Header from '../../../components/Header';
 import RouterKey from '../../../utils/Routerkey';
+
+import {Button as ButtonRE} from 'react-native-elements';
 const optionItems = [
   {label: 'Trước bữa ăn', value: '1'},
   {label: 'Sau bữa ăn', value: '2'},
@@ -53,6 +55,7 @@ function BloodScreen({navigation}) {
   const [diastoleMetric, setDiastoleMetric] = useState('');
   const [systolicMetric, setSystolicMetric] = useState('');
   const [optionDate, setOptionDate] = useState('week');
+  const [loading, setLoading] = useState(false);
 
   const blood_list = useSelector(userBloodPressureListSelectorFilter);
   const last_blood_pressure = useSelector(userLastBloodPressureSelector);
@@ -108,6 +111,7 @@ function BloodScreen({navigation}) {
       systolicMetric &&
       systolicMetric > 0
     ) {
+      setLoading(true);
       postBloodPressure({
         systolic: systolicMetric,
         diastole: diastoleMetric,
@@ -132,7 +136,6 @@ function BloodScreen({navigation}) {
             data: {notification: data.notification},
           });
           dispatch(infoSlice.actions.addBlood(data.doc));
-          setVisible(false);
           setDiastoleMetric('');
           setSystolicMetric('');
         })
@@ -151,7 +154,10 @@ function BloodScreen({navigation}) {
               Popup.hide();
             },
           });
+        })
+        .finally(() => {
           setVisible(false);
+          setLoading(false);
         });
     } else {
       setVisible(false);
@@ -181,7 +187,9 @@ function BloodScreen({navigation}) {
         <View style={styles.bmi_container}>
           <View style={styles.bmi_text}>
             <Text style={styles.bmi_text_title}>
-              {`Chỉ số Huyết áp mới nhất:`}
+              {`Chỉ số Huyết áp mới nhất: \n${moment(
+                last_blood_pressure ? createdAt : new Date(),
+              ).fromNow()}`}
             </Text>
             <Text style={styles.bmi_text_notification}>
               {`Tâm thu: ${systolic}\n`}
@@ -281,12 +289,12 @@ function BloodScreen({navigation}) {
               keyboardType="decimal-pad"
             />
 
-            <Button
-              mode="elevated"
+            <ButtonRE
+              title={'Gửi'}
               onPress={handlePostBloodPressure}
-              style={styles.modal_button}>
-              Gửi
-            </Button>
+              buttonStyle={styles.modal_button}
+              loading={loading}
+            />
           </Modal>
         </Portal>
       </View>
@@ -359,6 +367,7 @@ const styles = StyleSheet.create({
   },
   modal_button: {
     marginTop: 12,
+    borderRadius: 8,
   },
   bottom_view: {
     display: 'flex',

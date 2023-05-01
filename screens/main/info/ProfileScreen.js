@@ -26,6 +26,7 @@ import fetch from '../../../utils/fetch';
 import {infoSlice} from '../../../redux/slices/infoSlice';
 import Header from '../../../components/Header';
 
+import {Button as ButtonRE} from 'react-native-elements';
 function ProfilePatientScreen({navigation}) {
   const user_info = useSelector(infoSelector);
   const {person, blood, anamnesis, doctor_blood_id, doctor_glycemic_id} =
@@ -39,6 +40,7 @@ function ProfilePatientScreen({navigation}) {
   const [_blood, setBlood] = useState(blood);
   const [image, setImage] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -93,17 +95,21 @@ function ProfilePatientScreen({navigation}) {
       formData.append('avatar', image);
     }
 
+    setLoading(true);
     fetch
       .putFormWithAuth(`/patients/${user_info._id}`, formData)
       .then(val => {
         if (val?.error) {
           console.log('value -> ', val);
         }
-        console.log(val);
+        // console.log(val);
         dispatch(infoSlice.actions.updateUserInfoAfterChange(val.data));
-        hideModal();
       })
-      .catch(err => console.log('err -> ', err));
+      .catch(err => console.log('err -> ', err))
+      .finally(() => {
+        hideModal();
+        setLoading(false);
+      });
   };
 
   return (
@@ -221,6 +227,7 @@ function ProfilePatientScreen({navigation}) {
             _setValue={setGender}
             items={genderItems}
             isGender
+            stylePicker={{width: '92%'}}
           />
 
           {/* <DateTimePicker date={date} setDate={setDate} show={true} /> */}
@@ -252,13 +259,15 @@ function ProfilePatientScreen({navigation}) {
             _setValue={setBlood}
             items={bloodITems}
             isBlood
+            stylePicker={{width: '92%'}}
           />
-          <Button
-            mode="contained"
-            style={{zIndex: -1}}
-            onPress={handleUpdateIn4}>
-            Xác nhận
-          </Button>
+
+          <ButtonRE
+            title={'Xác nhận'}
+            onPress={handleUpdateIn4}
+            buttonStyle={{marginTop: 12, borderRadius: 8, width: 120}}
+            loading={loading}
+          />
         </Modal>
       </Portal>
     </>

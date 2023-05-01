@@ -11,7 +11,9 @@ import {
   infoSelector,
   infoStatusSelector,
   userAVGBMISelector,
+  userLastBloodPressureSelector,
   userLastGlycemicSelector,
+  userListBloodPressureSelector,
 } from '../../../redux/selectors/infoSelector';
 import ScheduleItem from '../../../components/ScheduleItem';
 import {ProgressChart} from 'react-native-chart-kit';
@@ -42,6 +44,7 @@ function HomeScreen({navigation, route}) {
   const bmi_avg = useSelector(userAVGBMISelector);
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const schedules = useSelector(scheduleDetailListAfterNow);
+  const last_blood = useSelector(userLastBloodPressureSelector);
 
   let glycemic_case_1 = 0;
   let glycemic_case_2 = 0;
@@ -54,9 +57,9 @@ function HomeScreen({navigation, route}) {
 
   let systolic = 0;
   let diastole = 0;
-  if (user_info.metrics?.last_blood_pressures) {
-    systolic = user_info.metrics?.last_blood_pressures.systolic;
-    diastole = user_info.metrics?.last_blood_pressures.diastole;
+  if (last_blood) {
+    systolic = last_blood.systolic;
+    diastole = last_blood.diastole;
   }
 
   const data = {

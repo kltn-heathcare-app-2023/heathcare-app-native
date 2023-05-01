@@ -36,7 +36,7 @@ export const infoSlice = createSlice({
     },
     addBlood: (state, action) => {
       state.blood_pressures.push(action.payload);
-      state.user_info.metrics.last_blood_pressures = {...action.payload};
+      // state.user_info.metrics.last_blood_pressures = {...action.payload};
     },
     resetUserInfo: state => {
       state.user_info = {};
@@ -55,7 +55,7 @@ export const infoSlice = createSlice({
       state.option_blood = action.payload;
     },
     updateUserInfoAfterChange: (state, action) => {
-      state.user_info = action.payload;
+      state.user_info = {...state.user_info, ...action.payload};
     },
   },
   extraReducers: builder => {
