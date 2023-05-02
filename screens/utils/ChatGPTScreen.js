@@ -109,10 +109,7 @@ function ChatGPTScreen({navigation}) {
             size={20}
             onPress={() => navigation.goBack()}
           />
-          <Text
-            style={
-              styles.header_left_username
-            }>{`Hỏi Xoáy Đáp Xoáy Luôn Cùng AI`}</Text>
+          <Text style={styles.header_left_username}>{`ChatBot`}</Text>
         </View>
       </View>
 

@@ -136,8 +136,12 @@ function HomeScreen({navigation, route}) {
       };
 
       ratingAfterExam(doctor_id, data)
-        .then(value => {
+        .then(({data, notification}) => {
           dispatch(removeScheduleDetail(schedule_detail_id));
+
+          socket.emit('notification_confirm_register_schedule', {
+            data: {notification},
+          });
         })
         .catch(err => console.error(err))
         .finally(() => {
