@@ -6,6 +6,7 @@ import GlycemicScreen from '../../screens/main/info/GlycemicScreen';
 import BloodScreen from '../../screens/main/info/BloodScreen';
 import ProfilePatientScreen from '../../screens/main/info/ProfileScreen';
 import PatientViewInfoDoctorScreen from '../../screens/main/info/doctorProfileScreen';
+import HistoryScreen from '../../screens/main/info/HistoryScheduleScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,10 @@ function InfoNavigator() {
       <Stack.Screen
         name={RouterKey.PATIENT_INFO_DOCTOR_SCREEN}
         component={PatientViewInfoDoctorScreen}
+      />
+      <Stack.Screen
+        name={RouterKey.PATIENT_HISTORY_SCREEN}
+        component={HistoryScreen}
       />
     </Stack.Navigator>
   );

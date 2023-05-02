@@ -36,6 +36,7 @@ const RouterKey = {
   UTILS_POST_DETAIL_SCREEN: 'PostDetailScreen',
   PATIENT_INFO_DOCTOR_SCREEN: 'PatientViewInfoDoctorScreen',
   UTILS_FORGOT_PASS_SCREEN: 'ForgotPasswordScreen',
+  PATIENT_HISTORY_SCREEN: 'PatientHistoryScreen',
 };
 
 export default RouterKey;

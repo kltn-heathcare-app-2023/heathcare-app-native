@@ -29,7 +29,7 @@ import Header from '../../../components/Header';
 import {Button as ButtonRE} from 'react-native-elements';
 function ProfilePatientScreen({navigation}) {
   const user_info = useSelector(infoSelector);
-  const {person, blood, anamnesis, doctor_blood_id, doctor_glycemic_id} =
+  const {_id, person, blood, anamnesis, doctor_blood_id, doctor_glycemic_id} =
     user_info;
 
   const [visible, setVisible] = useState(false);
@@ -156,6 +156,18 @@ function ProfilePatientScreen({navigation}) {
             }`}
           />
         </List.Section>
+
+        <View style={{marginLeft: 16}}>
+          <Text
+            style={{color: '#219ebc', textDecorationLine: 'underline'}}
+            onPress={() =>
+              navigation.navigate(RouterKey.PATIENT_HISTORY_SCREEN, {
+                patient_id: _id,
+              })
+            }>
+            Lịch sử khám
+          </Text>
+        </View>
         <List.Section>
           <List.Subheader>Bác sĩ đảm nhận:</List.Subheader>
           {!doctor_blood_id && !doctor_glycemic_id && (
