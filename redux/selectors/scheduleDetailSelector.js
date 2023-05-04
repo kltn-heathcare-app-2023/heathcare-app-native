@@ -17,7 +17,7 @@ export const scheduleDetailListAfterNow = createSelector(
       const schedule_now = _schedules.filter(
         schedule =>
           moment(schedule.day_exam).format('DD/MM/YYYY') ===
-          moment(new Date()).format('DD/MM/YYYY'),
+            moment(new Date()).format('DD/MM/YYYY') && schedule.status,
       );
 
       const schedule_waiting_accept = _schedules.filter(
