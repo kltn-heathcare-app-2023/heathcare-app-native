@@ -141,7 +141,8 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
             <Chip
               icon={
                 status
-                  ? moment(day_exam).diff(new Date(), 'day') === 0
+                  ? moment(day_exam).format('DD/MM/YYYY') ===
+                    moment(new Date()).format('DD/MM/YYYY')
                     ? 'archive-clock-outline'
                     : 'check'
                   : 'calendar-clock-outline'
@@ -150,14 +151,16 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                 styles.chip,
                 {
                   backgroundColor: status
-                    ? moment(day_exam).diff(new Date(), 'day') === 0
+                    ? moment(day_exam).format('DD/MM/YYYY') ===
+                      moment(new Date()).format('DD/MM/YYYY')
                       ? '#57c4e5'
                       : '#0ead69'
                     : '#f4a259',
                 },
               ]}>
               {status
-                ? moment(new Date(day_exam)).diff(new Date(), 'day') === 0
+                ? moment(day_exam).format('DD/MM/YYYY') ===
+                  moment(new Date()).format('DD/MM/YYYY')
                   ? is_exam
                     ? 'BS đang đợi'
                     : 'Hôm nay khám'

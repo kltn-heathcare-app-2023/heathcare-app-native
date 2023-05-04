@@ -14,17 +14,32 @@ export const scheduleDetailListAfterNow = createSelector(
         schedule => new Date(schedule.day_exam) >= now,
       );
 
-      const _schedule_now = _schedules.filter(
-        schedule => moment(schedule.day_exam).diff(new Date(), 'day') === 0,
+      const schedule_now = _schedules.filter(
+        schedule =>
+          moment(schedule.day_exam).format('DD/MM/YYYY') ===
+          moment(new Date()).format('DD/MM/YYYY'),
       );
 
-      const _schedule_now_ids = _schedule_now.map(schedule => schedule._id);
+      const schedule_waiting_accept = _schedules.filter(
+        schedule => schedule.status === false,
+      );
 
-      const _schedule_after = _schedules.filter(schedule => {
-        return !_schedule_now_ids.includes(schedule._id);
+      const schedule_waiting_accept_ids = schedule_waiting_accept.map(
+        schedule => schedule._id,
+      );
+
+      const schedule_now_ids = schedule_now.map(schedule => schedule._id);
+
+      const schedule_after = _schedules.filter(schedule => {
+        return (
+          !schedule_now_ids.includes(schedule._id) &&
+          !schedule_waiting_accept_ids.includes(schedule._id)
+        );
       });
 
-      return _schedule_now.concat(_schedule_after);
+      return schedule_now
+        .concat(schedule_waiting_accept)
+        .concat(schedule_after);
     }
 
     return [];
