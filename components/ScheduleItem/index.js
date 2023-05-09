@@ -32,7 +32,10 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
   const [reason, setReason] = useState('');
 
   const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const hideModal = () => {
+    setVisible(false);
+    setIsOpenInput(false);
+  };
 
   const handleClickScheduleItem = () => {
     navigation.navigate(RouterKey.SCHEDULE_DETAIL_SCREEN, {
@@ -243,7 +246,12 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                   mode={'outlined'}
                   placeholder={'Nhập lý do hủy khám'}
                   value={reason}
-                  onChangeText={val => setReason(val)}
+                  onChangeText={val => {
+                    setReason(val);
+                  }}
+                  outlineColor="#8ecae6"
+                  underlineColor="#fff"
+                  activeOutlineColor="#8ecae6"
                 />
               )}
               <View style={styles.modal_buttons}>
@@ -251,7 +259,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                   <Button
                     mode="elevated"
                     onPress={handleCancelScheduleDetail}
-                    style={{width: '60%'}}
+                    style={{width: '45%'}}
                     labelStyle={{width: '100%'}}>
                     Xác nhận
                   </Button>
@@ -259,7 +267,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                   <Button
                     mode="elevated"
                     onPress={() => setIsOpenInput(true)}
-                    style={{width: '40%'}}
+                    style={{width: '45%'}}
                     labelStyle={{width: '100%'}}>
                     Hủy
                   </Button>
@@ -269,7 +277,7 @@ function ScheduleItem({schedule, navigation, dateSelected, isHome, userId}) {
                   onPress={hideModal}
                   buttonColor={'#f4a259'}
                   textColor={'#000'}
-                  style={{width: '40%'}}
+                  style={{width: '45%'}}
                   labelStyle={{width: '100%'}}>
                   Thoát
                 </Button>

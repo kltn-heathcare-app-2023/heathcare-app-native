@@ -129,7 +129,7 @@ function InfoScreen({navigation}) {
             </Text>
           </View>
           <Image
-            style={styles.header_info_img}
+            style={{width: 76, height: 76}}
             source={require('../../../assets/images/bmi.png')}
           />
         </TouchableOpacity>
@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   bmi_text: {
     width: '75%',
