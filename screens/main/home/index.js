@@ -39,6 +39,7 @@ function HomeScreen({navigation, route}) {
   const [visible, setVisible] = useState(rating);
   const [countRating, setCountRating] = useState(5);
   const [contentRating, setContentRating] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const user_info = useSelector(infoSelector);
   const bmi_avg = useSelector(userAVGBMISelector);
@@ -135,6 +136,8 @@ function HomeScreen({navigation, route}) {
         schedule_id: schedule_detail_id,
       };
 
+      setLoading(true);
+
       ratingAfterExam(doctor_id, data)
         .then(({data, notification}) => {
           dispatch(removeScheduleDetail(schedule_detail_id));
@@ -148,6 +151,7 @@ function HomeScreen({navigation, route}) {
           setCountRating(5);
           setContentRating('');
           setVisible(false);
+          setLoading(false);
         });
     }
   };
@@ -326,6 +330,7 @@ function HomeScreen({navigation, route}) {
                 type="solid"
                 buttonStyle={{width: 164, borderRadius: 16}}
                 onPress={handleSendRating}
+                loading={loading}
               />
             </View>
           </View>
