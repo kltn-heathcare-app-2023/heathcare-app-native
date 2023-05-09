@@ -65,7 +65,7 @@ function ConversationDetail({route, navigation}) {
         setSize(prev => prev + last_size);
       }
     }, 200);
-  }, [size]);
+  }, [size, refreshing]);
   // socket when send message
   const handleSendMessage = async () => {
     if (message) {
