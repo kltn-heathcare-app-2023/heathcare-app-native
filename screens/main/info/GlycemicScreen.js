@@ -56,6 +56,7 @@ function GlycemicScreen({navigation}) {
   const glycemic_list = useSelector(userGlycemicListSelectorFilter);
   const glycemic_last = useSelector(userLastGlycemicSelector);
   const user_info = useSelector(infoSelector);
+  const [days, setDays] = useState([]);
 
   useEffect(() => {
     dispatch(infoSlice.actions.updateOptionGlycemic(optionDate));
@@ -72,32 +73,70 @@ function GlycemicScreen({navigation}) {
   useEffect(() => {
     dispatch(infoSlice.actions.updateOptionBMI(option));
   }, [option]);
-  const metrics_1 = glycemic_list
-    .filter(glycemic => glycemic.case === 1)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
 
-  const metrics_2 = glycemic_list
-    .filter(glycemic => glycemic.case === 2)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
+  useEffect(() => {
+    if (glycemic_list.length > 0) {
+      const _days = glycemic_list.map(glycemic => {
+        return moment(glycemic.createdAt).format('l');
+      });
 
-  const metrics_3 = glycemic_list
-    .filter(glycemic => glycemic.case === 3)
-    .map(glycemic => {
-      return {
-        x: moment(glycemic.createdAt).format('l'),
-        y: glycemic.metric,
-      };
-    });
+      setDays([...new Set(_days)]);
+    }
+  }, [glycemic_list.length]);
+
+  const metrics_1 = days.map(day => {
+    const _metrics = glycemic_list.filter(glycemic => glycemic.case === 1);
+
+    const sub_metric = _metrics.find(
+      metric => moment(metric.createdAt).format('l') === day,
+    );
+
+    return sub_metric
+      ? {
+          x: moment(sub_metric.createdAt).format('l'),
+          y: sub_metric.metric,
+        }
+      : {
+          x: day,
+          y: 0,
+        };
+  });
+
+  const metrics_2 = days.map(day => {
+    const _metrics = glycemic_list.filter(glycemic => glycemic.case === 2);
+
+    const sub_metric = _metrics.find(
+      metric => moment(metric.createdAt).format('l') === day,
+    );
+
+    return sub_metric
+      ? {
+          x: moment(sub_metric.createdAt).format('l'),
+          y: sub_metric.metric,
+        }
+      : {
+          x: day,
+          y: 0,
+        };
+  });
+
+  const metrics_3 = days.map(day => {
+    const _metrics = glycemic_list.filter(glycemic => glycemic.case === 3);
+
+    const sub_metric = _metrics.find(
+      metric => moment(metric.createdAt).format('l') === day,
+    );
+
+    return sub_metric
+      ? {
+          x: moment(sub_metric.createdAt).format('l'),
+          y: sub_metric.metric,
+        }
+      : {
+          x: day,
+          y: 0,
+        };
+  });
 
   const data = [];
   if (metrics_1.length > 0) {
