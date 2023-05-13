@@ -2,7 +2,7 @@ import moment from 'moment';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {Avatar} from 'react-native-paper';
 
-function MessageItem({message}) {
+function MessageItem({message, isGPT}) {
   return (
     <View
       style={[
@@ -52,7 +52,7 @@ function MessageItem({message}) {
             fontSize: 12,
             marginTop: 4,
           }}>
-          {moment(message.createdAt).fromNow()}
+          {isGPT ? null : moment(message.createdAt).fromNow()}
         </Text>
       </View>
     </View>

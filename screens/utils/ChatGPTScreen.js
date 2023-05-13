@@ -53,7 +53,6 @@ function ChatGPTScreen({navigation}) {
 
   const processMessageToChatGPT = async chatMessages => {
     const apiKey = env.REACT_APP_OPENAI_API_KEY;
-
     let apiMessages = chatMessages.map(_message => {
       return {role: _message.role, content: _message.content};
     });
@@ -77,6 +76,8 @@ function ChatGPTScreen({navigation}) {
       body: JSON.stringify(apiReqBody),
     })
       .then(res => {
+        if (res.status === 429)
+          return Promise.reject('Có lỗi xảy ra. Vui lòng thủ lại sau!');
         return res.json();
       })
       .then(data => {
@@ -92,8 +93,21 @@ function ChatGPTScreen({navigation}) {
             role: 'assistant',
           },
         ]);
-        // setTyping(false);
-      });
+      })
+      .catch(err =>
+        setMessages([
+          ...chatMessages,
+          {
+            sender: {
+              username: 'AI',
+              avatar:
+                'https://media.istockphoto.com/id/1073076312/vi/vec-to/robot-m%E1%BB%89m-c%C6%B0%E1%BB%9Di-d%E1%BB%85-th%C6%B0%C6%A1ng-bot-tr%C3%B2-chuy%E1%BB%87n-n%C3%B3i-ch%C3%A0o-vector-hi%E1%BB%87n-%C4%91%E1%BA%A1i-ph%E1%BA%B3ng-h%C3%ACnh-minh-h%E1%BB%8Da-nh%C3%A2n.jpg?s=1024x1024&w=is&k=20&c=gCqq3LF7PLfY-sdYrKUvpdgcnSsm5FVFjuw5sF6pWn8=',
+            },
+            content: err,
+            role: 'assistant',
+          },
+        ]),
+      );
   };
 
   return (
@@ -109,7 +123,7 @@ function ChatGPTScreen({navigation}) {
             size={20}
             onPress={() => navigation.goBack()}
           />
-          <Text style={styles.header_left_username}>{`ChatBot`}</Text>
+          <Text style={styles.header_left_username}>{`Chatbot`}</Text>
         </View>
       </View>
 
@@ -120,7 +134,7 @@ function ChatGPTScreen({navigation}) {
           scrollViewRef.current.scrollToEnd({animated: true})
         }>
         {messages.map((message, index) => {
-          return <MessageItem message={message} key={index} />;
+          return <MessageItem message={message} key={index} isGPT />;
         })}
       </ScrollView>
 
