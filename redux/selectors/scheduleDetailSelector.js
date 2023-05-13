@@ -10,9 +10,11 @@ export const scheduleDetailListAfterNow = createSelector(
     const now = new Date();
 
     if (schedules?.length > 0) {
-      const _schedules = schedules.filter(schedule =>
-        moment(schedule.day_exam).isAfter(moment(now).add(45, 'm').toDate()),
-      );
+      const _schedules = schedules.filter(schedule => {
+        return moment(schedule.day_exam)
+          .add(45, 'minutes')
+          .isAfter(moment(now));
+      });
 
       const schedule_now = _schedules.filter(
         schedule =>
