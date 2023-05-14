@@ -91,7 +91,7 @@ function ScheduleDetail({navigation, route}) {
               <Rating
                 style={{paddingVertical: 10}}
                 imageSize={18}
-                startingValue={doctor.rating}
+                startingValue={doctor.rating ?? 5}
               />
             }
             left={() => <List.Icon icon="notebook-check-outline" />}

@@ -47,10 +47,10 @@ function ProfilePatientScreen({navigation}) {
 
   const dispatch = useDispatch();
 
-  const handleViewDoctorInfo = () => {
+  const handleViewDoctorInfo = doctor => {
     console.log('click ', doctor_glycemic_id);
     navigation.navigate(RouterKey.PATIENT_INFO_DOCTOR_SCREEN, {
-      schedule: {doctor: doctor_glycemic_id},
+      schedule: {doctor: doctor},
     });
   };
 
@@ -175,7 +175,9 @@ function ProfilePatientScreen({navigation}) {
           )}
         </List.Section>
         {doctor_blood_id && (
-          <TouchableOpacity style={styles.doctor_info}>
+          <TouchableOpacity
+            style={styles.doctor_info}
+            onPress={() => handleViewDoctorInfo(doctor_blood_id)}>
             <Image
               source={{uri: doctor_blood_id.person.avatar}}
               style={styles.doctor_info_image}
@@ -187,7 +189,7 @@ function ProfilePatientScreen({navigation}) {
                   ? 'Đường huyết'
                   : 'Huyết áp'
               }`}</Text>
-              <Text>{`Đánh giá: ${doctor_blood_id.rating}/5`}</Text>
+              <Text>{`Đánh giá: ${doctor_blood_id.rating ?? 5}/5`}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -195,7 +197,7 @@ function ProfilePatientScreen({navigation}) {
         {doctor_glycemic_id && (
           <TouchableOpacity
             style={styles.doctor_info}
-            onPress={handleViewDoctorInfo}>
+            onPress={() => handleViewDoctorInfo(doctor_glycemic_id)}>
             <Image
               source={{uri: doctor_glycemic_id.person.avatar}}
               style={styles.doctor_info_image}
@@ -207,7 +209,7 @@ function ProfilePatientScreen({navigation}) {
                   ? 'Đường huyết'
                   : 'Huyết áp'
               }`}</Text>
-              <Text>{`Đánh giá: ${doctor_glycemic_id.rating}/5`}</Text>
+              <Text>{`Đánh giá: ${doctor_glycemic_id.rating ?? 5}/5`}</Text>
             </View>
           </TouchableOpacity>
         )}

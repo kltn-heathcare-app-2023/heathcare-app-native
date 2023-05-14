@@ -362,6 +362,12 @@ function MainScreen({navigation}) {
                   borderRadius: 50,
                 }}
                 onPress={() => {
+                  socket.emit('call_now_not_accept_to_user', {
+                    small_id: Math.floor(Math.random() * 100000) + 1,
+                    roomId: callData?.room_id ?? '',
+                    schedule_detail_id: callData?.schedule_details_id ?? '',
+                    patient_id: user_info._id ?? '',
+                  });
                   setVisible(false);
                 }}
               />

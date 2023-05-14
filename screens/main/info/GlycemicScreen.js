@@ -225,7 +225,7 @@ function GlycemicScreen({navigation}) {
         type: 'Warning',
         title: 'Chú ý',
         button: true,
-        textBody: MESSAGE_MISS_DATA,
+        textBody: 'Chỉ số không được là 0',
         buttontext: 'OK',
         callback: () => {
           // navigation.navigate(RouterKey.ROUTER_INFO_SCREEN, {
