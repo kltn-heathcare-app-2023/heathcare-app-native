@@ -200,7 +200,7 @@ function HomeScreen({navigation, route}) {
               }>{`Chỉ số TH1: ${glycemic_case_1}/ 126\nChỉ số TH2: ${glycemic_case_2}/ 180\nChỉ số TH3: ${glycemic_case_3}/ 120`}</Text>
           </View>
         </View>
-        {status && status.message && (
+        {status && status.message ? (
           <View
             style={[
               styles.box_status,
@@ -209,7 +209,7 @@ function HomeScreen({navigation, route}) {
                   status && status.message.code === 0
                     ? '#0ead69'
                     : status.message.code === 1
-                    ? '#fb8b240'
+                    ? '#fb8b24'
                     : status.message.code === 2
                     ? '#f95738'
                     : '#cbdfbd',
@@ -219,6 +219,20 @@ function HomeScreen({navigation, route}) {
             <Text style={styles.box_status_title}>Đánh giá:</Text>
             <Text style={styles.box_status_content}>
               {status ? status?.message?.status : 'Đang tải ...'}
+            </Text>
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.box_status,
+              {
+                borderColor: '#f95738',
+              },
+              {marginTop: 8},
+            ]}>
+            <Text style={styles.box_status_title}>Đánh giá:</Text>
+            <Text style={styles.box_status_content}>
+              {'Chỉ số đánh giá cho bệnh nhân nằm ngoài tính toán'}
             </Text>
           </View>
         )}
