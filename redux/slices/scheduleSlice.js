@@ -11,6 +11,7 @@ export const scheduleSlice = createSlice({
     schedule_details_after_now: [],
     day_of_week: new Date(),
     doctor_name: '',
+    doctor_type: '',
   },
   reducers: {
     chooseDayOfWeek: (state, action) => {
@@ -19,8 +20,11 @@ export const scheduleSlice = createSlice({
     },
 
     updateDoctorName: (state, action) => {
-      console.log(action.payload);
       state.doctor_name = action.payload;
+    },
+
+    updateDoctorType: (state, action) => {
+      state.doctor_type = action.payload;
     },
   },
   extraReducers: builder => {
@@ -32,7 +36,8 @@ export const scheduleSlice = createSlice({
   },
 });
 
-export const {chooseDayOfWeek, updateDoctorName} = scheduleSlice.actions;
+export const {chooseDayOfWeek, updateDoctorName, updateDoctorType} =
+  scheduleSlice.actions;
 export const fetchAllScheduleDoctor = createAsyncThunk(
   'schedules/fetchAllScheduleDoctor',
   async () => {

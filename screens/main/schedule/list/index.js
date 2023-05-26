@@ -21,20 +21,34 @@ import {
   scheduleSlice,
   fetchAllScheduleDoctor,
   updateDoctorName,
+  updateDoctorType,
 } from '../../../../redux/slices/scheduleSlice';
+import DropDownPicker from '../../../../components/Input/DropdownPicker';
+
+const optionTypes = [
+  {label: 'Tất cả', value: ''},
+  {label: 'Đường huyết', value: 'glycemic'},
+  {label: 'Huyết áp', value: 'blood'},
+];
 
 function ScheduleListScreen({navigation}) {
   const dispatch = useDispatch();
 
   const [selectedDate, setSelectedDate] = useState();
   const [doctorName, setDoctorName] = useState('');
+  const [doctorType, setDoctorType] = useState(optionTypes[0].value);
   const schedule_list = useSelector(filterScheduleByDayOfWeek);
   const schedule_list_by_doctor = useSelector(filterScheduleByDoctorName);
+
   useEffect(() => {
     if (schedule_list.length === 0) {
       dispatch(fetchAllScheduleDoctor());
     }
   }, [selectedDate]);
+
+  useEffect(() => {
+    dispatch(updateDoctorType(doctorType));
+  }, [doctorType]);
 
   return (
     <View style={styles.container}>
@@ -66,6 +80,22 @@ function ScheduleListScreen({navigation}) {
         weekStartsOn={1} // 0,1,2,3,4,5,6 for S M T W T F S, defaults to 0
       />
 
+      <DropDownPicker
+        items={optionTypes}
+        _setValue={setDoctorType}
+        value={doctorType}
+        style={{
+          width: '96%',
+          margin: 0,
+          marginTop: 8,
+        }}
+        stylePicker={{
+          width: '99%',
+        }}
+        childPicker={{
+          marginRight: 0,
+        }}
+      />
       <TextInput
         style={styles.input}
         placeholder="Nhập tên bác sĩ"
@@ -76,6 +106,7 @@ function ScheduleListScreen({navigation}) {
         }}
         value={doctorName}
       />
+
       <ScrollView style={styles.schedule_list}>
         {schedule_list_by_doctor && schedule_list_by_doctor.length > 0 ? (
           schedule_list_by_doctor.map(schedule => {
@@ -114,13 +145,15 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '96%',
-    borderWidth: 1,
-    borderColor: '#219ebc',
+    borderWidth: 2,
+    borderColor: '#5D90F5',
     borderRadius: 8,
-    padding: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     marginTop: 4,
     marginLeft: 24,
     marginRight: 24,
+    backgroundColor: '#ffff',
   },
 });
 
