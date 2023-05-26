@@ -1,10 +1,16 @@
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 
 import {useEffect, useState} from 'react';
 import {getAllHistoriesById} from '../../../services/patient/info';
 import moment from 'moment';
 import Header from '../../../components/Header';
-import {ActivityIndicator} from 'react-native-paper';
+import {ActivityIndicator, Modal, Portal} from 'react-native-paper';
 
 const specialist = {
   glycemic: 'Đường huyết',
@@ -15,6 +21,7 @@ function HistoryScreen({navigation, route}) {
   const {patient_id} = route.params;
   const [histories, setHistories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState('');
 
   useEffect(() => {
     if (patient_id) {
@@ -47,7 +54,7 @@ function HistoryScreen({navigation, route}) {
             <ActivityIndicator animating={true} color={'#a8dadc'} />
           </View>
         ) : histories.length > 0 ? (
-          histories.reverse().map(history => {
+          histories.map(history => {
             return (
               <View style={styles.exam_item} key={history._id}>
                 <Text style={{fontWeight: '600'}}>
@@ -64,7 +71,43 @@ function HistoryScreen({navigation, route}) {
                     Ngày khám:{' '}
                     {moment(history.created_at).format('DD/MM/YYYY - HH:mm:ss')}
                   </Text>
+                  {history.prescription && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setVisible(history.prescription);
+                      }}>
+                      <Text
+                        style={{
+                          color: '#0077b6',
+                          textDecorationLine: 'underline',
+                          marginTop: 8,
+                        }}>
+                        {'Xem đơn thuốc'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
+
+                <Portal>
+                  <Modal
+                    visible={visible}
+                    auto
+                    onDismiss={() => {
+                      setVisible('');
+                    }}
+                    contentContainerStyle={styles.modal}>
+                    <Text
+                      style={{
+                        fontWeight: '700',
+                        fontSize: 16,
+                        marginBottom: 16,
+                      }}>
+                      Đơn thuốc
+                    </Text>
+
+                    <Text>{visible}</Text>
+                  </Modal>
+                </Portal>
               </View>
             );
           })
@@ -90,6 +133,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#a8dadc',
     marginBottom: 8,
     borderRadius: 16,
+  },
+  modal: {
+    backgroundColor: '#fff',
+    height: 400,
+    marginHorizontal: 8,
+    borderRadius: 16,
+    padding: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
