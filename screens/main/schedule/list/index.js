@@ -6,24 +6,30 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TextInput,
   View,
 } from 'react-native';
 import CalendarStrip from 'react-native-slideable-calendar-strip';
 import {useDispatch, useSelector} from 'react-redux';
 import {TITLE_NOTIFICATION} from '../../../../common/title';
 import ScheduleItem from '../../../../components/ScheduleItem';
-import {filterScheduleByDayOfWeek} from '../../../../redux/selectors/scheduleSelector';
+import {
+  filterScheduleByDayOfWeek,
+  filterScheduleByDoctorName,
+} from '../../../../redux/selectors/scheduleSelector';
 import {
   scheduleSlice,
   fetchAllScheduleDoctor,
+  updateDoctorName,
 } from '../../../../redux/slices/scheduleSlice';
 
 function ScheduleListScreen({navigation}) {
   const dispatch = useDispatch();
 
   const [selectedDate, setSelectedDate] = useState();
+  const [doctorName, setDoctorName] = useState('');
   const schedule_list = useSelector(filterScheduleByDayOfWeek);
-
+  const schedule_list_by_doctor = useSelector(filterScheduleByDoctorName);
   useEffect(() => {
     if (schedule_list.length === 0) {
       dispatch(fetchAllScheduleDoctor());
@@ -60,9 +66,19 @@ function ScheduleListScreen({navigation}) {
         weekStartsOn={1} // 0,1,2,3,4,5,6 for S M T W T F S, defaults to 0
       />
 
+      <TextInput
+        style={styles.input}
+        placeholder="Nhập tên bác sĩ"
+        onChangeText={value => {
+          // console.log(value);
+          setDoctorName(value);
+          dispatch(updateDoctorName(value));
+        }}
+        value={doctorName}
+      />
       <ScrollView style={styles.schedule_list}>
-        {schedule_list && schedule_list.length > 0 ? (
-          schedule_list.map(schedule => {
+        {schedule_list_by_doctor && schedule_list_by_doctor.length > 0 ? (
+          schedule_list_by_doctor.map(schedule => {
             return (
               <ScheduleItem
                 schedule={schedule}
@@ -95,6 +111,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
     height: '80%',
     width: '100%',
+  },
+  input: {
+    width: '96%',
+    borderWidth: 1,
+    borderColor: '#219ebc',
+    borderRadius: 8,
+    padding: 8,
+    marginTop: 4,
+    marginLeft: 24,
+    marginRight: 24,
   },
 });
 
