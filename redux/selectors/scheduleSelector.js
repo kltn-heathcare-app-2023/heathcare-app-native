@@ -5,6 +5,8 @@ export const scheduleDaySelector = state => state.schedules.day_of_week;
 export const scheduleDetailListSelector = state =>
   state.schedules.schedule_details_after_now;
 
+export const doctorName = state => state.schedules.doctor_name;
+export const doctorType = state => state.schedules.doctor_type;
 export const filterScheduleByDayOfWeek = createSelector(
   scheduleSelector,
   scheduleDetailListSelector,
@@ -81,5 +83,34 @@ export const filterScheduleByDayOfWeek = createSelector(
       return final_schedule;
     }
     return [];
+  },
+);
+
+export const filterScheduleByDoctorName = createSelector(
+  filterScheduleByDayOfWeek,
+  doctorName,
+  doctorType,
+  (schedules, doctor, type) => {
+    if (doctor && type) {
+      return schedules.filter(schedule => {
+        return (
+          schedule.doctor.person.username.includes(doctor) &&
+          schedule.doctor.work_type === type
+        );
+      });
+    }
+    if (doctor) {
+      return schedules.filter(schedule => {
+        return schedule.doctor.person.username.includes(doctor);
+      });
+    }
+
+    if (type) {
+      return schedules.filter(schedule => {
+        return schedule.doctor.work_type === type;
+      });
+    }
+
+    return schedules;
   },
 );
